@@ -1,0 +1,9 @@
+local
+
+# rust
+target
+
+# npm
+node_modules
+dist
+build
