@@ -8,6 +8,7 @@
     "scripts": {
         "serve": "npm run serve --workspace=torii-client",
         "build": "npm run build --workspace=torii-client",
-        "lint": "npm run lint --workspace=torii-client"
+        "lint": "npm run lint --workspace=torii-client",
+        "tauri": "tauri"
     }
 }
