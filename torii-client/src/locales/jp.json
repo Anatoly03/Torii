@@ -1,7 +1,6 @@
 {
     "app": {
         "title": "鳥居",
-        "version": "Ｖｅｒｓｉｏｎ {version}",
         "welcome": "あなたの Vue.js + TypeScript アプリへようこそ"
     },
     "menu": {
@@ -12,5 +11,9 @@
         "home": "ようこそホームページへ",
         "about": "これはＡｂｏｕｔページです",
         "noRecentProjects": "最近のプロジェクトはありません。"
+    },
+    "version": {
+        "verbose": "Version {version}",
+        "unknown": "Unknown"
     }
 }

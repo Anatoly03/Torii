@@ -1,7 +1,6 @@
 {
     "app": {
         "title": "鸟居",
-        "version": "版本 {version}",
         "welcome": "欢迎来到您的 Vue.js + TypeScript 应用"
     },
     "menu": {
@@ -12,5 +11,9 @@
         "home": "欢迎来到主页",
         "about": "这是关于页面",
         "noRecentProjects": "没有最近的项目。"
+    },
+    "version": {
+        "verbose": "Version {version}",
+        "unknown": "Unknown"
     }
 }
