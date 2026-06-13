@@ -9,14 +9,33 @@ const routes: Array<RouteRecordRaw> = [
     },
     {
         path: '/settings',
+        redirect: '/settings/general',
         name: 'settings',
         // route level code-splitting
         // this generates a separate chunk (settings.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
         component: () =>
             import(
-                /* webpackChunkName: "settings" */ '../views/SettingsView.vue'
+                /* webpackChunkName: "settings" */ '../views/settings/SettingsView.vue'
             ),
+        children: [
+            {
+                path: 'general',
+                name: 'settings-general',
+                component: () =>
+                    import(
+                        /* webpackChunkName: "settings-general" */ '../views/settings/GeneralSettingsView.vue'
+                    ),
+            },
+            {
+                path: 'theme',
+                name: 'settings-theme',
+                component: () =>
+                    import(
+                        /* webpackChunkName: "settings-theme" */ '../views/settings/ThemeSettingsView.vue'
+                    ),
+            },
+        ],
     },
 ];
 
