@@ -1,5 +1,7 @@
 # Torii Project （鳥居Ｐｒｏｊｅｃｔ）
 
+[![Publish](https://github.com/Anatoly03/Torii/actions/workflows/publish.yml/badge.svg)](https://github.com/Anatoly03/Torii/actions/workflows/publish.yml)
+
 Torii Project is a tool for world builders and story writers to document vast worlds.
 
 ### Running
