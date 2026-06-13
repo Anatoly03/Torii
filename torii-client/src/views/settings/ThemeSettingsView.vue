@@ -1,5 +1,5 @@
 <template>
-    <div class="view-settings-theme">Theme Settings</div>
+    <div class="view-settings-theme">{{ $t('placeholder.noThemes') }}</div>
 </template>
 
 <style lang="scss" scoped>

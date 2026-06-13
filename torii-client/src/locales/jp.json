@@ -10,7 +10,8 @@
     "placeholder": {
         "home": "ようこそホームページへ",
         "about": "これはＡｂｏｕｔページです",
-        "noRecentProjects": "最近のプロジェクトはありません。"
+        "noRecentProjects": "最近のプロジェクトはありません。",
+        "noThemes": "利用可能なテーマがありません。"
     },
     "version": {
         "verbose": "Version {version}",

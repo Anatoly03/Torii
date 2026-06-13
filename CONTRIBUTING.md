@@ -24,4 +24,5 @@
 
 ### User Interface
 
+- [naive-ui](https://www.naiveui.com/en-US/os-theme)
 - [xicons](https://www.xicons.org/)

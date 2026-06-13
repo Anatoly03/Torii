@@ -1,31 +1,43 @@
 <template>
-    <div class="view-settings">
-        <div class="view-settings-side">
-            <router-link
-                v-for="subsetting in subsettings"
-                :key="subsetting.path"
-                :to="subsetting.path"
-            >
-                {{ subsetting.name }}
-            </router-link>
-        </div>
-        <div class="view-settings-content">
+    <n-layout has-sider class="view-settings">
+        <n-layout-sider bordered class="view-settings-side">
+            <n-menu
+                v-model:value="activeSetting"
+                :options="menuOptions"
+                @update:value="openSetting"
+            />
+        </n-layout-sider>
+        <n-layout class="view-settings-content">
             <router-view />
-        </div>
-    </div>
+        </n-layout>
+    </n-layout>
 </template>
 
 <script setup lang="ts">
-const subsettings = [
+import { ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { NLayout, NLayoutSider, NMenu } from 'naive-ui';
+
+const router = useRouter();
+const route = useRoute();
+const activeSetting = ref(route.name);
+const menuOptions = [
     {
-        name: 'General',
-        path: '/settings/general',
+        label: 'General',
+        key: 'settings-general',
     },
     {
-        name: 'Theme',
-        path: '/settings/theme',
+        label: 'Theme',
+        key: 'settings-theme',
     },
 ];
+
+function openSetting(key: string) {
+    router.push({ name: key });
+    // const option = menuOptions.find((opt) => opt.key === key);
+    // if (!option) return;
+    // router.push({ name: option.key });
+}
 </script>
 
 <style lang="scss" scoped>
@@ -33,15 +45,6 @@ const subsettings = [
     display: flex;
     flex-direction: row;
     height: 100%;
-
-    .view-settings-side {
-        display: flex;
-        flex-direction: column;
-        width: 200px;
-        padding: 16px;
-        gap: 8px;
-        border-right: 1px solid #ccc;
-    }
 
     .view-settings-content {
         display: flex;

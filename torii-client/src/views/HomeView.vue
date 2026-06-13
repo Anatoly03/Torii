@@ -57,7 +57,7 @@ function openSettingsWindow() {
     settingsWindow.value = new WebviewWindow('settings', {
         url: '/settings',
         title: 'Settings',
-        width: 600,
+        width: 860,
         height: 500,
         center: true,
         resizable: true,
