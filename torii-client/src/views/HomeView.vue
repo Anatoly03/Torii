@@ -1,18 +1,16 @@
 <template>
     <div class="home">
         <img alt="Vue logo" src="../assets/logo.png" />
-        <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+        <HelloWorld :msg="msg" />
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
+<script setup lang="ts">
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-    name: 'HomeView',
-    components: {
-        HelloWorld,
-    },
-});
+import HelloWorld from '@/components/HelloWorld.vue';
+
+const i18n = useI18n();
+const msg = computed(() => i18n.t('app.welcome'));
 </script>

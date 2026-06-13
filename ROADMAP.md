@@ -3,6 +3,8 @@
 
 The first stage of the project is to create a simple file browser like application with tools to create and manage markdown notes.
 
+- [x] Setup Client Files
+- [x] Setup Desktop Files
 - [ ] Launcher
   - [ ] View Recent Projects
   - [ ] Delete Recent Project

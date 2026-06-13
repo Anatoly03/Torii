@@ -4,7 +4,12 @@
         <router-link to="/about">{{ $t('menu.about') }}</router-link>
     </nav>
     <router-view />
+    <language-select />
 </template>
+
+<script setup lang="ts">
+import LanguageSelect from './components/LanguageSelect.vue';
+</script>
 
 <style>
 #app {

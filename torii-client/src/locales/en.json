@@ -1,4 +1,9 @@
 {
+    "app": {
+        "title": "Torii",
+        "version": "Version {version}",
+        "welcome": "Welcome to Your Vue.js + TypeScript App"
+    },
     "menu": {
         "home": "Home",
         "about": "About"

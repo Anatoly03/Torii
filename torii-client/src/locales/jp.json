@@ -1,0 +1,15 @@
+{
+    "app": {
+        "title": "鳥居",
+        "version": "Ｖｅｒｓｉｏｎ {version}",
+        "welcome": "あなたの Vue.js + TypeScript アプリへようこそ"
+    },
+    "menu": {
+        "home": "ホーム",
+        "about": "について"
+    },
+    "placeholder": {
+        "home": "ようこそホームページへ",
+        "about": "これはＡｂｏｕｔtページです"
+    }
+}
