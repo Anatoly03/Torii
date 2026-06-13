@@ -10,6 +10,7 @@ target
 node_modules
 dist
 build
+build-client
 
 # env
 .env
