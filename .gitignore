@@ -3,6 +3,9 @@ local
 # rust
 target
 
+# tauri
+**/gen/schemas
+
 # npm
 node_modules
 dist

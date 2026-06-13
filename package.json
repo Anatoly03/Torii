@@ -2,6 +2,9 @@
     "workspaces": [
         "torii-client"
     ],
+    "devDependencies": {
+        "@tauri-apps/cli": "^2.11.1"
+    },
     "scripts": {
         "serve": "npm run serve --workspace=torii-client",
         "build": "npm run build --workspace=torii-client",
