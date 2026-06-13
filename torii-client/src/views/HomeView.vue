@@ -6,7 +6,10 @@
             </div>
             <div class="view-home-quick-settings">
                 <LanguageSelect class="language-select" />
-                <button class="view-home-settings-button" disabled>
+                <button
+                    class="view-home-settings-button"
+                    @click="openSettingsWindow()"
+                >
                     <Icon><SettingsOutline /></Icon>
                 </button>
             </div>
@@ -25,6 +28,7 @@ import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { listRecentProjects } from '../composables/listRecentProjects';
 import { getVersion } from '@tauri-apps/api/app';
+import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
 
 import { Icon } from '@vicons/utils';
 import { SettingsOutline } from '@vicons/ionicons5';
@@ -33,6 +37,7 @@ import LanguageSelect from '@/components/LanguageSelect.vue';
 const i18n = useI18n();
 const recentProjects = computed(() => listRecentProjects());
 const version = ref(i18n.t('version.unknown'));
+const settingsWindow = ref<WebviewWindow | null>(null);
 
 onMounted(async () => {
     try {
@@ -41,6 +46,42 @@ onMounted(async () => {
         console.error('Failed to get app version:', error);
     }
 });
+
+function openSettingsWindow() {
+    // Avoid opening multiple settings windows.
+    if (settingsWindow.value) {
+        settingsWindow.value.setFocus();
+        return;
+    }
+
+    settingsWindow.value = new WebviewWindow('settings', {
+        url: '/settings',
+        title: 'Settings',
+        width: 600,
+        height: 500,
+        center: true,
+        resizable: true,
+        fullscreen: false,
+    });
+
+    settingsWindow.value.once('tauri://created', () => {
+        console.log('Settings window created');
+    });
+
+    settingsWindow.value.once('tauri://close-requested', (e) => {
+        settingsWindow.value?.close();
+        settingsWindow.value = null;
+    });
+
+    settingsWindow.value.once('tauri://error', (e) => {
+        console.error('Failed to create settings window', e);
+    });
+
+    settingsWindow.value.once('tauri://error', (e) => {
+        console.error('Failed to create settings window', e);
+        settingsWindow.value = null; // Also clear on error
+    });
+}
 </script>
 
 <style lang="scss" scoped>
