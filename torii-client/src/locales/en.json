@@ -1,0 +1,10 @@
+{
+    "menu": {
+        "home": "Home",
+        "about": "About"
+    },
+    "placeholder": {
+        "home": "Welcome to the Home Page",
+        "about": "This is the About Page"
+    }
+}
