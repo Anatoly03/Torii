@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "Torii",
-  "version": "0.0.0",
+  "version": "0.0.0-dev0",
   "identifier": "com.torii.dev",
   "build": {
     "frontendDist": "assets",
