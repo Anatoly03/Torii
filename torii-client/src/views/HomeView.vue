@@ -4,8 +4,11 @@
             <div class="view-recent-projects">
                 {{ $t('placeholder.noRecentProjects') }}
             </div>
-            <div class="view-home-settings">
-                <LanguageSelect />
+            <div class="view-home-quick-settings">
+                <LanguageSelect class="language-select" />
+                <button class="view-home-settings-button" disabled>
+                    <Icon><SettingsOutline /></Icon>
+                </button>
             </div>
         </div>
         <div class="view-home-content">
@@ -23,6 +26,8 @@ import { useI18n } from 'vue-i18n';
 import { listRecentProjects } from '../composables/listRecentProjects';
 import { getVersion } from '@tauri-apps/api/app';
 
+import { Icon } from '@vicons/utils';
+import { SettingsOutline } from '@vicons/ionicons5';
 import LanguageSelect from '@/components/LanguageSelect.vue';
 
 const i18n = useI18n();
@@ -59,10 +64,15 @@ onMounted(async () => {
             flex: 1;
         }
 
-        .view-home-settings {
+        .view-home-quick-settings {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             gap: 8px;
+            min-height: 2em;
+
+            .language-select {
+                flex: 1;
+            }
         }
     }
 

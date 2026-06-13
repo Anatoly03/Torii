@@ -21,3 +21,7 @@
 - [vue-devtools](https://github.com/vuejs/vue-devtools#vue-devtools)
 - [vue-loader](https://vue-loader.vuejs.org)
 - [awesome-vue](https://github.com/vuejs/awesome-vue)
+
+### User Interface
+
+- [xicons](https://www.xicons.org/)
