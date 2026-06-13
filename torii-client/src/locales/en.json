@@ -10,6 +10,7 @@
     },
     "placeholder": {
         "home": "Welcome to the Home Page",
-        "about": "This is the About Page"
+        "about": "This is the About Page",
+        "noRecentProjects": "No recent projects."
     }
 }

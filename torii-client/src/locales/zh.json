@@ -10,6 +10,7 @@
     },
     "placeholder": {
         "home": "欢迎来到主页",
-        "about": "这是关于页面"
+        "about": "这是关于页面",
+        "noRecentProjects": "没有最近的项目。"
     }
 }
