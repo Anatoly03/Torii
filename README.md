@@ -12,12 +12,15 @@ You can serve the application quickly with `npx tauri dev`, which will serve fro
 npx tauri dev
 ```
 
+If you are also curious in developing a custom Torii backend, the following command can be used to start the API service.
+
+```sh
+cd torii-api
+go run src/main.go serve
+```
+
 <!-- If you work on a headless setup and would like to export environment variables, this command sequence will help. You can for example override the `DESKTOP` environment variable.
 
 ```sh
 set -a; . .env; set +a
 ``` -->
-
-### Contributing
-
-Note that currently using vite dev tools is extremely unstable and crashes the application.

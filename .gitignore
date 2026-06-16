@@ -6,6 +6,9 @@ target
 # tauri
 **/gen/schemas
 
+# pocketbase
+pb_data
+
 # npm
 node_modules
 dist
