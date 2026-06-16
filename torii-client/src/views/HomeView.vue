@@ -26,7 +26,6 @@ import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { getVersion } from '@tauri-apps/api/app';
 import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
-
 import { Icon } from '@vicons/utils';
 import { SettingsOutline } from '@vicons/ionicons5';
 import LanguageSelect from '@/components/LanguageSelect.vue';

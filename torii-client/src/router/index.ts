@@ -8,6 +8,12 @@ const routes: Array<RouteRecordRaw> = [
         component: HomeView,
     },
     {
+        path: '/project',
+        name: 'project',
+        props: { projectPath: '' },
+        component: () => import('../views/ProjectView.vue'),
+    },
+    {
         path: '/settings',
         redirect: '/settings/general',
         name: 'settings',

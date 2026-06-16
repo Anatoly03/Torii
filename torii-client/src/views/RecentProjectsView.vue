@@ -9,7 +9,7 @@
                 v-for="project in recentProjects"
                 :key="project.path"
             >
-                <div class="project-title">{{ project.name }}</div>
+                <span @click="openProject(project.path)" class="project-title">{{ project.name }}</span>
                 <n-dropdown
                     trigger="click"
                     placement="right"
@@ -38,10 +38,15 @@ import {
 import { open } from '@tauri-apps/plugin-dialog';
 import { NIcon, NDropdown, DropdownOption } from 'naive-ui';
 import { EllipsisVertical } from '@vicons/ionicons5';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const recentProjects = listRecentProjects();
 const projectOptions: DropdownOption[] = [{ label: 'Remove', key: 'remove' }];
 
+/**
+ * Opens a dialog to open a project folder from file system.
+ */
 async function openProjectDialog() {
     const selected = await open({
         directory: true,
@@ -55,6 +60,17 @@ async function openProjectDialog() {
     addRecentProject({ path: selected, name });
 }
 
+/**
+ * Opens the project at the given path.
+ */
+function openProject(projectPath: string) {
+    router.push({ name: 'project', params: { projectPath } });
+}
+
+/**
+ * @param project Project Metadata
+ * @param option Project Option
+ */
 function handleProjectOptions(
     project: { path: string; name: string },
     option: DropdownOption
@@ -86,6 +102,13 @@ function handleProjectOptions(
         .project-entry {
             display: flex;
             flex-direction: row;
+            align-items: center;
+            height: 2em;
+            cursor: pointer;
+
+            &:hover {
+                background-color: #eee;
+            }
 
             .project-title {
                 flex: 1;

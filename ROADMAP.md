@@ -9,15 +9,15 @@ The first stage of the project is to create a simple file browser like applicati
 
 - [x] Setup Client Files
 - [x] Setup Desktop Files
-- [x] Launcher
+- [x] Launcher View
   - [x] View Recent Projects
   - [x] Delete Recent Project
-  - [ ] Open Recent Project
+  - [x] Open Recent Project
   - [ ] Create Project (at directory)
 - [ ] Settings
   - [ ] General
   - [x] Themes Stub
-- [ ] Project
+- [x] Project View
   - [ ] View File Tree
   - [ ] Markdown: Edit and Auto-Save Files
   - [ ] Markdown: Create Files
