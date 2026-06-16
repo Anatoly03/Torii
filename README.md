@@ -12,8 +12,8 @@ You can serve the application quickly with `npx tauri dev`, which will serve fro
 npx tauri dev
 ```
 
-If you work on a headless setup and would like to export environment variables, this command sequence will help. You can for example override the `DESKTOP` environment variable.
+<!-- If you work on a headless setup and would like to export environment variables, this command sequence will help. You can for example override the `DESKTOP` environment variable.
 
 ```sh
 set -a; . .env; set +a
-```
+``` -->
