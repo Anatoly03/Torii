@@ -1,9 +1,7 @@
 <template>
     <div class="view-home">
         <div class="view-home-side">
-            <div class="view-recent-projects">
-                {{ $t('placeholder.noRecentProjects') }}
-            </div>
+            <RecentProjectsView />
             <div class="view-home-quick-settings">
                 <LanguageSelect class="language-select" />
                 <button
@@ -26,13 +24,14 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { listRecentProjects } from '../composables/listRecentProjects';
+import { listRecentProjects } from '../composables/recentProjects';
 import { getVersion } from '@tauri-apps/api/app';
 import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
 
 import { Icon } from '@vicons/utils';
 import { SettingsOutline } from '@vicons/ionicons5';
 import LanguageSelect from '@/components/LanguageSelect.vue';
+import RecentProjectsView from './RecentProjectsView.vue';
 
 const i18n = useI18n();
 const recentProjects = computed(() => listRecentProjects());
@@ -97,13 +96,6 @@ function openSettingsWindow() {
         padding: 16px;
         gap: 8px;
         border-right: 1px solid #ccc;
-
-        .view-recent-projects {
-            margin-bottom: 16px;
-            font-size: 14px;
-            color: #666;
-            flex: 1;
-        }
 
         .view-home-quick-settings {
             display: flex;

@@ -9,8 +9,8 @@ The first stage of the project is to create a simple file browser like applicati
 
 - [x] Setup Client Files
 - [x] Setup Desktop Files
-- [ ] Launcher
-  - [ ] View Recent Projects
+- [x] Launcher
+  - [x] View Recent Projects
   - [ ] Delete Recent Project
   - [ ] Open Recent Project
   - [ ] Create Project (at directory)

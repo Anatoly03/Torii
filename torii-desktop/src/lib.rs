@@ -1,3 +1,7 @@
+//! Desktop library for the Torii desktop application, built using Tauri.
+
+mod recent;
+
 use std::error::Error;
 use tauri::App;
 
@@ -7,6 +11,11 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .setup(enable_logging)
+        .invoke_handler(tauri::generate_handler![
+            recent::list_recent_projects,
+            recent::add_recent_project,
+            recent::remove_recent_project,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

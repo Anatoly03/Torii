@@ -12,6 +12,7 @@
     "core:webview:allow-webview-close",
     "core:window:allow-close",
     "core:window:allow-destroy",
-    "core:window:allow-set-focus"
+    "core:window:allow-set-focus",
+    "dialog:allow-open"
   ]
 }
