@@ -4,20 +4,43 @@
             {{ $t('placeholder.noRecentProjects') }}
         </span>
         <div v-else class="project-list">
-            <button v-for="project in recentProjects" :key="project.path" disabled>
-                {{ project.name }}
-            </button>
+            <span
+                class="project-entry"
+                v-for="project in recentProjects"
+                :key="project.path"
+            >
+                <div class="project-title">{{ project.name }}</div>
+                <n-dropdown
+                    trigger="click"
+                    placement="right"
+                    :options="projectOptions"
+                    :show-arrow="true"
+                    @select="
+                        (_, option) => handleProjectOptions(project, option)
+                    "
+                >
+                    <n-icon class="project-remove">
+                        <ellipsis-vertical />
+                    </n-icon>
+                </n-dropdown>
+            </span>
         </div>
         <button @click="openProjectDialog">Open Project</button>
     </div>
 </template>
 
 <script setup lang="ts">
-import { listRecentProjects, addRecentProject } from '../composables/recentProjects';
+import {
+    listRecentProjects,
+    addRecentProject,
+    removeRecentProject,
+} from '../composables/recentProjects';
 import { open } from '@tauri-apps/plugin-dialog';
+import { NIcon, NDropdown, DropdownOption } from 'naive-ui';
+import { EllipsisVertical } from '@vicons/ionicons5';
 
 const recentProjects = listRecentProjects();
-console.log(recentProjects);
+const projectOptions: DropdownOption[] = [{ label: 'Remove', key: 'remove' }];
 
 async function openProjectDialog() {
     const selected = await open({
@@ -30,6 +53,18 @@ async function openProjectDialog() {
 
     const name = selected.split('/').pop() || 'Unknown Project';
     addRecentProject({ path: selected, name });
+}
+
+function handleProjectOptions(
+    project: { path: string; name: string },
+    option: DropdownOption
+) {
+    console.log('Selected option', option, 'for project', project);
+    switch (option.key) {
+        case 'remove':
+            removeRecentProject(project.path);
+            break;
+    }
 }
 </script>
 
@@ -47,6 +82,24 @@ async function openProjectDialog() {
         display: flex;
         flex-direction: column;
         gap: 8px;
+
+        .project-entry {
+            display: flex;
+            flex-direction: row;
+
+            .project-title {
+                flex: 1;
+            }
+
+            .project-remove {
+                cursor: pointer;
+                color: #999;
+
+                &:hover {
+                    color: #666;
+                }
+            }
+        }
 
         button {
             padding: 8px 12px;

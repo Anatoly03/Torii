@@ -24,7 +24,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { listRecentProjects } from '../composables/recentProjects';
 import { getVersion } from '@tauri-apps/api/app';
 import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
 
@@ -34,7 +33,6 @@ import LanguageSelect from '@/components/LanguageSelect.vue';
 import RecentProjectsView from './RecentProjectsView.vue';
 
 const i18n = useI18n();
-const recentProjects = computed(() => listRecentProjects());
 const version = ref(i18n.t('version.unknown'));
 const settingsWindow = ref<WebviewWindow | null>(null);
 

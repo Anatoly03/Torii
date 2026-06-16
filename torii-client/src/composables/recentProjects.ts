@@ -57,5 +57,6 @@ export async function addRecentProject(metadata: RecentProject): Promise<void> {
  * recently opened projects.
  */
 export async function removeRecentProject(path: string): Promise<void> {
-    return invoke('remove_recent_project', { path });
+    await invoke('remove_recent_project', { path });
+    listRecentProjects(); // update the list of recent projects ref
 }
