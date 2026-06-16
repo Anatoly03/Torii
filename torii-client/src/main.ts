@@ -17,7 +17,7 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
 
 const mainWindow = getCurrentWindow();
-mainWindow.listen('tauri://close-requested', async (event) => {
+mainWindow.listen('tauri://close-requested', async (_event) => {
     const settings = await WebviewWindow.getByLabel('settings');
 
     if (settings) {
@@ -29,4 +29,4 @@ mainWindow.listen('tauri://close-requested', async (event) => {
 
 import '@/styles/global.scss';
 
-createApp(App).use(router).use(i18n).mount('#app');
+createApp(App).use(router).use(i18n).mount("#app");

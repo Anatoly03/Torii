@@ -17,3 +17,7 @@ npx tauri dev
 ```sh
 set -a; . .env; set +a
 ``` -->
+
+### Contributing
+
+Note that currently using vite dev tools is extremely unstable and crashes the application.
