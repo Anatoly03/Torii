@@ -11,7 +11,7 @@
             >
                 <span @click="openProject(project.path)" class="project-title">{{ project.name }}</span>
                 <n-dropdown
-                    trigger="click"
+                    trigger="hover"
                     placement="right"
                     :options="projectOptions"
                     :show-arrow="true"
