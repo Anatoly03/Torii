@@ -1,5 +1,7 @@
 <template>
-    <div class="view-settings-general">General Settings</div>
+    <div class="view-settings-general">
+        {{ $t('placeholder.generalSettings') }}
+    </div>
 </template>
 
 <style lang="scss" scoped>

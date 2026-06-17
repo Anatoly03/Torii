@@ -11,6 +11,11 @@
             "recent": "最近的项目",
             "noRecent": "没有最近的项目。"
         },
+        "settings": {
+            "title": "设置",
+            "general": "常规",
+            "themes": "主题"
+        },
         "menu": {
             "home": "主页",
             "about": "关于"
@@ -19,6 +24,7 @@
     "placeholder": {
         "home": "欢迎来到主页",
         "about": "这是关于页面",
-        "noThemes": "没有可用的主题。"
+        "noThemes": "没有可用的主题。",
+        "generalSettings": "常规设置"
     }
 }

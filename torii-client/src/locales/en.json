@@ -11,6 +11,11 @@
             "recent": "Recent Projects",
             "noRecent": "No recent projects."
         },
+        "settings": {
+            "title": "Settings",
+            "general": "General",
+            "themes": "Themes"
+        },
         "menu": {
             "home": "Home",
             "about": "About"
@@ -19,6 +24,7 @@
     "placeholder": {
         "home": "Welcome to the Home Page",
         "about": "This is the About Page",
-        "noThemes": "No themes available."
+        "noThemes": "No themes available.",
+        "generalSettings": "General Settings"
     }
 }

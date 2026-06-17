@@ -9,7 +9,7 @@
                     class="view-project-return-to-menu"
                     @click="$router.push('/')"
                 >
-                    Close Project
+                    {{ $t('app.project.close') }}
                 </button>
             </div>
         </div>

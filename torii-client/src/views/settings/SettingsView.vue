@@ -14,23 +14,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { NLayout, NLayoutSider, NMenu } from 'naive-ui';
+import { useI18n } from 'vue-i18n';
 
+const i18n = useI18n();
 const router = useRouter();
 const route = useRoute();
 const activeSetting = ref(route.name);
-const menuOptions = [
+const menuOptions = computed(() => [
     {
-        label: 'General',
+        label: i18n.t('app.settings.general'),
         key: 'settings-general',
     },
     {
-        label: 'Theme',
+        label: i18n.t('app.settings.themes'),
         key: 'settings-theme',
     },
-];
+]);
 
 function openSetting(key: string) {
     router.push({ name: key });

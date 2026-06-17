@@ -11,6 +11,11 @@
             "recent": "最近のプロジェクト",
             "noRecent": "最近のプロジェクトはありません。"
         },
+        "settings": {
+            "title": "設定",
+            "general": "一般",
+            "themes": "テーマ"
+        },
         "menu": {
             "home": "ホーム",
             "about": "について"
@@ -19,6 +24,7 @@
     "placeholder": {
         "home": "ようこそホームページへ",
         "about": "これはＡｂｏｕｔページです",
-        "noThemes": "利用可能なテーマがありません。"
+        "noThemes": "利用可能なテーマがありません。",
+        "generalSettings": "一般設定"
     }
 }
