@@ -78,6 +78,7 @@ pub async fn add_recent_project(
     metadata: RecentProjectMetadata,
 ) -> Result<(), String> {
     let mut recent_projects = list_recent_projects(app.clone()).await.unwrap_or_default();
+    recent_projects.retain(|p| p.path != metadata.path);
     recent_projects.push(metadata);
     save_recent_projects(app, recent_projects).await
 }

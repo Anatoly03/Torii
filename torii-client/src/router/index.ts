@@ -11,7 +11,7 @@ const routes: Array<RouteRecordRaw> = [
         path: '/project',
         name: 'project',
         props: { projectPath: '' },
-        component: () => import('../views/ProjectView.vue'),
+        component: () => import('../views/project/ProjectView.vue'),
     },
     {
         path: '/settings',
