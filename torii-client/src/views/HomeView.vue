@@ -13,17 +13,16 @@
             </div>
         </div>
         <div class="view-home-content">
-            {{ $t('menu.home') }}
+            {{ $t('app.menu.home') }}
             <small class="version">
-                {{ $t('version.verbose', { version }) }}
+                {{ $t('app.version.verbose', { version }) }}
             </small>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { onMounted, ref } from 'vue';
 import { getVersion } from '@tauri-apps/api/app';
 import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
 import { Icon } from '@vicons/utils';
@@ -31,8 +30,7 @@ import { SettingsOutline } from '@vicons/ionicons5';
 import LanguageSelect from '@/components/LanguageSelect.vue';
 import RecentProjectsView from './RecentProjectsView.vue';
 
-const i18n = useI18n();
-const version = ref(i18n.t('version.unknown'));
+const version = ref('Invalid Version');
 const settingsWindow = ref<WebviewWindow | null>(null);
 
 onMounted(async () => {

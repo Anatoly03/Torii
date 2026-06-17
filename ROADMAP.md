@@ -22,6 +22,7 @@ The first stage of the project is to create a simple file browser like applicati
   - [ ] Markdown: Edit and Auto-Save Files
   - [ ] Markdown: Create Files
   - [ ] Markdown: Delete Files
+  - [x] Close Project
 - [x] Simple Localization: EN, JP, ZH
 
 # `v0.0.1` - Daiishi 台石

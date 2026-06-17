@@ -1,21 +1,24 @@
 {
     "app": {
         "title": "Torii",
-        "version": "Version {version}",
-        "welcome": "Welcome to Your Vue.js + TypeScript App"
-    },
-    "menu": {
-        "home": "Home",
-        "about": "About"
+        "version": {
+            "verbose": "Version {version}"
+        },
+        "project": {
+            "new": "New Project",
+            "open": "Open Project",
+            "close": "Close Project",
+            "recent": "Recent Projects",
+            "noRecent": "No recent projects."
+        },
+        "menu": {
+            "home": "Home",
+            "about": "About"
+        }
     },
     "placeholder": {
         "home": "Welcome to the Home Page",
         "about": "This is the About Page",
-        "noRecentProjects": "No recent projects.",
         "noThemes": "No themes available."
-    },
-    "version": {
-        "verbose": "Version {version}",
-        "unknown": "Unknown"
     }
 }

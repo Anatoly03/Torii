@@ -1,7 +1,7 @@
 <template>
     <div class="view-recent-projects">
         <span class="no-projects" v-if="recentProjects.length == 0">
-            {{ $t('placeholder.noRecentProjects') }}
+            {{ $t('app.project.noRecent') }}
         </span>
         <div v-else class="project-list">
             <span
@@ -25,7 +25,9 @@
                 </n-dropdown>
             </span>
         </div>
-        <button @click="openProjectDialog">Open Project</button>
+        <button @click="openProjectDialog">
+            {{ $t('app.project.open') }}
+        </button>
     </div>
 </template>
 

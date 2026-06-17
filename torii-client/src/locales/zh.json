@@ -1,20 +1,24 @@
 {
     "app": {
         "title": "鸟居",
-        "welcome": "欢迎来到您的 Vue.js + TypeScript 应用"
-    },
-    "menu": {
-        "home": "主页",
-        "about": "关于"
+        "version": {
+            "verbose": "Version {version}"
+        },
+        "project": {
+            "new": "新建项目",
+            "open": "打开项目",
+            "close": "关闭项目",
+            "recent": "最近的项目",
+            "noRecent": "没有最近的项目。"
+        },
+        "menu": {
+            "home": "主页",
+            "about": "关于"
+        }
     },
     "placeholder": {
         "home": "欢迎来到主页",
         "about": "这是关于页面",
-        "noRecentProjects": "没有最近的项目。",
         "noThemes": "没有可用的主题。"
-    },
-    "version": {
-        "verbose": "Version {version}",
-        "unknown": "Unknown"
     }
 }

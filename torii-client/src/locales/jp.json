@@ -1,20 +1,24 @@
 {
     "app": {
         "title": "鳥居",
-        "welcome": "あなたの Vue.js + TypeScript アプリへようこそ"
-    },
-    "menu": {
-        "home": "ホーム",
-        "about": "について"
+        "version": {
+            "verbose": "Version {version}"
+        },
+        "project": {
+            "new": "新しいプロジェクト",
+            "open": "プロジェクトを開く",
+            "close": "プロジェクトを閉じる",
+            "recent": "最近のプロジェクト",
+            "noRecent": "最近のプロジェクトはありません。"
+        },
+        "menu": {
+            "home": "ホーム",
+            "about": "について"
+        }
     },
     "placeholder": {
         "home": "ようこそホームページへ",
         "about": "これはＡｂｏｕｔページです",
-        "noRecentProjects": "最近のプロジェクトはありません。",
         "noThemes": "利用可能なテーマがありません。"
-    },
-    "version": {
-        "verbose": "Version {version}",
-        "unknown": "Unknown"
     }
 }
