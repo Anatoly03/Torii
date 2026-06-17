@@ -39,36 +39,40 @@ pub fn time_now() -> u64 {
         .unwrap_or_default()
 }
 
-/// Gets the list of recently opened projects. This is used by the client to display the list
-/// of recent projects in the UI.
-pub async fn save_recent_projects(
-    app: AppHandle,
-    projects: Vec<RecentProjectMetadata>,
-) -> Result<(), String> {
-    let recent_projects_list = app
-        .path()
-        .app_local_data_dir()
-        .map_err(|e| format!("Failed to get app local data directory: {e}"))?
-        .join(RECENT_PROJECTS_FILE);
-    let file = File::create(recent_projects_list)
-        .map_err(|e| format!("Failed to create recent projects file: {e}"))?;
-    serde_json::to_writer(file, &projects)
-        .map_err(|e| format!("Failed to write recent projects file: {e}"))
+impl RecentProjectMetadata {
+    /// Retrieves the recent projects from the global file.
+    pub async fn get(app: AppHandle) -> Result<Vec<Self>, String> {
+        let recent_projects_list = app
+            .path()
+            .app_local_data_dir()
+            .map_err(|e| format!("Failed to get app local data directory: {e}"))?
+            .join(RECENT_PROJECTS_FILE);
+        let file = File::open(recent_projects_list)
+            .map_err(|e| format!("Failed to open recent projects file: {e}"))?;
+        serde_json::from_reader(file)
+            .map_err(|e| format!("Failed to parse recent projects file: {e}"))
+    }
+
+    /// Saves the recent project metadata to the recent projects file. This is used
+    /// when a project is added to the list of recent projects.
+    pub async fn save(app: AppHandle, list: Vec<Self>) -> Result<(), String> {
+        let recent_projects_list = app
+            .path()
+            .app_local_data_dir()
+            .map_err(|e| format!("Failed to get app local data directory: {e}"))?
+            .join(RECENT_PROJECTS_FILE);
+        let file = File::create(recent_projects_list)
+            .map_err(|e| format!("Failed to create recent projects file: {e}"))?;
+        serde_json::to_writer(file, &list)
+            .map_err(|e| format!("Failed to write recent projects file: {e}"))
+    }
 }
 
 /// Lists recently opened projects. This is used by the client to display the
 /// list of recent projects in the UI.
 #[tauri::command]
 pub async fn list_recent_projects(app: AppHandle) -> Result<Vec<RecentProjectMetadata>, String> {
-    let recent_projects_list = app
-        .path()
-        .app_local_data_dir()
-        .map_err(|e| format!("Failed to get app local data directory: {e}"))?
-        .join(RECENT_PROJECTS_FILE);
-    // println!("Recent projects: {recent_projects_list:?}");
-    let file = File::open(recent_projects_list)
-        .map_err(|e| format!("Failed to open recent projects file: {e}"))?;
-    serde_json::from_reader(file).map_err(|e| format!("Failed to parse recent projects file: {e}"))
+    RecentProjectMetadata::get(app).await
 }
 
 /// Adds a recently opened project.
@@ -77,16 +81,20 @@ pub async fn add_recent_project(
     app: AppHandle,
     metadata: RecentProjectMetadata,
 ) -> Result<(), String> {
-    let mut recent_projects = list_recent_projects(app.clone()).await.unwrap_or_default();
+    let mut recent_projects = RecentProjectMetadata::get(app.clone())
+        .await
+        .unwrap_or_default();
     recent_projects.retain(|p| p.path != metadata.path);
     recent_projects.push(metadata);
-    save_recent_projects(app, recent_projects).await
+    RecentProjectMetadata::save(app, recent_projects).await
 }
 
 /// Removes a recently opened project.
 #[tauri::command]
 pub async fn remove_recent_project(app: AppHandle, path: PathBuf) -> Result<(), String> {
-    let mut recent_projects = list_recent_projects(app.clone()).await.unwrap_or_default();
+    let mut recent_projects = RecentProjectMetadata::get(app.clone())
+        .await
+        .unwrap_or_default();
     recent_projects.retain(|p| p.path != path);
-    save_recent_projects(app, recent_projects).await
+    RecentProjectMetadata::save(app, recent_projects).await
 }
