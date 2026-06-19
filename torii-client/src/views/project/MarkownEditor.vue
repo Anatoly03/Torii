@@ -1,5 +1,9 @@
 <template>
-    <editor-content class="file-editor-md" :editor="editor" />
+    <editor-content
+        class="file-editor-md"
+        @click="onEditorClick"
+        :editor="editor"
+    />
 </template>
 
 <script setup lang="ts">
@@ -64,7 +68,30 @@ async function saveFile() {
     });
 }
 
+async function onEditorClick() {
+    // Focus the editor when the user clicks on it
+    editor.commands.focus();
+}
+
 onUnmounted(() => {
     editor.destroy();
 });
 </script>
+
+<style lang="scss">
+.file-editor-md {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 16px;
+
+    .ProseMirror {
+        outline: none;
+    }
+
+    p {
+        padding: 0;
+        margin: 0;
+    }
+}
+</style>

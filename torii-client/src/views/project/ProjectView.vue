@@ -82,20 +82,8 @@ if (!projectPath) {
         align-items: flex-start;
         justify-content: flex-start;
         flex: 1;
-        margin: 4px;
         text-align: left;
-
-        p {
-            margin: 0;
-        }
-
-        :deep(.ProseMirror) {
-            max-height: 100%;
-            outline: none;
-            box-sizing: border-box;
-
-            padding: 0 16px;
-        }
+        overflow-y: auto;
     }
 }
 </style>
