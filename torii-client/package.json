@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vite --host",
-    "build": "vue-cli-service build --dest ../build-client",
+    "build": "vite build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

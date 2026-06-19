@@ -11,16 +11,16 @@ pub struct MarkdownFile {
 }
 
 impl MarkdownFile {
-    /// The name of the markdown file, without the extension. This is used to display
-    /// the file in the UI.
-    pub fn get_name(&self) -> String {
-        self.path
-            .with_extension("")
-            .file_name()
-            .unwrap_or("<unnamed>".as_ref())
-            .to_string_lossy()
-            .to_string()
-    }
+    // /// The name of the markdown file, without the extension. This is used to display
+    // /// the file in the UI.
+    // pub fn get_name(&self) -> String {
+    //     self.path
+    //         .with_extension("")
+    //         .file_name()
+    //         .unwrap_or("<unnamed>".as_ref())
+    //         .to_string_lossy()
+    //         .to_string()
+    // }
 
     /// Lists the markdown files in the given directory. This is used to populate the
     /// file tree in the UI.

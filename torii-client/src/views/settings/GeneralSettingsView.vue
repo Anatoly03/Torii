@@ -1,10 +1,10 @@
 <template>
     <!-- <div class="view-settings-general"> -->
-        <n-form label-placement="left" label-width="auto">
-            <n-form-item label="Language">
-                <LanguageSelect />
-            </n-form-item>
-        </n-form>
+    <n-form label-placement="left" label-width="auto">
+        <n-form-item label="Language">
+            <LanguageSelect />
+        </n-form-item>
+    </n-form>
     <!-- </div> -->
 </template>
 

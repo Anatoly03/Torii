@@ -118,7 +118,9 @@ function renderFileOptions(props: TreeRenderProps): VNodeChild {
             showArrow: true,
             onSelect: async (_, option) => {
                 if (option.key === 'delete') {
-                    await invoke('remove_markdown_file', { path: props.option.key });
+                    await invoke('remove_markdown_file', {
+                        path: props.option.key,
+                    });
                     await refreshFiles();
                 }
             },

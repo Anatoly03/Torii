@@ -17,7 +17,7 @@
         <div class="view-project-content-placeholder" v-if="!currentFile">
             Project View: {{ projectPath }}<br />
         </div>
-        <MarkownEditor
+        <MarkdownEditor
             class="view-project-content"
             :file="currentFile"
             v-else
@@ -28,8 +28,9 @@
 <script setup lang="ts">
 import { onUnmounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import FileTree from '../../components/file/FileTree.vue';
-import MarkownEditor from './MarkownEditor.vue';
+
+const FileTree = import('../../components/file/FileTree.vue');
+const MarkdownEditor = import('./MarkdownEditor.vue');
 
 const route = useRoute();
 const router = useRouter();
