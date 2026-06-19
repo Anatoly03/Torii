@@ -8,6 +8,7 @@ import jp from './locales/jp.json';
 import zh from './locales/zh.json';
 
 const i18n = createI18n({
+    legacy: false,
     locale: 'en',
     fallbackLocale: 'en',
     messages: { en, jp, zh },

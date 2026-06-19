@@ -14,13 +14,13 @@ The first stage of the project is to create a simple file browser like applicati
   - [x] Delete Recent Project
   - [x] Open Recent Project
   - [ ] Create Project (at directory)
-- [ ] Settings
-  - [ ] General
+- [x] Settings
+  - [x] General: Language Select
   - [x] Themes Stub
 - [x] Project View
-  - [ ] View File Tree
+  - [x] View File Tree (non-recursive, only root markdown files)
   - [ ] Markdown: Edit and Auto-Save Files
-  - [ ] Markdown: Create Files
+  - [x] Markdown: Create Files
   - [ ] Markdown: Delete Files
   - [x] Close Project
 - [x] Simple Localization: EN, JP, ZH

@@ -1,5 +1,6 @@
 //! Desktop library for the Torii desktop application, built using Tauri.
 
+mod project;
 mod recent;
 
 use std::error::Error;
@@ -15,6 +16,10 @@ pub fn run() {
             recent::list_recent_projects,
             recent::add_recent_project,
             recent::remove_recent_project,
+            project::list_markdown_files,
+            project::get_markdown_file,
+            project::save_markdown_file,
+            project::remove_markdown_file,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
