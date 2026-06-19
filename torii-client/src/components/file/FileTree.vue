@@ -7,7 +7,9 @@
             :value="currentFile"
             :data="treeData"
             :render-label="renderLabel"
-            :render-prefix="renderPrefix"
+            :render-prefix="_ => null"
+            :render-switcher-icon="_ => null"
+            block-line
             block-node
             @update:selected-keys="onSelectFile"
         >
@@ -60,16 +62,6 @@ function createIcon(icon: Component) {
         h(NIcon, null, {
             default: () => h(icon),
         });
-}
-
-function renderPrefix({ option }: { option: TreeOption }) {
-    if (option.key === NEW_FILE_KEY) {
-        return h(NIcon, null, {
-            default: () => h(FileTrayFullOutline),
-        });
-    }
-    // If your files have icons, return them
-    return option.prefix || null;
 }
 
 function renderLabel({ option }: { option: TreeOption }) {

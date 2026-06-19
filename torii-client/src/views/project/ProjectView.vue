@@ -19,7 +19,6 @@
         </div>
         <editor-content
             class="view-project-content"
-            @keydown="saveFile"
             v-else
             :editor="editor"
         />
@@ -39,9 +38,11 @@ const route = useRoute();
 const router = useRouter();
 const projectPath = route.params.projectPath as string;
 const currentFile = ref<string | null>(null);
+const ignoreFirstSave = ref(true);
 const editor = new Editor({
     extensions: [Markdown, StarterKit],
     content: "<p>I'm running Tiptap with Vue.js. 🎉</p>",
+    onUpdate: saveFile,
 });
 
 if (!projectPath) {
@@ -56,11 +57,16 @@ watch(currentFile, async (path) => {
     let content = await invoke<string>('get_markdown_file', { path });
     console.debug('load', content);
 
+    ignoreFirstSave.value = true;
     editor.commands.setContent(content, { contentType: 'markdown' });
 });
 
-async function saveFile(input: InputEvent) {
+async function saveFile() {
     if (!currentFile.value) return;
+    if (ignoreFirstSave.value) {
+        ignoreFirstSave.value = false;
+        return;
+    }
 
     // Get markdown content from the editor
     const content = editor.getMarkdown();
