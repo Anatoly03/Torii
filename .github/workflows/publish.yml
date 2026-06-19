@@ -18,17 +18,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # we currently only build for macs and linux while in early development
         include:
-          - platform: 'macos-latest' # for Arm based macs (M1 and above).
-            args: '--target aarch64-apple-darwin'
+        #   - platform: 'macos-latest' # for Arm based macs (M1 and above).
+        #     args: '--target aarch64-apple-darwin'
           - platform: 'macos-latest' # for Intel based macs.
             args: '--target x86_64-apple-darwin'
           - platform: 'ubuntu-22.04'
             args: ''
-          - platform: 'ubuntu-24.04-arm'
-            args: ''
-          - platform: 'windows-latest'
-            args: ''
+        #   - platform: 'ubuntu-24.04-arm'
+        #     args: ''
+        # windows builds are currently disabled in `-dev` versions.
+        #   - platform: 'windows-latest'
+        #     args: ''
 
     runs-on: ${{ matrix.platform }}
     steps:

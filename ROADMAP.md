@@ -3,7 +3,7 @@
 
 - [x] Verify the integration works and can build artefacts.
 
-# `v0.0.0-2` - Hajime 始め
+# `v0.0.0-dev2` - [COMPLETED] Hajime 始め
 
 The first stage of the project is to create a simple file browser like application with tools to create and manage markdown notes.
 
@@ -21,15 +21,18 @@ The first stage of the project is to create a simple file browser like applicati
   - [x] View File Tree (non-recursive, only root markdown files)
   - [x] Markdown: Edit and Auto-Save Files
   - [x] Markdown: Create Files
-  - [ ] Markdown: Delete Files
+  - [x] Markdown: Delete Files
   - [x] Close Project
 - [x] Simple Localization: EN, JP, ZH
 
-# `v0.0.1` - Daiishi 台石
+# `v0.0.0-dev3` - Hajime 始め
 
 - [ ] Extend Markdown
   - [ ] File Links Support
   - [ ] Autocomplete File Links
+
+# `v0.0.1` - Daiishi 台石
+
 - [ ] Theme Manager
   - [ ] Write Default Themes into `$APPDATA/themes/**`
   - [ ] View Themes (Format: SCSS, metadata and localization in comments)
