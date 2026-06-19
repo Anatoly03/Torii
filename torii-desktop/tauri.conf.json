@@ -4,7 +4,7 @@
   "version": "0.0.0-dev2",
   "identifier": "com.torii.dev",
   "build": {
-    "frontendDist": "../build-client",
+    "frontendDist": "../torii-client/dist",
     "devUrl": "http://localhost:8080/",
     "beforeDevCommand": "npm run serve",
     "beforeBuildCommand": "npm run build"
