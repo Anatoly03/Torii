@@ -7,8 +7,9 @@
             :value="currentFile"
             :data="treeData"
             :render-label="renderLabel"
-            :render-prefix="_ => null"
-            :render-switcher-icon="_ => null"
+            :render-prefix="(_) => null"
+            :render-suffix="renderFileOptions"
+            :render-switcher-icon="(_) => null"
             block-line
             block-node
             @update:selected-keys="onSelectFile"
@@ -27,13 +28,13 @@ import type { TreeOption } from 'naive-ui';
 import {
     FileTrayFullOutline,
     AddOutline,
-    CloseOutline,
+    EllipsisVertical,
 } from '@vicons/ionicons5';
-import { NIcon, NTree, NInput, NButton, NSpace } from 'naive-ui';
-import { Component, h, onMounted, ref, nextTick, watch } from 'vue';
+import { NIcon, NTree, NInput, NButton, NSpace, NDropdown } from 'naive-ui';
+import { Component, h, onMounted, ref, nextTick, watch, VNodeChild } from 'vue';
 import { invoke } from '@tauri-apps/api/core';
-
 import FileTreeCreateFile from './FileTreeCreateFile.vue';
+import { TreeRenderProps } from 'naive-ui/es/tree/src/interface';
 
 const props = defineProps<{
     root: string;
@@ -86,6 +87,53 @@ function renderLabel({ option }: { option: TreeOption }) {
 
     // Regular file label
     return option.label;
+}
+
+function renderFileOptions(props: TreeRenderProps): VNodeChild {
+    // <n-dropdown
+    //                 trigger="hover"
+    //                 placement="right"
+    //                 :options="projectOptions"
+    //                 :show-arrow="true"
+    //                 @select="
+    //                     (_, option) => handleProjectOptions(project, option)
+    //                 "
+    //             >
+    //                 <n-icon class="project-remove">
+    //                     <ellipsis-vertical />
+    //                 </n-icon>
+    //             </n-dropdown>
+
+    return h(
+        NDropdown,
+        {
+            trigger: 'hover',
+            placement: 'right',
+            options: [
+                {
+                    label: 'Delete',
+                    key: 'delete',
+                },
+            ],
+            showArrow: true,
+            onSelect: async (_, option) => {
+                if (option.key === 'delete') {
+                    await invoke('remove_markdown_file', { path: props.option.key });
+                    await refreshFiles();
+                }
+            },
+        },
+        {
+            default: () =>
+                h(
+                    NIcon,
+                    { style: { color: '#ff4d4f' } },
+                    {
+                        default: () => h(EllipsisVertical),
+                    }
+                ),
+        }
+    );
 }
 
 function onSelectFile(keys: string[]) {

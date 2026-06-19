@@ -13,7 +13,7 @@ The first stage of the project is to create a simple file browser like applicati
   - [x] View Recent Projects
   - [x] Delete Recent Project
   - [x] Open Recent Project
-  - [ ] Create Project (at directory)
+  - [x] Create Project (at directory)
 - [x] Settings
   - [x] General: Language Select
   - [x] Themes Stub
@@ -27,6 +27,9 @@ The first stage of the project is to create a simple file browser like applicati
 
 # `v0.0.1` - Daiishi 台石
 
+- [ ] Extend Markdown
+  - [ ] File Links Support
+  - [ ] Autocomplete File Links
 - [ ] Theme Manager
   - [ ] Write Default Themes into `$APPDATA/themes/**`
   - [ ] View Themes (Format: SCSS, metadata and localization in comments)
