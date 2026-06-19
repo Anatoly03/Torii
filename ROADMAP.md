@@ -25,15 +25,18 @@ The first stage of the project is to create a simple file browser like applicati
   - [x] Close Project
 - [x] Simple Localization: EN, JP, ZH
 
-# `v0.0.0-dev3` - Hajime 始め
+# `v0.0.0-dev3` - [CURRENT] Hajime 始め
 
 - [ ] Extend Markdown
   - [ ] File Links Support
   - [ ] Autocomplete File Links
+- [ ] Refactor to Theme Support
+  - [ ] Light Mode
+  - [ ] Dark Mode
 
 # `v0.0.1` - Daiishi 台石
 
-- [ ] Theme Manager
+- [ ] Dynamic Theme Manager
   - [ ] Write Default Themes into `$APPDATA/themes/**`
   - [ ] View Themes (Format: SCSS, metadata and localization in comments)
 - [x] Torii API
