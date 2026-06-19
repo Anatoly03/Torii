@@ -23,11 +23,13 @@
 ### Client: Ecosystem
 
 - [vue-router](https://router.vuejs.org)
-- [vue-i18n](https://vue-i18n.intlify.dev/)
+- [vue-i18n](https://vue-i18n.intlify.dev/) localization manager
 - [vuex](https://vuex.vuejs.org)
 - [vue-devtools](https://github.com/vuejs/vue-devtools#vue-devtools)
 - [vue-loader](https://vue-loader.vuejs.org)
 - [awesome-vue](https://github.com/vuejs/awesome-vue)
+- [tiptap](https://tiptap.dev/docs) what-you-see editor
+- [tiptap-markdown](https://tiptap.dev/docs/editor/markdown)
 
 ### Client: User Interface
 

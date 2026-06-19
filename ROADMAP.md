@@ -19,7 +19,7 @@ The first stage of the project is to create a simple file browser like applicati
   - [x] Themes Stub
 - [x] Project View
   - [x] View File Tree (non-recursive, only root markdown files)
-  - [ ] Markdown: Edit and Auto-Save Files
+  - [x] Markdown: Edit and Auto-Save Files
   - [x] Markdown: Create Files
   - [ ] Markdown: Delete Files
   - [x] Close Project

@@ -17,23 +17,32 @@
         <div class="view-project-content-placeholder" v-if="!currentFile">
             Project View: {{ projectPath }}<br />
         </div>
-        <div class="view-project-content" v-else>
-            <pre>{{ textBody }}</pre>
-        </div>
+        <editor-content
+            class="view-project-content"
+            @keydown="saveFile"
+            v-else
+            :editor="editor"
+        />
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { onUnmounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import FileTree from '../../components/file/FileTree.vue';
 import { invoke } from '@tauri-apps/api/core';
+import { Editor, EditorContent } from '@tiptap/vue-3';
+import { Markdown } from '@tiptap/markdown';
+import StarterKit from '@tiptap/starter-kit';
 
 const route = useRoute();
 const router = useRouter();
 const projectPath = route.params.projectPath as string;
 const currentFile = ref<string | null>(null);
-const textBody = ref<string>('');
+const editor = new Editor({
+    extensions: [Markdown, StarterKit],
+    content: "<p>I'm running Tiptap with Vue.js. 🎉</p>",
+});
 
 if (!projectPath) {
     // If no project path is provided, redirect to the home page
@@ -45,7 +54,27 @@ watch(currentFile, async (path) => {
 
     // Load the file content when a new file is selected
     let content = await invoke<string>('get_markdown_file', { path });
-    textBody.value = content;
+    console.debug('load', content);
+
+    editor.commands.setContent(content, { contentType: 'markdown' });
+});
+
+async function saveFile(input: InputEvent) {
+    if (!currentFile.value) return;
+
+    // Get markdown content from the editor
+    const content = editor.getMarkdown();
+    console.debug('save', content);
+
+    // Save the file content whenever it changes
+    await invoke('save_markdown_file', {
+        path: currentFile.value,
+        content,
+    });
+}
+
+onUnmounted(() => {
+    editor.destroy();
 });
 </script>
 
@@ -89,8 +118,20 @@ watch(currentFile, async (path) => {
         align-items: flex-start;
         justify-content: flex-start;
         flex: 1;
-        margin: 16px;
+        margin: 4px;
         text-align: left;
+
+        p {
+            margin: 0;
+        }
+
+        :deep(.ProseMirror) {
+            max-height: 100%;
+            outline: none;
+            box-sizing: border-box;
+
+            padding: 0 16px;
+        }
     }
 }
 </style>
