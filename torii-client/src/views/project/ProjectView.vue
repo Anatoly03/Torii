@@ -28,9 +28,8 @@
 <script setup lang="ts">
 import { onUnmounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-
-const FileTree = import('../../components/file/FileTree.vue');
-const MarkdownEditor = import('./MarkdownEditor.vue');
+import FileTree from '../../components/file/FileTree.vue';
+import MarkdownEditor from './MarkdownEditor.vue';
 
 const route = useRoute();
 const router = useRouter();
