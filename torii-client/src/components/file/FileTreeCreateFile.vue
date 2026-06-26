@@ -4,6 +4,7 @@
         size="small"
         :clearable="true"
         v-model:value="newFileName"
+        @blur="emit('cancel')"
         @keydown="handleKeydown"
     />
 </template>
