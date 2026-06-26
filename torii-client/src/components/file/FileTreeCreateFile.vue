@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 import { NInput } from 'naive-ui';
-import { computed, defineModel } from 'vue';
+import { computed } from 'vue';
 
 const newFileName = defineModel<string>();
 const fileNameTrim = computed(() => newFileName.value?.trim() ?? '');
