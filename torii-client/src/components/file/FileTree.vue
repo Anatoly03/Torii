@@ -90,6 +90,10 @@ function renderLabel({ option }: { option: TreeOption }) {
 }
 
 function renderFileOptions(props: TreeRenderProps): VNodeChild {
+    if (props.option.key === NEW_FILE_KEY) {
+        return null; // No options for the new file input
+    }
+
     // <n-dropdown
     //                 trigger="hover"
     //                 placement="right"
