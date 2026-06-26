@@ -41,7 +41,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    (e: 'file-selected', path: string): void;
+    (e: 'file-selected', path?: string): void;
     (e: 'file-created', path: string): void;
     (e: 'update:current-file', path: string | null): void;
 }>();
@@ -139,13 +139,17 @@ function renderFileOptions(props: TreeRenderProps): VNodeChild {
 }
 
 function onSelectFile(keys: string[]) {
-    if (keys.length > 0) {
-        const key = keys[0];
-        if (key !== NEW_FILE_KEY) {
-            currentFile.value = key;
-            emit('file-selected', key);
-        }
+    const fileKeys = keys.filter((key) => key !== NEW_FILE_KEY);
+
+    if (!fileKeys.length) {
+        currentFile.value = null;
+        emit('file-selected', undefined);
+        return;
     }
+
+    const key = fileKeys[0];
+    currentFile.value = key;
+    emit('file-selected', key);
 }
 
 function startNewFile() {
