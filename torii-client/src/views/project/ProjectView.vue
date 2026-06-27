@@ -19,7 +19,8 @@
         </div>
         <MarkdownEditor
             class="view-project-content"
-            :file="currentFile"
+            :directory="markdownDirectory"
+            :name="markdownName"
             v-else
         />
     </div>
@@ -34,7 +35,19 @@ import MarkdownEditor from './MarkdownEditor.vue';
 const route = useRoute();
 const router = useRouter();
 const projectPath = route.params.projectPath as string;
-const currentFile = ref<string | null>(null);
+const currentFile = ref<{ directory: string; name: string } | null>(null);
+const markdownDirectory = ref<string | null>(null);
+const markdownName = ref<string | null>(null);
+
+watch(currentFile, (newFile) => {
+    if (newFile) {
+        markdownDirectory.value = newFile.directory;
+        markdownName.value = newFile.name;
+    } else {
+        markdownDirectory.value = null;
+        markdownName.value = null;
+    }
+});
 
 if (!projectPath) {
     // If no project path is provided, redirect to the home page

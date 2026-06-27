@@ -11,11 +11,12 @@ import { onMounted, onUnmounted, ref, watch } from 'vue';
 import { invoke } from '@tauri-apps/api/core';
 import { Editor, EditorContent } from '@tiptap/vue-3';
 import { Markdown } from '@tiptap/markdown';
-import { TaskList, TaskItem } from '@tiptap/extension-list'
+import { TaskList, TaskItem } from '@tiptap/extension-list';
 import StarterKit from '@tiptap/starter-kit';
 
 const props = defineProps<{
-    file: string;
+    directory: string | null;
+    name: string | null;
 }>();
 
 const ignoreFirstSave = ref(true);
@@ -30,10 +31,16 @@ const editor = new Editor({
 onMounted(loadFile);
 
 watch(
-    () => props.file,
-    async (path: string) => {
+    () => props.name,
+    async (name: string | null) => {
+        if (!name) return;
+
         // Load the file content when a new file is selected
-        let content = await invoke<string>('get_markdown_file', { path });
+        let content = await invoke<string>('get_record_component', {
+            directory: props.directory,
+            name,
+            component: 'article',
+        });
         console.debug('load', content);
 
         ignoreFirstSave.value = true;
@@ -42,9 +49,11 @@ watch(
 );
 
 async function loadFile() {
-    const path = props.file;
-
-    let content = await invoke<string>('get_markdown_file', { path });
+    let content = await invoke<string>('get_record_component', {
+        directory: props.directory,
+        name: props.name,
+        component: 'article',
+    });
     console.debug('load', content);
 
     ignoreFirstSave.value = true;
@@ -52,7 +61,8 @@ async function loadFile() {
 }
 
 async function saveFile() {
-    if (!props.file) return;
+    if (!props.directory) return;
+    if (!props.name) return;
     if (ignoreFirstSave.value) {
         ignoreFirstSave.value = false;
         return;
@@ -63,8 +73,10 @@ async function saveFile() {
     console.debug('save', content);
 
     // Save the file content whenever it changes
-    await invoke('save_markdown_file', {
-        path: props.file,
+    await invoke('save_record_component', {
+        directory: props.directory,
+        name: props.name,
+        component: 'article',
         content,
     });
 }
@@ -95,7 +107,8 @@ onUnmounted(() => {
         margin: 0;
     }
 
-    label, input[type="checkbox"] {
+    label,
+    input[type='checkbox'] {
         display: inline;
     }
 

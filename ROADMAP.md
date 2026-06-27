@@ -29,6 +29,8 @@ The first stage of the project is to create a simple file browser like applicati
 
 - [x] Create demo project which is linked in the repository.
   - [x] Define the project Vision
+- [x] Rewrite Tauri code to support component system stubs.
+- [ ] Image Component
 - [ ] Extend Markdown
   - [ ] File Links Support
   - [ ] Autocomplete File Links

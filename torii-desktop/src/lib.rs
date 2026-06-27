@@ -16,10 +16,11 @@ pub fn run() {
             recent::list_recent_projects,
             recent::add_recent_project,
             recent::remove_recent_project,
-            project::list_markdown_files,
-            project::get_markdown_file,
-            project::save_markdown_file,
-            project::remove_markdown_file,
+            project::record::list_records,
+            project::record::list_record_components,
+            project::record::get_record_component,
+            project::record::save_record_component,
+            project::record::remove_record_component,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -36,18 +36,26 @@ import { invoke } from '@tauri-apps/api/core';
 import FileTreeCreateFile from './FileTreeCreateFile.vue';
 import { TreeRenderProps } from 'naive-ui/es/tree/src/interface';
 
+interface Record {
+    directory: string;
+    name: string;
+}
+
 const props = defineProps<{
     root: string;
 }>();
 
 const emit = defineEmits<{
-    (e: 'file-selected', path?: string): void;
-    (e: 'file-created', path: string): void;
-    (e: 'update:current-file', path: string | null): void;
+    (e: 'file-selected', path?: { directory: string; name: string }): void;
+    (e: 'file-created', path: { directory: string; name: string }): void;
+    (
+        e: 'update:current-file',
+        path: { directory: string; name: string } | null
+    ): void;
 }>();
 
-const treeData = ref<TreeOption[]>([]);
-const currentFile = ref<string | null>();
+const treeData = ref<(TreeOption & { record: Record })[]>([]);
+const currentFile = ref<{ directory: string; name: string } | null>();
 const isLoading = ref(false);
 const isCreatingNew = ref(false);
 
@@ -89,24 +97,10 @@ function renderLabel({ option }: { option: TreeOption }) {
     return option.label;
 }
 
-function renderFileOptions(props: TreeRenderProps): VNodeChild {
-    if (props.option.key === NEW_FILE_KEY) {
+function renderFileOptions(tree_props: TreeRenderProps): VNodeChild {
+    if (tree_props.option.key === NEW_FILE_KEY) {
         return null; // No options for the new file input
     }
-
-    // <n-dropdown
-    //                 trigger="hover"
-    //                 placement="right"
-    //                 :options="projectOptions"
-    //                 :show-arrow="true"
-    //                 @select="
-    //                     (_, option) => handleProjectOptions(project, option)
-    //                 "
-    //             >
-    //                 <n-icon class="project-remove">
-    //                     <ellipsis-vertical />
-    //                 </n-icon>
-    //             </n-dropdown>
 
     return h(
         NDropdown,
@@ -122,8 +116,11 @@ function renderFileOptions(props: TreeRenderProps): VNodeChild {
             showArrow: true,
             onSelect: async (_, option) => {
                 if (option.key === 'delete') {
-                    await invoke('remove_markdown_file', {
-                        path: props.option.key,
+                    let record = tree_props.option.record as any;
+                    await invoke('remove_record_component', {
+                        directory: record.directory,
+                        name: record.name,
+                        component: 'article',
                     });
                     await refreshFiles();
                 }
@@ -151,9 +148,12 @@ function onSelectFile(keys: string[]) {
         return;
     }
 
-    const key = fileKeys[0];
-    currentFile.value = key;
-    emit('file-selected', key);
+    const key = fileKeys[0]!;
+    const data = treeData.value.find((node) => node.key === key)!;
+
+    currentFile.value = data.record;
+    emit('update:current-file', currentFile.value);
+    emit('file-selected', currentFile.value);
 }
 
 function startNewFile() {
@@ -168,6 +168,7 @@ function startNewFile() {
             label: '', // Will be rendered by renderLabel
             isLeaf: true,
             prefix: createIcon(FileTrayFullOutline),
+            record: null!,
         },
     ];
 
@@ -194,19 +195,28 @@ async function createFile(name: string) {
         const path = props.root.endsWith('/')
             ? props.root + name + '.md'
             : props.root + '/' + name + '.md';
-        const filePath = await invoke<string>('save_markdown_file', {
-            path,
-            content: `# ${name}\n\nSource: \`${path}\`\n\n`,
+
+        await invoke<string>('save_record_component', {
+            directory: props.root,
+            name,
+            component: 'article',
+            content: `# ${name}\n\n- Source: ${path}\n- Parent: ${props.root}\n- Name: ${name}\n\n`,
         });
 
         // Refresh the file list
         await refreshFiles();
 
         // Emit event
-        emit('file-created', filePath);
+        emit('file-created', {
+            directory: props.root,
+            name,
+        });
 
         // Select the new file
-        emit('file-selected', filePath);
+        emit('file-selected', {
+            directory: props.root,
+            name,
+        });
 
         // Reset state
         cancelNewFile();
@@ -222,17 +232,16 @@ async function refreshFiles() {
     if (!props.root) return;
 
     try {
-        const files = await invoke<any[]>('list_markdown_files', {
+        // Lists all records.
+        const files = await invoke<Record[]>('list_records', {
             directory: props.root,
         });
 
         const newData = files.map((file) => {
-            const name = file.path.split('/').pop() || file.path;
-            const name_no_ext = name.split('.').slice(0, -1).join('.');
-
             return {
-                key: file.path,
-                label: name_no_ext,
+                record: file,
+                key: file.directory + '/' + file.name,
+                label: file.name,
                 isLeaf: true,
                 prefix: createIcon(FileTrayFullOutline),
             };
@@ -247,6 +256,7 @@ async function refreshFiles() {
                     label: '',
                     isLeaf: true,
                     prefix: createIcon(FileTrayFullOutline),
+                    record: null!,
                 },
             ];
         } else {

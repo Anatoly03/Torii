@@ -90,7 +90,3 @@ The idea of queries is to use structured data and get an understanding of their 
 
 **With Torii we want to give world builders tools, not tell you how to use them!**
 
-
-
-s
-
