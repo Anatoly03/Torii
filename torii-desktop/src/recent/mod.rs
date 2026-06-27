@@ -22,6 +22,11 @@ pub struct RecentProjectMetadata {
     /// on it in the UI.
     pub path: PathBuf,
 
+    /// Wether the project is managed by the system. Such projects can not be removed from the
+    /// recent projects list.
+    #[serde(skip_deserializing, default = "default_false")]
+    pub is_system: bool,
+
     /// The timestamp of when the project was last opened, in milliseconds since
     /// the Unix epoch.
     #[serde(skip_deserializing, default = "time_now")]
@@ -39,6 +44,11 @@ pub fn time_now() -> u64 {
         .unwrap_or_default()
 }
 
+/// Returns false. This is used to set default false fields in [RecentProjectMetadata].
+pub fn default_false() -> bool {
+    false
+}
+
 impl RecentProjectMetadata {
     /// Retrieves the recent projects from the global file.
     pub async fn get(app: AppHandle) -> Result<Vec<Self>, String> {
@@ -49,8 +59,29 @@ impl RecentProjectMetadata {
             .join(RECENT_PROJECTS_FILE);
         let file = File::open(recent_projects_list)
             .map_err(|e| format!("Failed to open recent projects file: {e}"))?;
-        serde_json::from_reader(file)
-            .map_err(|e| format!("Failed to parse recent projects file: {e}"))
+        let mut projects: Vec<RecentProjectMetadata> = serde_json::from_reader(file)
+            .map_err(|e| format!("Failed to parse recent projects file: {e}"))?;
+
+        if cfg!(dev) {
+            // If we are in development mode, link the `torii-example` demo workspace. This
+            // Torii project is version tracked in this repository and shared with collaborators.
+            let workspace_dir = std::env::var("CARGO_MANIFEST_DIR")
+                .map(|dir| PathBuf::from(dir).join("../torii-example"));
+
+            // Link demo project for development purposes.
+            if let Ok(dir) = workspace_dir
+                && dir.is_dir()
+            {
+                projects.push(RecentProjectMetadata {
+                    name: "Torii Guide".to_string(),
+                    path: dir,
+                    is_system: true,
+                    last_opened: 0,
+                });
+            }
+        }
+
+        Ok(projects)
     }
 
     /// Saves the recent project metadata to the recent projects file. This is used

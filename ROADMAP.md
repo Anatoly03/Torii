@@ -27,6 +27,8 @@ The first stage of the project is to create a simple file browser like applicati
 
 # `v0.0.0-dev3` - [CURRENT] Hajime 始め
 
+- [x] Create demo project which is linked in the repository.
+  - [x] Define the project Vision
 - [ ] Extend Markdown
   - [ ] File Links Support
   - [ ] Autocomplete File Links

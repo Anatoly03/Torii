@@ -13,7 +13,7 @@
                 <n-dropdown
                     trigger="hover"
                     placement="right"
-                    :options="projectOptions"
+                    :options="getProjectOptions(project)"
                     :show-arrow="true"
                     @select="
                         (_, option) => handleProjectOptions(project, option)
@@ -44,7 +44,14 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const recentProjects = listRecentProjects();
-const projectOptions: DropdownOption[] = [{ label: 'Remove', key: 'remove' }];
+
+function getProjectOptions(project: any): DropDownOption[] {
+    if (project.is_system) {
+        return [{ label: 'Remove', key: 'remove', disabled: true }];
+    }
+
+    return [{ label: 'Remove', key: 'remove' }];
+}
 
 /**
  * Opens a dialog to open a project folder from file system.
