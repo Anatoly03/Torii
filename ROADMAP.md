@@ -25,18 +25,25 @@ The first stage of the project is to create a simple file browser like applicati
   - [x] Close Project
 - [x] Simple Localization: EN, JP, ZH
 
-# `v0.0.0-dev3` - [CURRENT] Hajime 始め
+# `v0.0.0-dev3` - [COMPLETED] Hajime 始め
 
-- [x] Create demo project which is linked in the repository.
+- [x] Create demo project which is linked in the repository (only accessible in dev builds)
   - [x] Define the project Vision
 - [x] Rewrite Tauri code to support component system stubs.
-- [x] Image Component
+- [x] Image Component: Ability to view images.
+
+# `v0.0.0-dev4` - [CURRENT] Hajime 始め
+
 - [ ] Extend Markdown
   - [ ] File Links Support
   - [ ] Autocomplete File Links
 - [ ] Refactor to Theme Support
   - [ ] Light Mode
   - [ ] Dark Mode
+
+# `v0.0.0-dev5` - Hajime 始め
+
+- To-Do: Plan
 
 # `v0.0.1` - Daiishi 台石
 
