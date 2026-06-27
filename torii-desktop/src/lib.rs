@@ -17,6 +17,7 @@ pub fn run() {
             recent::add_recent_project,
             recent::remove_recent_project,
             project::record::list_records,
+            project::record::rename_record,
             project::record::list_record_components,
             project::record::get_record_component,
             project::record::save_record_component,

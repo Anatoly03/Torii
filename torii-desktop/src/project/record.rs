@@ -117,6 +117,12 @@ pub fn list_records(directory: PathBuf) -> Result<Vec<Record>, String> {
     Record::list(directory)
 }
 
+/// Renames a record in the given directory. This is used to rename a record in the workspace UI.
+#[tauri::command]
+pub fn rename_record(directory: PathBuf, old_name: String, new_name: String) -> Result<Vec<Record>, String> {
+    Err(format!("Renaming records is not implemented yet"))
+}
+
 /// Returns the components attached to a specific record.
 #[tauri::command]
 pub fn list_record_components(directory: PathBuf, name: String) -> Result<Vec<String>, String> {
