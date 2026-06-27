@@ -67,6 +67,27 @@ The following layers should be considered, discussion is needed on which of thes
 - Marker "Area": Reference to another record as an "areal" zone, such as political borders and cultural landscapes.
 - Marker "Path": Reference to another record, such as rivers or highways.
 
+### "Time System" Component
+
+Some worlds lead their own calendars. For authors who deeply care about proper time management, it is important to allow defining their own time system formats, following simple rules:
+
+- Repeat "Day"
+- Repeat "Week" Every 7 Days with Day 1 = Monday, etc.
+- To-Do: Think about months, years
+
+### "Scene" Component
+
+Fragment of a chapter, a scene is an article describing events occuring in a certain place (record), at a certain time in a time system (record) with certain characters present (records).
+
+### Minor Component Ideas
+
+Below are minor component ideas which are too small for their own subtitle.
+
+- Manga Page Layout: Arrange images and speech bubbles onto a page.
+- Quote Component: Could be used in the gallery to scroll beautiful quotes from the world.
+- Split "Identity" and "Character": Some villains live two-lifes.
+- Chapter: Collection of Scenes.
+
 ### Infoboxes &amp; Templates
 
 There should be a way to "create" new components within a workspace, through templates or cloning existing components. For encyclopedia articles the idea is that we split "Article" into different sections (intuitively every time you add a new subtitle, make that section an entire component instead). "Fandom"-style infoboxes could be used as templates to create new components.
