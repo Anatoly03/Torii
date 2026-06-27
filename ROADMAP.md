@@ -45,7 +45,7 @@ The first stage of the project is to create a simple file browser like applicati
 
 ### `v0.0.0-dev5`
 
-- To-Do: Plan
+- [ ] To-Do: Plan
 
 # Daiishi 台石
 
@@ -64,7 +64,7 @@ The first stage of the project is to create a simple file browser like applicati
 
 ### `v1.0.1`
 
-- [ ] Far future
+- [ ] To-Do: Far future
 
 <!-- Daiishi / Kamebara -->
 <!-- Hashira -->
