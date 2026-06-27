@@ -58,7 +58,7 @@ The map component is a geopolitical slice of the map.
 
 The file pattern is `<entity>.map.yaml`.
 
-The following layers should be considered:
+The following layers should be considered, discussion is needed on which of these can be abstracted to be their own components/ records:
 
 - Surface: Heightmap (land vs water)
 - Surface: Biomes (forest, desert, etc.)
