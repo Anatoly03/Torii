@@ -38,7 +38,9 @@ The first stage of the project is to create a simple file browser like applicati
 
 - [ ] Dynamic Theme Manager
   - [ ] Write Default Themes into `$APPDATA/themes/**`
-  - [ ] View Themes (Format: SCSS, metadata and localization in comments)
+  - [ ] View Themes
+    - [ ] SCSS support
+    - [ ] Theme name localization support.
 - [x] Torii API
   - [ ] Blogposts (Main Menu)
   - [ ] Torii Auth (reserved, not used, no registration)
