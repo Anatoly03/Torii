@@ -14,23 +14,31 @@
                 </button>
             </div>
         </div>
-        <div class="view-project-content-placeholder" v-if="!currentFile">
+        <!-- <div class="view-project-content-placeholder" v-if="!currentFile">
             Project View: {{ projectPath }}<br />
+        </div> -->
+        <div class="view-project-content">
+            <ImageEditor
+                :directory="markdownDirectory"
+                :name="markdownName"
+                v-if="currentFile && recordComponents.includes('image')"
+            />
+            <MarkdownEditor
+                :directory="markdownDirectory"
+                :name="markdownName"
+                v-if="currentFile && recordComponents.includes('article')"
+            />
         </div>
-        <MarkdownEditor
-            class="view-project-content"
-            :directory="markdownDirectory"
-            :name="markdownName"
-            v-else
-        />
     </div>
 </template>
 
 <script setup lang="ts">
-import { onUnmounted, ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { invoke } from '@tauri-apps/api/core';
 import FileTree from '../../components/file/FileTree.vue';
 import MarkdownEditor from './MarkdownEditor.vue';
+import ImageEditor from './ImageEditor.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -38,16 +46,30 @@ const projectPath = route.params.projectPath as string;
 const currentFile = ref<{ directory: string; name: string } | null>(null);
 const markdownDirectory = ref<string | null>(null);
 const markdownName = ref<string | null>(null);
+const recordComponents = ref<string[]>([]);
+
+onMounted(loadComponents);
 
 watch(currentFile, (newFile) => {
     if (newFile) {
         markdownDirectory.value = newFile.directory;
         markdownName.value = newFile.name;
+        loadComponents();
     } else {
         markdownDirectory.value = null;
         markdownName.value = null;
     }
 });
+
+async function loadComponents() {
+    if (!currentFile.value) return;
+
+    const { directory, name } = currentFile.value;
+    recordComponents.value = await invoke('list_record_components', {
+        directory,
+        name,
+    });
+}
 
 if (!projectPath) {
     // If no project path is provided, redirect to the home page

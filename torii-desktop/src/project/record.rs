@@ -1,5 +1,6 @@
 //! This module exposes the interface to manage a Torii record.
 
+use tauri::ipc::Response;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashSet, fs::read_dir, path::PathBuf};
 
@@ -65,6 +66,19 @@ impl Record {
         Ok(records)
     }
 
+    /// Lists the components attached to a specific record.
+    pub fn list_components(&self) -> Result<Vec<String>, String> {
+        let mut components = vec!["article".to_string()];
+
+        // If the record has an image, add the "image" component to the list.
+        let image_path = self.directory.join(format!("{}.png", self.name));
+        if image_path.exists() {
+            components.push("image".to_string());
+        }
+
+        Ok(components)
+    }
+
     /// Returns the path to the markdown file of the record. This is used to read
     /// and write the "Article" component of the record.
     pub fn get_markdown_path(&self) -> PathBuf {
@@ -73,19 +87,15 @@ impl Record {
 }
 
 /// Gets the markdown file ("Article" component) of a record.
-pub fn get_markdown_file(directory: PathBuf, name: String) -> Result<String, String> {
+pub fn get_markdown_file(directory: PathBuf, name: String) -> Result<Vec<u8>, String> {
     let path = directory.join(format!("{}.md", name));
+    std::fs::read(path).map_err(|e| format!("Failed to read markdown file: {e}"))
+}
 
-    // (security) validate that the file has the correct extension before trying to read it
-    if path.extension().map_or(true, |ext| ext != "md") {
-        let ext = path
-            .extension()
-            .map(|ext| ext.to_string_lossy())
-            .unwrap_or("<no extension>".into());
-        return Err(format!("Extension not allowed, expected `md`, got `{ext}`",));
-    }
-
-    std::fs::read_to_string(path).map_err(|e| format!("Failed to read markdown file: {e}"))
+/// Gets the image file ("Image" component) of a record.
+pub fn get_image_file(directory: PathBuf, name: String) -> Result<Vec<u8>, String> {
+    let path = directory.join(format!("{}.png", name));
+    std::fs::read(path).map_err(|e| format!("Failed to read image file: {e}"))
 }
 
 /// Saves (or creates) the markdown file ("Article" component) of a record.
@@ -110,7 +120,8 @@ pub fn list_records(directory: PathBuf) -> Result<Vec<Record>, String> {
 /// Returns the components attached to a specific record.
 #[tauri::command]
 pub fn list_record_components(directory: PathBuf, name: String) -> Result<Vec<String>, String> {
-    Ok(vec!["article".to_string()])
+    let record = Record { directory, name };
+    record.list_components()
 }
 
 /// Returns the content of a specific component for a given record.
@@ -119,9 +130,10 @@ pub fn get_record_component(
     directory: PathBuf,
     name: String,
     component: String,
-) -> Result<String, String> {
+) -> Result<Response, String> {
     match component.as_str() {
-        "article" => get_markdown_file(directory, name),
+        "article" => get_markdown_file(directory, name).map(Response::new),
+        "image" => get_image_file(directory, name).map(Response::new),
         _ => Err(format!("Unknown component: {component}")),
     }
 }
@@ -136,6 +148,7 @@ pub fn save_record_component(
 ) -> Result<(), String> {
     match component.as_str() {
         "article" => save_markdown_file(directory, name, content),
+        "image" => Err("Saving image component is not implemented yet".to_string()),
         _ => Err(format!("Unknown component: {component}")),
     }
 }
@@ -150,6 +163,7 @@ pub fn remove_record_component(
 ) -> Result<(), String> {
     match component.as_str() {
         "article" => remove_markdown_file(directory, name),
+        "image" => Err("Removing image component is not implemented yet".to_string()),
         _ => Err(format!("Unknown component: {component}")),
     }
 }

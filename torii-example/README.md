@@ -8,5 +8,6 @@ The following is a list of all features currently possible in Torii. If you have
 
 - View &amp; Open Recent Projects
 - View, Edit &amp; Create Markdown Files (`.md`)
+- View Image Files (`.png`)
 - ...
 
