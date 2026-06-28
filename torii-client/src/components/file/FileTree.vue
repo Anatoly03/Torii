@@ -129,10 +129,9 @@ function renderFileOptions(tree_props: TreeRenderProps): VNodeChild {
             onSelect: async (_, option) => {
                 if (option.key === 'delete') {
                     let record = tree_props.option.record as any;
-                    await invoke('remove_record_component', {
+                    await invoke('remove_record', {
                         directory: record.directory,
                         name: record.name,
-                        component: 'article',
                     });
                     await refreshFiles();
                 }
@@ -240,8 +239,8 @@ async function createFile(name: string) {
     }
 }
 
-async function refreshFiles(): Record[] {
-    if (!props.root) return;
+async function refreshFiles(): Promise<Record[]> {
+    if (!props.root) return [];
 
     try {
         // Lists all records.

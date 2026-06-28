@@ -1,8 +1,8 @@
 //! This module exposes the interface to manage a Torii record.
 
-use tauri::ipc::Response;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashSet, fs::read_dir, path::PathBuf};
+use tauri::ipc::Response;
 
 /// A record in a Torii project. This is used to represent a single "thing"
 /// in the project, such as an encyclopedia entry, a character sheet or a book
@@ -79,6 +79,24 @@ impl Record {
         Ok(components)
     }
 
+    /// Retrieve all files in the directory which define the record. When deleting a record,
+    /// all these files should be deleted.
+    ///
+    /// Note that this does not delete all references to this record in other records.
+    pub fn associated_files(&self) -> Result<Vec<PathBuf>, String> {
+        let files = read_dir(self.directory.clone())
+            .map_err(|e| format!("Failed to read directory: {e}"))?
+            .filter_map(|e| e.ok())
+            .map(|entry| entry.path())
+            .filter(|p| p.is_file())
+            .filter(|path| {
+                path.file_prefix()
+                    .is_some_and(|prefix| prefix.to_str().is_some_and(|n| n == self.name))
+            })
+            .collect();
+        Ok(files)
+    }
+
     /// Returns the path to the markdown file of the record. This is used to read
     /// and write the "Article" component of the record.
     pub fn get_markdown_path(&self) -> PathBuf {
@@ -119,8 +137,35 @@ pub fn list_records(directory: PathBuf) -> Result<Vec<Record>, String> {
 
 /// Renames a record in the given directory. This is used to rename a record in the workspace UI.
 #[tauri::command]
-pub fn rename_record(directory: PathBuf, old_name: String, new_name: String) -> Result<Vec<Record>, String> {
+pub fn rename_record(
+    directory: PathBuf,
+    old_name: String,
+    new_name: String,
+) -> Result<Vec<Record>, String> {
     Err(format!("Renaming records is not implemented yet"))
+}
+
+/// Removes a given record.
+#[tauri::command]
+pub fn remove_record(directory: PathBuf, name: String) -> Result<(), String> {
+    let record = Record { directory, name };
+    let mut kept_files = vec![];
+
+    for file in record.associated_files()? {
+        match std::fs::remove_file(&file) {
+            Ok(_) => (),
+            Err(e) => kept_files.push(format!("{}: {e}", file.to_string_lossy().to_string())),
+        }
+    }
+
+    if !kept_files.is_empty() {
+        Err(format!(
+            "Record not completely removed. Failed to remove files:\n - {}",
+            kept_files.join("\n - ")
+        ))
+    } else {
+        Ok(())
+    }
 }
 
 /// Returns the components attached to a specific record.
