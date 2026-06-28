@@ -6,7 +6,8 @@ Like a [Japanese Torii](https://en.wikipedia.org/wiki/Torii) gate, the idea for 
 
 ### v0.0.0-dev4
 
-- TBA
+- Add minor support for tabulation accross the project.
+- Fix minor CSS issuesses on Mac.
 
 ### [v0.0.0-dev3](https://github.com/Anatoly03/Torii/releases/tag/app-v0.0.0-dev3)
 
