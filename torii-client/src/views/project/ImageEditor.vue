@@ -5,13 +5,20 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { invoke } from '@tauri-apps/api/core';
 
 const props = defineProps<{
     directory: string | null;
     name: string | null;
 }>();
+
+watch(
+    () => [props.directory, props.name],
+    () => {
+        loadFile();
+    }
+);
 
 const imageData = ref<Uint8Array | null>(null);
 const imageSrc = computed(() => {

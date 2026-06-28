@@ -79,7 +79,7 @@ impl RecentProjectMetadata {
                 && dir.is_dir()
             {
                 projects.push(RecentProjectMetadata {
-                    name: "Torii Guide".to_string(),
+                    name: "Torii Dev".to_string(),
                     path: dir,
                     is_system: true,
                     last_opened: 0,
