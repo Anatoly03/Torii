@@ -5,11 +5,17 @@
         </span>
         <div v-else class="project-list">
             <span
+                :tabindex="index"
+                @keydown.space.enter ="openProject(project.path)"
                 class="project-entry"
-                v-for="project in recentProjects"
+                v-for="(project, index) in recentProjects"
                 :key="project.path"
             >
-                <span @click="openProject(project.path)" class="project-title">{{ project.name }}</span>
+                <span
+                    @click="openProject(project.path)"
+                    class="project-title"
+                    >{{ project.name }}</span
+                >
                 <n-dropdown
                     trigger="hover"
                     placement="right"

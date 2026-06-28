@@ -94,7 +94,19 @@ function renderLabel({ option }: { option: TreeOption }) {
     }
 
     // Regular file label
-    return option.label;
+    return h(
+        'span',
+        {
+            tabindex: 1,
+            onKeydown: (e: KeyboardEvent) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onSelectFile([option.key as string]);
+                }
+            },
+        },
+        option.label
+    );
 }
 
 function renderFileOptions(tree_props: TreeRenderProps): VNodeChild {

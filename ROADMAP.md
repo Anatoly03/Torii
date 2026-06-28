@@ -36,6 +36,8 @@ The first stage of the project is to create a simple file browser like applicati
 
 ### `v0.0.0-dev4` [CURRENT]
 
+- [x] Fix CSS on Apple devices
+- [x] Add tabulation support to navigate the project
 - [ ] Extend Markdown
   - [ ] File Links Support
   - [ ] Autocomplete File Links

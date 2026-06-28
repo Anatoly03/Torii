@@ -95,6 +95,7 @@ function openSettingsWindow() {
         .view-home-quick-settings {
             display: flex;
             flex-direction: row;
+            align-items: center;
             gap: 8px;
             min-height: 2em;
 

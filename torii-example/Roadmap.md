@@ -4,15 +4,15 @@ Like a [Japanese Torii](https://en.wikipedia.org/wiki/Torii) gate, the idea for 
 
 # Roadmap
 
-### v1.0.0-dev4
+### v0.0.0-dev4
 
 - TBA
 
-### v1.0.0-dev3
+### [v0.0.0-dev3](https://github.com/Anatoly03/Torii/releases/tag/app-v0.0.0-dev3)
 
 - Added technical functionality to display one header image.
 
-### v1.0.0-dev2
+### [v0.0.0-dev2](https://github.com/Anatoly03/Torii/releases/tag/app-v0.0.0-dev2) **Hajime 始め**
 
 - View, (Create) Open &amp; Unlink Recent Projects
 - View, Create, Edit &amp; Remove Markdown Files (`.md`)
