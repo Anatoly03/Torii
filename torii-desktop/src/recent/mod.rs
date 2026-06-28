@@ -4,6 +4,7 @@
 //! from the desktop application.
 
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 use std::{fs::File, io::ErrorKind, path::PathBuf};
 use tauri::{AppHandle, Manager};
 
@@ -50,7 +51,9 @@ pub fn default_false() -> bool {
 }
 
 impl RecentProjectMetadata {
-    /// Retrieves the recent projects from the global file.
+    /// Retrieves the recent projects from the global file. This only includes the
+    /// projects linked in `recent_projects.json`. Some "special" projects can be
+    /// retrieved with [get_extended][Self::get_extended].
     pub async fn get(app: AppHandle) -> Result<Vec<Self>, String> {
         // Compute the path to the recent projects file. This is stored in the app
         // local data directory.
@@ -61,12 +64,20 @@ impl RecentProjectMetadata {
             .join(RECENT_PROJECTS_FILE);
         // Parse the recent projects. If the file does not exist yet, assume we have
         // no recent projects. If any other error occurs report.
-        let mut projects: Vec<RecentProjectMetadata> = match File::open(recent_projects_list_path) {
+        let projects: Vec<RecentProjectMetadata> = match File::open(recent_projects_list_path) {
             Ok(file) => serde_json::from_reader(file)
                 .map_err(|e| format!("Failed to parse recent projects file: {e}"))?,
             Err(e) if e.kind() == ErrorKind::NotFound => vec![],
             Err(e) => return Err(format!("Failed to open recent projects file: {e}")),
         };
+
+        Ok(projects)
+    }
+
+    /// Retrieves the recent projects from the global file, and adds some "special"
+    /// projects that are stored externally.
+    pub async fn get_extended(app: AppHandle) -> Result<Vec<Self>, String> {
+        let mut projects = Self::get(app.clone()).await?;
 
         if cfg!(dev) {
             // If we are in development mode, link the `torii-example` demo workspace. This
@@ -100,8 +111,19 @@ impl RecentProjectMetadata {
             .join(RECENT_PROJECTS_FILE);
         let file = File::create(recent_projects_list)
             .map_err(|e| format!("Failed to create recent projects file: {e}"))?;
-        serde_json::to_writer(file, &list)
+        // invoke the "export()" method to hide some generated fields from the JSON file.
+        let export_data = list.iter().map(|p| p.export()).collect::<Vec<Value>>();
+        serde_json::to_writer(file, &export_data)
             .map_err(|e| format!("Failed to write recent projects file: {e}"))
+    }
+
+    /// Exports the recent project metadata to a JSON object with "public" fields.
+    pub fn export(&self) -> Value {
+        serde_json::json!({
+            "name": self.name,
+            "path": self.path,
+            "last_opened": self.last_opened,
+        })
     }
 }
 
@@ -109,7 +131,7 @@ impl RecentProjectMetadata {
 /// list of recent projects in the UI.
 #[tauri::command]
 pub async fn list_recent_projects(app: AppHandle) -> Result<Vec<RecentProjectMetadata>, String> {
-    RecentProjectMetadata::get(app).await
+    RecentProjectMetadata::get_extended(app).await
 }
 
 /// Adds a recently opened project.

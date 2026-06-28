@@ -4,19 +4,27 @@ Like a [Japanese Torii](https://en.wikipedia.org/wiki/Torii) gate, the idea for 
 
 # Roadmap
 
+---
+
 ### v0.0.0-dev4
 
 - Add minor support for tabulation accross the project.
 - Fix minor CSS issuesses on Mac.
-- 
+- Fix minor bug with recent projects where "Torii Dev" workspace would duplicate itself into the local project list.
+
+---
 
 ### [v0.0.0-dev3](https://github.com/Anatoly03/Torii/releases/tag/app-v0.0.0-dev3)
 
 - Added technical functionality to display one header image.
+
+---
 
 ### [v0.0.0-dev2](https://github.com/Anatoly03/Torii/releases/tag/app-v0.0.0-dev2) **Hajime 始め**
 
 - View, (Create) Open &amp; Unlink Recent Projects
 - View, Create, Edit &amp; Remove Markdown Files (`.md`)
 - Added Localization Support (English, Japanese, Chinese)
+
+---
 
