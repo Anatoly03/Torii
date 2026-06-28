@@ -8,7 +8,7 @@ The idea is simple: Every element of a story is a "record", for example the char
 
 
 
-Every thing that has its' own page in the encyclopedia of your fantasy is a "record" and every record is represented by a name and at least one file in the workspace directory: Usually it has the markdown files, but every image you add to the encyclopedia is also a record.
+Every “thing" that has its' own page in the encyclopedia of your fantasy is a "record" and every “record" is represented by at least a name and one file in the workspace directory: Usually it has the markdown note where you can write prose and lore, but every image, every map and every object you add to the encyclopedia is also a record.
 
 ### Component
 
@@ -87,12 +87,17 @@ Below are minor component ideas which are too small for their own subtitle.
 - Quote Component: Could be used in the gallery to scroll beautiful quotes from the world.
 - Split "Identity" and "Character": Some villains live two-lifes.
 - Chapter: Collection of Scenes.
+- Port “Azgaars’ Fantasy Map” if possible to a map component.
 
 ### Infoboxes &amp; Templates
 
 There should be a way to "create" new components within a workspace, through templates or cloning existing components. For encyclopedia articles the idea is that we split "Article" into different sections (intuitively every time you add a new subtitle, make that section an entire component instead). "Fandom"-style infoboxes could be used as templates to create new components.
 
 Imagine the component "Character Metadata" which is an infobox to the right having fields like "Titles", "Affiliations" or "Gender". By having these universal fields, every record which implements "Character Metadata" will have these fields ready to be defined.
+
+
+
+When a plugin called `<plugin>` defines a component, we should consider the component file extension to be `<entity>.<plugin>.<component>.<extension>` to avoid ambiguity between components (e.g. “map” and “azgaar.map” and other map-like implementations)
 
 ### Queries &amp; Data Handling
 
@@ -107,7 +112,11 @@ Let's say you want to know the average age of all characters in your world. Sinc
 - Generate family trees and dynasty relations.
 - Generate the timeline of all events occuring in the story.
 
-The idea of queries is to use structured data and get an understanding of their relations. You can also split the book into smaller "Chapters" and then simply collect it all into one file.
+The idea of queries is to use structured data and get an understanding of their relations. You can also split the book into smaller "Chapters" and then simply collect it all into one file. **With Torii we want to provide world builders with powerful tools, not tell you how to use them!**
 
-**With Torii we want to give world builders tools, not tell you how to use them!**
+### Version Controlling &amp; File System
+
+The Torii ecosystem is specifically designed to be compatible with GIT and the local filesystem.. All components are individual files that can be committed and tracked, but also individually removed and managed. 
+
+When possible, components should not be custom binaries but represented as a human-readable git-frienly data format (such as JSON and YAML). When porting data formats to Torii components this is not always possible (Images or if someone ports Azgaars’ Map engine to Torii).
 

@@ -9,5 +9,6 @@
 <style lang="scss" scoped>
 .locale-select {
     flex: 1;
+    height: 100%;
 }
 </style>
