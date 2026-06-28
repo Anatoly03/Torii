@@ -2,6 +2,7 @@
     <div class="view-project">
         <div class="view-project-side">
             <FileTree
+                ref="fileTree"
                 :root="projectPath"
                 @update:current-file="currentFile = $event"
             />
@@ -47,8 +48,18 @@ const currentFile = ref<{ directory: string; name: string } | null>(null);
 const markdownDirectory = ref<string | null>(null);
 const markdownName = ref<string | null>(null);
 const recordComponents = ref<string[]>([]);
+const fileTree = ref<InstanceType<typeof FileTree> | null>(null);
 
-onMounted(loadComponents);
+onMounted(async () => {
+    const files = await fileTree.value?.loadFiles();
+    const readme = files?.find((r) => r.name === 'README');
+
+    if (readme) {
+        currentFile.value = readme;
+    }
+
+    loadComponents();
+});
 
 watch(currentFile, (newFile) => {
     if (newFile) {

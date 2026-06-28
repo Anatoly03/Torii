@@ -228,7 +228,7 @@ async function createFile(name: string) {
     }
 }
 
-async function refreshFiles() {
+async function refreshFiles(): Record[] {
     if (!props.root) return;
 
     try {
@@ -262,13 +262,21 @@ async function refreshFiles() {
         } else {
             treeData.value = newData;
         }
+
+        return files;
     } catch (error) {
         console.error('Failed to list files:', error);
     }
+
+    return [];
 }
 
+/**
+ * Exposed method to load files, can be called from parent component
+ * to refresh the file tree and list all records.
+ */
 function loadFiles() {
-    refreshFiles();
+    return refreshFiles();
 }
 
 // Expose refresh method
