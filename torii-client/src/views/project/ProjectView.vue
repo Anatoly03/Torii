@@ -22,6 +22,7 @@
             <ImageEditor
                 :directory="markdownDirectory"
                 :name="markdownName"
+                @refresh="loadComponents()"
                 v-if="currentFile && recordComponents.includes('image')"
             />
             <MarkdownEditor

@@ -97,6 +97,26 @@ impl Record {
         Ok(files)
     }
 
+    /// Retrieve all files in the directory which define the records' components. When
+    /// detaching a component from a record, all these files should be deleted.
+    pub fn associated_component_files<C: AsRef<str>>(
+        &self,
+        component: C,
+    ) -> Result<Vec<PathBuf>, String> {
+        let predicate = match component.as_ref() {
+            "article" => |p: &PathBuf| p.extension().is_some_and(|ext| ext == "md"),
+            "image" => |p: &PathBuf| p.extension().is_some_and(|ext| ext == "png"),
+            _ => |_: &PathBuf| false, // TODO: implement component-specific filtering
+        };
+
+        let component_files = self
+            .associated_files()?
+            .into_iter()
+            .filter(predicate)
+            .collect();
+        Ok(component_files)
+    }
+
     /// Returns the path to the markdown file of the record. This is used to read
     /// and write the "Article" component of the record.
     pub fn get_markdown_path(&self) -> PathBuf {
@@ -149,23 +169,15 @@ pub fn rename_record(
 #[tauri::command]
 pub fn remove_record(directory: PathBuf, name: String) -> Result<(), String> {
     let record = Record { directory, name };
-    let mut kept_files = vec![];
 
-    for file in record.associated_files()? {
-        match std::fs::remove_file(&file) {
-            Ok(_) => (),
-            Err(e) => kept_files.push(format!("{}: {e}", file.to_string_lossy().to_string())),
-        }
-    }
+    record
+        .associated_files()?
+        .iter()
+        .map(|file| std::fs::remove_file(&file))
+        .collect::<Result<Vec<()>, std::io::Error>>()
+        .map_err(|e| format!("Failed to remove record files: {e}"))?;
 
-    if !kept_files.is_empty() {
-        Err(format!(
-            "Record not completely removed. Failed to remove files:\n - {}",
-            kept_files.join("\n - ")
-        ))
-    } else {
-        Ok(())
-    }
+    Ok(())
 }
 
 /// Returns the components attached to a specific record.
@@ -212,9 +224,16 @@ pub fn remove_record_component(
     name: String,
     component: String,
 ) -> Result<(), String> {
-    match component.as_str() {
-        "article" => remove_markdown_file(directory, name),
-        "image" => Err("Removing image component is not implemented yet".to_string()),
-        _ => Err(format!("Unknown component: {component}")),
-    }
+    let record = Record { directory, name };
+    let component_files = record.associated_component_files(&component)?;
+
+    component_files
+        .iter()
+        .map(|file| {
+            std::fs::remove_file(&file)
+                .map_err(|e| format!("Failed to remove component file {}: {e}", file.display()))
+        })
+        .collect::<Result<Vec<()>, String>>()?;
+
+    Ok(())
 }
