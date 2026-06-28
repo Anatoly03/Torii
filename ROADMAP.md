@@ -40,14 +40,14 @@ The first stage of the project is to create a simple file browser like applicati
 - [x] Add tabulation support to navigate the project
 - [ ] Extend Markdown
   - [ ] File Links Support
+  - [ ] Image embed support
   - [ ] Autocomplete File Links
-- [ ] Refactor to Theme Support
-  - [ ] Light Mode
-  - [ ] Dark Mode
 
 ### `v0.0.0-dev5`
 
-- [ ] To-Do: Plan
+- [ ] Refactor to Theme Support
+  - [ ] Light Mode
+  - [ ] Dark Mode
 
 # Daiishi 台石
 
