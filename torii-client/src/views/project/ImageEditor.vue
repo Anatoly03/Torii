@@ -50,11 +50,8 @@ onUnmounted(revokeImageUrl);
 
 <style lang="scss" scoped>
 .file-editor-image {
-    display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: row;
-    width: 100%;
     padding: 16px;
 
     .file-image-preview {

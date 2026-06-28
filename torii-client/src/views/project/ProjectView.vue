@@ -125,7 +125,7 @@ if (!projectPath) {
     .view-project-content {
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
         justify-content: flex-start;
         flex: 1;
         text-align: left;
