@@ -4,7 +4,7 @@
 //! from the desktop application.
 
 use serde::{Deserialize, Serialize};
-use std::{fs::File, path::PathBuf};
+use std::{fs::File, io::ErrorKind, path::PathBuf};
 use tauri::{AppHandle, Manager};
 
 /// The path to the file where recent projects are stored. This is a JSON file
@@ -52,15 +52,21 @@ pub fn default_false() -> bool {
 impl RecentProjectMetadata {
     /// Retrieves the recent projects from the global file.
     pub async fn get(app: AppHandle) -> Result<Vec<Self>, String> {
-        let recent_projects_list = app
+        // Compute the path to the recent projects file. This is stored in the app
+        // local data directory.
+        let recent_projects_list_path = app
             .path()
             .app_local_data_dir()
             .map_err(|e| format!("Failed to get app local data directory: {e}"))?
             .join(RECENT_PROJECTS_FILE);
-        let file = File::open(recent_projects_list)
-            .map_err(|e| format!("Failed to open recent projects file: {e}"))?;
-        let mut projects: Vec<RecentProjectMetadata> = serde_json::from_reader(file)
-            .map_err(|e| format!("Failed to parse recent projects file: {e}"))?;
+        // Parse the recent projects. If the file does not exist yet, assume we have
+        // no recent projects. If any other error occurs report.
+        let mut projects: Vec<RecentProjectMetadata> = match File::open(recent_projects_list_path) {
+            Ok(file) => serde_json::from_reader(file)
+                .map_err(|e| format!("Failed to parse recent projects file: {e}"))?,
+            Err(e) if e.kind() == ErrorKind::NotFound => vec![],
+            Err(e) => return Err(format!("Failed to open recent projects file: {e}")),
+        };
 
         if cfg!(dev) {
             // If we are in development mode, link the `torii-example` demo workspace. This

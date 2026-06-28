@@ -6,9 +6,10 @@ Torii Project is a tool for world builders and story writers to document vast wo
 
 ### Running
 
-You can serve the application quickly with `npx tauri dev`, which will serve front end, then build aand run the desktop binary.
+You can serve the application quickly with `npx tauri dev`, which will serve front end, then build and run the desktop binary.
 
 ```sh
+npm install # once
 npx tauri dev
 ```
 
