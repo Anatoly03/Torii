@@ -1,4 +1,4 @@
-# Torii Guide
+# Torii Dev
 
 Welcome to the Torii demo workspace! Edits to these files will be tracked in the version control of the Torii codebase and shared with other collaborators.
 
