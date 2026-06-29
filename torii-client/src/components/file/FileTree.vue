@@ -36,7 +36,7 @@ import { invoke } from '@tauri-apps/api/core';
 import FileTreeCreateFile from './FileTreeCreateFile.vue';
 import { TreeRenderProps } from 'naive-ui/es/tree/src/interface';
 
-interface Record {
+export interface Record {
     directory: string;
     name: string;
 }
