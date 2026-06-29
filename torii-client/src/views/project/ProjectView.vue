@@ -39,7 +39,7 @@ import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { invoke } from '@tauri-apps/api/core';
 import FileTree from '../../components/file/FileTree.vue';
-import MarkdownEditor from './MarkdownEditor.vue';
+import MarkdownEditor from '../../components/article/MarkdownEditor.vue';
 import ImageEditor from './ImageEditor.vue';
 
 const route = useRoute();
