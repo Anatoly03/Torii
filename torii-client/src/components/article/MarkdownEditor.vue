@@ -73,6 +73,7 @@ const editor = new Editor({
                 const match = text.match(/[a-zA-Z0-9_.]+$/);
                 return match ? match[0] : null;
             },
+            popup: autocompletePopup,
         }),
     ],
     content: '', // Initial content is empty; will be loaded in onMounted

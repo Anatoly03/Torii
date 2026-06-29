@@ -28,7 +28,7 @@
             <MarkdownEditor
                 :directory="markdownDirectory"
                 :name="markdownName"
-                :autocomplete-suggestion="v => autocompleteMarkdown(v)"
+                :autocomplete-suggestion="(v) => autocompleteMarkdown(v)"
                 v-if="currentFile && recordComponents.includes('article')"
             />
         </div>

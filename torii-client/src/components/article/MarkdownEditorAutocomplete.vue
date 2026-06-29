@@ -1,11 +1,11 @@
 <template>
     <ul
         class="autocomplete-popup"
-        :class="{ show: visible && suggestions.length > 0 }"
+        :class="{ show: visible && items.length > 0 }"
         :style="{ left: left + 'px', top: top + 'px' }"
     >
         <li
-            v-for="record in suggestions"
+            v-for="record in items"
             :key="record.label"
             class="autocomplete-item"
             :class="{ active: currentSelection?.label == record?.label }"
@@ -32,6 +32,7 @@ const emit = defineEmits<{
     (e: 'select', suggestion: SuggestionItem): void;
 }>();
 
+const items = ref(props.suggestions);
 const currentSelection = ref<SuggestionItem | undefined>(props.suggestions[0]);
 const visible = ref(false);
 const left = ref(0);
@@ -55,7 +56,7 @@ async function hide() {
 }
 
 function onKeyDown(event: KeyboardEvent) {
-    if (!visible.value || props.suggestions.length === 0) return;
+    if (!visible.value || items.value.length === 0) return;
 
     // Block default behaviour for these keys
     if (event.key === 'Enter' || event.key === 'Tab') {
@@ -67,15 +68,15 @@ function onKeyDown(event: KeyboardEvent) {
         case 'ArrowDown':
         case 'ArrowUp':
             event.preventDefault();
-            const currentIndex = props.suggestions.findIndex(
+            const currentIndex = items.value.findIndex(
                 (s) => s.label === currentSelection.value?.label
             );
             const nextIndex =
                 event.key === 'ArrowDown'
-                    ? (currentIndex + 1) % props.suggestions.length
-                    : (currentIndex - 1 + props.suggestions.length) %
-                      props.suggestions.length;
-            currentSelection.value = props.suggestions[nextIndex];
+                    ? (currentIndex + 1) % items.value.length
+                    : (currentIndex - 1 + items.value.length) %
+                      items.value.length;
+            currentSelection.value = items.value[nextIndex];
             break;
 
         case 'Enter':
@@ -88,6 +89,16 @@ function onKeyDown(event: KeyboardEvent) {
             event.preventDefault();
             hide();
             break;
+    }
+}
+
+function setSuggestions(suggestions: SuggestionItem[]) {
+    items.value = suggestions;
+
+    if (suggestions.length > 0) {
+        currentSelection.value = suggestions[0];
+    } else {
+        currentSelection.value = undefined;
     }
 }
 
@@ -109,6 +120,7 @@ defineExpose({
     realign,
     show,
     hide,
+    setSuggestions,
 });
 </script>
 
