@@ -82,26 +82,20 @@ export const ProsemirrorAutocompleteExtension = (
                     const $nodeBefore = $from.nodeBefore;
                     const textBeforeCursor = $nodeBefore?.text ?? '';
 
+                    // Extract the token from the text before the cursor. This is used to
+                    // further shorten the context range.
+                    const token = options.extractToken?.(textBeforeCursor) ?? textBeforeCursor;
+
                     // Get the suggestions for the current text before the cursor.
-                    options.suggest(textBeforeCursor).then((suggestions) => {
+                    options.suggest(token).then((suggestions) => {
+                        // If we can't find the popup component, we can't show the suggestions.
+                        if (!options.popup?.value) return;
+
                         // Get the list of suggestions and propagate them to the
                         // autocomplete popup component.
-                        if (options.popup?.value) {
-                            options.popup.value.setSuggestions(suggestions ?? []);
-                            options.popup.value.show();
-                        }
-
-                        if (!suggestions || suggestions.length === 0) {
-                            return;
-                        }
-
-                        console.log(options.popup?.value);
+                        options.popup.value.setSuggestions(suggestions ?? []);
+                        options.popup.value.show();
                     });
-
-                    // const $pos = editorView.state.selection.$from.pos;
-                    // const element = editorView.domAtPos($pos);
-
-                    // console.log($nodeBefore, $nodes);
                 },
                 destroy: () => {
                     // TODO
