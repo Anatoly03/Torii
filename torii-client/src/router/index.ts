@@ -10,7 +10,7 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/project',
         name: 'project',
-        props: { projectPath: '' },
+        // query: { project: '' },
         component: () => import('../views/project/ProjectView.vue'),
     },
     {

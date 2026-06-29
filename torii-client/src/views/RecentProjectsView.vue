@@ -79,7 +79,7 @@ async function openProjectDialog() {
  * Opens the project at the given path.
  */
 function openProject(projectPath: string) {
-    router.push({ name: 'project', params: { projectPath } });
+    router.push({ name: 'project', query: { project: projectPath } });
 }
 
 /**

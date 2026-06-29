@@ -44,7 +44,7 @@ import ImageEditor from './ImageEditor.vue';
 
 const route = useRoute();
 const router = useRouter();
-const projectPath = route.params.projectPath as string;
+const projectPath = route.query.project as string;
 const currentFile = ref<{ directory: string; name: string } | null>(null);
 const markdownDirectory = ref<string | null>(null);
 const markdownName = ref<string | null>(null);
