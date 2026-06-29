@@ -8,7 +8,7 @@
         <markdown-editor-autocomplete
             ref="autocompletePopup"
             :editor-view="editor.view"
-            :suggestions="[{ label: 'Test' }]"
+            :suggestions="[{ label: 'Test' }, { label: 'Banana' }, { label: 'Building' }]"
             @select="console.log('selected', $event)"
         />
     </div>
@@ -76,21 +76,19 @@ const editor = new Editor({
     onUpdate: saveFile,
 });
 
-editor.on('focus', () => {
-    autocompletePopup.value?.show();
-    autocompletePopup.value?.realign();
-});
-
-editor.on('selectionUpdate', () => {
-    autocompletePopup.value?.realign();
-});
-
 onMounted(async () => {
     // Load the file content when the component is mounted.
     await loadFile();
 
-    // Hide the autocomplete popup (load file triggers autocomplete show)
-    autocompletePopup.value?.hide();
+    // Start listening after mounted.
+    editor.on('focus', () => {
+        autocompletePopup.value?.show();
+        autocompletePopup.value?.realign();
+    });
+
+    editor.on('selectionUpdate', () => {
+        autocompletePopup.value?.realign();
+    });
 });
 
 watch(

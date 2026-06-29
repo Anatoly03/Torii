@@ -7,6 +7,9 @@
         <li
             v-for="record in suggestions"
             :key="record.label"
+            class="autocomplete-item"
+            :class="{ active: currentSelection?.label == record?.label }"
+            @mouseenter="currentSelection = record"
             @click="emit('select', record)"
             @keydown="emit('select', record)"
         >
@@ -17,7 +20,7 @@
 
 <script setup lang="ts">
 import { EditorView } from 'prosemirror-view';
-import { onMounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import type { SuggestionItem } from './autocomplete-extension';
 
 const props = defineProps<{
@@ -29,6 +32,7 @@ const emit = defineEmits<{
     (e: 'select', suggestion: SuggestionItem): void;
 }>();
 
+const currentSelection = ref<SuggestionItem | undefined>(props.suggestions[0]);
 const visible = ref(false);
 const left = ref(0);
 const top = ref(0);
@@ -49,6 +53,47 @@ async function hide() {
     await new Promise((resolve) => setTimeout(resolve, 100)); // wait for click event to propagate
     visible.value = false;
 }
+
+function listenKeyboard(event: KeyboardEvent) {
+    if (!visible.value) return;
+
+    switch (event.key) {
+        case 'ArrowDown':
+        case 'ArrowUp':
+            event.preventDefault();
+            const currentIndex = props.suggestions.findIndex(
+                (s) => s.label === currentSelection.value?.label
+            );
+            const nextIndex =
+                event.key === 'ArrowDown'
+                    ? (currentIndex + 1) % props.suggestions.length
+                    : (currentIndex - 1 + props.suggestions.length) %
+                      props.suggestions.length;
+            currentSelection.value = props.suggestions[nextIndex];
+            break;
+
+        case 'Enter':
+        case 'Tab':
+            event.preventDefault();
+            if (currentSelection.value) {
+                emit('select', currentSelection.value);
+            }
+            hide();
+            break;
+    }
+}
+
+onMounted(() => {
+    props.editorView.dom.addEventListener('focus', show);
+    props.editorView.dom.addEventListener('blur', hide);
+    document.addEventListener('keydown', listenKeyboard);
+});
+
+onUnmounted(() => {
+    props.editorView.dom.removeEventListener('focus', show);
+    props.editorView.dom.removeEventListener('blur', hide);
+    document.removeEventListener('keydown', listenKeyboard);
+});
 
 defineExpose({
     realign,
@@ -75,12 +120,13 @@ defineExpose({
         display: flex;
     }
 
-    li {
+    li.autocomplete-item {
         list-style: none;
         padding: 4px 8px;
         cursor: pointer;
 
-        &:hover {
+        &:hover,
+        &.active {
             background-color: #f0f0f0;
         }
     }
