@@ -35,6 +35,10 @@ const props = defineProps<{
     autocompleteSuggestion: (name: string) => Promise<SuggestionItem[]>;
 }>();
 
+const emit = defineEmits<{
+    (e: 'open-file', path: string): void;
+}>();
+
 const autocompletePopup = ref<InstanceType<
     typeof MarkdownEditorAutocomplete
 > | null>(null);
@@ -93,6 +97,25 @@ onMounted(async () => {
     editor.on('selectionUpdate', () => {
         autocompletePopup.value?.realign();
     });
+
+    const dom = editor.view.dom;
+
+    function onLinkClick(event: MouseEvent) {
+        if (!event.ctrlKey && !event.metaKey) return;
+        const link = (event.target as HTMLElement).closest('a');
+        if (!link) return;
+        event.preventDefault();
+        event.stopPropagation();
+        const href = link.getAttribute('href');
+        if (!href) return;
+        const match = href.match(/^\.\/(.+)\.md$/);
+        if (match) {
+            const fileName = decodeURIComponent(match[1]);
+            emit('open-file', fileName);
+        }
+    }
+
+    dom.addEventListener('click', onLinkClick, { capture: true });
 });
 
 watch(
@@ -161,6 +184,9 @@ async function onEditorClick() {
 
 onUnmounted(() => {
     editor.destroy();
+
+    const dom = editor.view.dom;
+    dom.removeEventListener('click', onLinkClick, { capture: true });
 });
 </script>
 

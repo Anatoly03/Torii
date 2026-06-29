@@ -4,7 +4,7 @@
             <FileTree
                 ref="fileTree"
                 :root="projectPath"
-                @update:current-file="currentFile = $event"
+                @update:current-file="setCurrentFile"
             />
             <div class="view-project-quick-settings">
                 <button
@@ -29,6 +29,7 @@
                 :directory="markdownDirectory"
                 :name="markdownName"
                 :autocomplete-suggestion="(v) => autocompleteMarkdown(v)"
+                @open-file="openFile"
                 v-if="currentFile && recordComponents.includes('article')"
             />
         </div>
@@ -93,6 +94,18 @@ async function autocompleteMarkdown(name: string): Promise<any> {
             label: record.name,
             value: record.name,
         }));
+}
+
+async function openFile(name: string) {
+    const record = records.value.find((r) => r.name === name);
+    if (!record) return;
+
+    currentFile.value = record;
+}
+
+function setCurrentFile(file: Record | null) {
+    if (!file) return;
+    currentFile.value = file;
 }
 
 if (!projectPath) {
