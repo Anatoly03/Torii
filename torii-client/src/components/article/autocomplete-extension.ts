@@ -54,6 +54,68 @@ export type AutocompleteOptions = {
     popup?: Ref<InstanceType<typeof MarkdownEditorAutocomplete> | null>;
 };
 
+function triggerAutocomplete(
+    options: AutocompleteOptions,
+    editorView: EditorView
+) {
+    return (item: SuggestionItem) =>
+        ({ commands }) => {
+            // We only apply the autocomplete logic within one element of the editor.
+            //
+            // For example `<a href="#">hel</a>lo` with the cursor at the end will autocomplete
+            // for 'lo', not 'hello'.
+            //
+            // The exception is bold, italic and underline.
+            // For example `<b>hel</>lo` with the cursor at the end will autocomplete
+            // for 'hello'.
+            //
+            // Below $nodes is computed to be the content of the current element after resolving
+            // the selection position. We only apply the autocomplete logic within this context.
+            const $from = editorView.state.selection.$from;
+            // const $parent = $from.parent;
+            // const $nodes = $parent.content.content;
+
+            // Find the currently selected node within the $nodes array.
+            const $nodeBefore = $from.nodeBefore;
+            const textBeforeCursor = $nodeBefore?.text ?? '';
+
+            // Extract the token from the text before the cursor. This is used to
+            // further shorten the context range.
+            const token =
+                options.extractToken?.(textBeforeCursor) ?? textBeforeCursor;
+
+            const rangeFrom = $from.pos - token.length;
+            const rangeTo = $from.pos;
+
+            // Delete the token before the cursor.
+            commands.deleteRange({ from: rangeFrom, to: rangeTo });
+
+            // Insert the selected suggestion into the editor.
+            commands.insertContent([
+                {
+                    type: 'text',
+                    marks: [
+                        {
+                            type: 'link',
+                            attrs: {
+                                href: `./${encodeURIComponent(item.label)}.md`,
+                            },
+                        },
+                    ],
+                    text: item.label,
+                },
+                {
+                    type: 'text',
+                    text: ' ',
+                },
+            ]);
+
+            // Hide the autocomplete popup after selection.
+            options.popup?.value?.hide();
+            return true;
+        };
+}
+
 export const ProsemirrorAutocompleteExtension = (
     options: AutocompleteOptions,
     editor: Editor
@@ -84,7 +146,9 @@ export const ProsemirrorAutocompleteExtension = (
 
                     // Extract the token from the text before the cursor. This is used to
                     // further shorten the context range.
-                    const token = options.extractToken?.(textBeforeCursor) ?? textBeforeCursor;
+                    const token =
+                        options.extractToken?.(textBeforeCursor) ??
+                        textBeforeCursor;
 
                     // Get the suggestions for the current text before the cursor.
                     options.suggest(token).then((suggestions) => {
@@ -118,6 +182,12 @@ export const AutocompleteExtension = Extension.create<AutocompleteOptions>({
                 const match = text.match(/(\w+)$/);
                 return match ? match[1] : null;
             },
+        };
+    },
+
+    addCommands() {
+        return {
+            autocomplete: triggerAutocomplete(this.options, this.editor),
         };
     },
 

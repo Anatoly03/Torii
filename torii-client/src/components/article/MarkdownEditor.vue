@@ -156,14 +156,9 @@ async function saveFile() {
     });
 }
 
+// Call command from autocomplete extension.
 async function onSuggestionSelect(item: SuggestionItem) {
-    // Insert the selected suggestion into the editor
-    let { from, to } = editor.state.selection;
-    editor.commands.insertContentAt({ from, to }, item.label);
-
-    // Add some space after the inserted text for better UX
-    from = editor.state.selection.from;
-    editor.commands.insertContentAt({ from, to: from }, ' ');
+    editor.commands.autocomplete(item);
 }
 
 async function onEditorClick() {
