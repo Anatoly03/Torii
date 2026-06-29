@@ -11,6 +11,7 @@ Like a [Japanese Torii](https://en.wikipedia.org/wiki/Torii) gate, the idea for 
 - Add minor support for tabulation accross the project.
 - Fix minor CSS issuesses on Mac.
 - Fix minor bug with recent projects where "Torii Dev" workspace would duplicate itself into the local project list.
+- Added very simple autocomplete feature for linking markdown notes (e.g. [Flower](./Flower.md), [Vision](./Vision.md)).
 
 ---
 

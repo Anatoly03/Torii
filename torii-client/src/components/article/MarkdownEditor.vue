@@ -39,11 +39,7 @@ const autocompletePopup = ref<InstanceType<
     typeof MarkdownEditorAutocomplete
 > | null>(null);
 
-const suggestions = ref<SuggestionItem[]>([
-    { label: 'Test' },
-    { label: 'Banana' },
-    { label: 'Building' },
-]);
+const suggestions = ref<SuggestionItem[]>([]);
 
 const ignoreFirstSave = ref(true);
 const editor = new Editor({
@@ -86,6 +82,7 @@ const editor = new Editor({
 onMounted(async () => {
     // Load the file content when the component is mounted.
     await loadFile();
+    autocompletePopup.value?.hide();
 
     // Start listening after mounted.
     editor.on('focus', () => {
@@ -95,10 +92,6 @@ onMounted(async () => {
 
     editor.on('selectionUpdate', () => {
         autocompletePopup.value?.realign();
-    });
-
-    props.autocompleteSuggestion('').then((v) => {
-        suggestions.value = v;
     });
 });
 

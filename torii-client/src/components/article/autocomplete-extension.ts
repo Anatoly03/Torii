@@ -52,6 +52,12 @@ export type AutocompleteOptions = {
      * control the visibility, position and options of the popup.
      */
     popup?: Ref<InstanceType<typeof MarkdownEditorAutocomplete> | null>;
+
+    /**
+     * The minimum length of the token before the autocomplete is triggered.
+     * If the token is shorter than this length, autocomplete popup is hidden.
+     */
+    readonly MIN_TOKEN_LENGTH: number;
 };
 
 function triggerAutocomplete(
@@ -150,6 +156,11 @@ export const ProsemirrorAutocompleteExtension = (
                         options.extractToken?.(textBeforeCursor) ??
                         textBeforeCursor;
 
+                    if (token.length < options.MIN_TOKEN_LENGTH) {
+                        options.popup?.value?.hide();
+                        return;
+                    }
+
                     // Get the suggestions for the current text before the cursor.
                     options.suggest(token).then((suggestions) => {
                         // If we can't find the popup component, we can't show the suggestions.
@@ -182,6 +193,7 @@ export const AutocompleteExtension = Extension.create<AutocompleteOptions>({
                 const match = text.match(/(\w+)$/);
                 return match ? match[1] : null;
             },
+            MIN_TOKEN_LENGTH: 1,
         };
     },
 
