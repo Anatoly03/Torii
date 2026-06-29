@@ -1,11 +1,7 @@
 <template>
     <div class="file-editor-image" v-if="imageSrc">
         <img class="file-image-preview" :src="imageSrc" alt="Image Preview" />
-        <button
-            class="delete-btn"
-            @click="removeImage"
-            title="Delete image"
-        >
+        <button class="delete-btn" @click="removeImage" title="Delete image">
             <NIcon size="16">
                 <CloseOutline />
             </NIcon>
@@ -49,11 +45,16 @@ const imageSrc = computed(() => {
 });
 
 async function loadFile() {
-    imageData.value = await invoke<Uint8Array>('get_record_component', {
-        directory: props.directory,
-        name: props.name,
-        component: 'image',
-    });
+    try {
+        imageData.value = await invoke<Uint8Array>('get_record_component', {
+            directory: props.directory,
+            name: props.name,
+            component: 'image',
+        });
+    } catch(e) {
+        console.warn(e);
+        imageData.value = null;
+    }
 }
 
 async function removeImage() {

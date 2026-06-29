@@ -1,7 +1,7 @@
 //! This module exposes the interface to manage a Torii record.
 
 use serde::{Deserialize, Serialize};
-use std::{collections::HashSet, fs::read_dir, path::PathBuf};
+use std::{collections::HashSet, fs::read_dir, io::ErrorKind, path::PathBuf};
 use tauri::ipc::Response;
 
 /// A record in a Torii project. This is used to represent a single "thing"
@@ -127,13 +127,23 @@ impl Record {
 /// Gets the markdown file ("Article" component) of a record.
 pub fn get_markdown_file(directory: PathBuf, name: String) -> Result<Vec<u8>, String> {
     let path = directory.join(format!("{}.md", name));
-    std::fs::read(path).map_err(|e| format!("Failed to read markdown file: {e}"))
+
+    match std::fs::read(path) {
+        Ok(file) => Ok(file),
+        Err(e) if e.kind() == ErrorKind::NotFound => Ok(vec![]),
+        Err(e) => return Err(format!("Failed to read markdown file: {e}")),
+    }
 }
 
 /// Gets the image file ("Image" component) of a record.
 pub fn get_image_file(directory: PathBuf, name: String) -> Result<Vec<u8>, String> {
     let path = directory.join(format!("{}.png", name));
-    std::fs::read(path).map_err(|e| format!("Failed to read image file: {e}"))
+
+    match std::fs::read(path) {
+        Ok(file) => Ok(file),
+        Err(e) if e.kind() == ErrorKind::NotFound => Ok(vec![]),
+        Err(e) => return Err(format!("Failed to read image file: {e}")),
+    }
 }
 
 /// Saves (or creates) the markdown file ("Article" component) of a record.
