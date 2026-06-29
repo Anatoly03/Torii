@@ -1,7 +1,7 @@
 <template>
     <ul
         class="autocomplete-popup"
-        :class="{ show: visible }"
+        :class="{ show: visible && suggestions.length > 0 }"
         :style="{ left: left + 'px', top: top + 'px' }"
     >
         <li
@@ -10,7 +10,7 @@
             class="autocomplete-item"
             :class="{ active: currentSelection?.label == record?.label }"
             @mouseenter="currentSelection = record"
-            @click="emit('select', record)"
+            @mousedown.prevent="emit('select', record)"
             @keydown="emit('select', record)"
         >
             {{ record.label }}
@@ -54,8 +54,14 @@ async function hide() {
     visible.value = false;
 }
 
-function listenKeyboard(event: KeyboardEvent) {
-    if (!visible.value) return;
+function onKeyDown(event: KeyboardEvent) {
+    if (!visible.value || props.suggestions.length === 0) return;
+
+    // Block default behaviour for these keys
+    if (event.key === 'Enter' || event.key === 'Tab') {
+        event.preventDefault();
+        event.stopPropagation();
+    }
 
     switch (event.key) {
         case 'ArrowDown':
@@ -74,25 +80,30 @@ function listenKeyboard(event: KeyboardEvent) {
 
         case 'Enter':
         case 'Tab':
-            event.preventDefault();
             if (currentSelection.value) {
                 emit('select', currentSelection.value);
             }
+            hide();
+            break;
+        case 'Escape':
+            event.preventDefault();
             hide();
             break;
     }
 }
 
 onMounted(() => {
-    props.editorView.dom.addEventListener('focus', show);
-    props.editorView.dom.addEventListener('blur', hide);
-    document.addEventListener('keydown', listenKeyboard);
+    const dom = props.editorView.dom;
+    dom.addEventListener('focus', show);
+    dom.addEventListener('blur', hide);
+    dom.addEventListener('keydown', onKeyDown, { capture: true });
 });
 
 onUnmounted(() => {
-    props.editorView.dom.removeEventListener('focus', show);
-    props.editorView.dom.removeEventListener('blur', hide);
-    document.removeEventListener('keydown', listenKeyboard);
+    const dom = props.editorView.dom;
+    dom.removeEventListener('focus', show);
+    dom.removeEventListener('blur', hide);
+    dom.removeEventListener('keydown', onKeyDown, { capture: true });
 });
 
 defineExpose({
@@ -122,7 +133,7 @@ defineExpose({
 
     li.autocomplete-item {
         list-style: none;
-        padding: 4px 8px;
+        padding: 4px 12px;
         cursor: pointer;
 
         &:hover,

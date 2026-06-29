@@ -9,7 +9,7 @@
             ref="autocompletePopup"
             :editor-view="editor.view"
             :suggestions="[{ label: 'Test' }, { label: 'Banana' }, { label: 'Building' }]"
-            @select="console.log('selected', $event)"
+            @select="onSuggestionSelect"
         />
     </div>
 </template>
@@ -143,6 +143,15 @@ async function saveFile() {
         component: 'article',
         content,
     });
+}
+
+async function onSuggestionSelect(item: SuggestionItem) {
+    // Insert the selected suggestion into the editor
+    const { from, to } = editor.state.selection;
+    editor.commands.insertContentAt({ from, to }, item.label);
+
+    // Hide the autocomplete popup after selection
+    autocompletePopup.value?.hide();
 }
 
 async function onEditorClick() {
