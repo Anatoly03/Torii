@@ -83,7 +83,6 @@ function onKeyDown(event: KeyboardEvent) {
             if (currentSelection.value) {
                 emit('select', currentSelection.value);
             }
-            hide();
             break;
         case 'Escape':
             event.preventDefault();
@@ -115,7 +114,7 @@ defineExpose({
 
 <style lang="scss" scoped>
 .autocomplete-popup {
-    position: absolute;
+    position: fixed;
     display: none;
     flex-direction: column;
     min-width: 128px;

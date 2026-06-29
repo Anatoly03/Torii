@@ -147,11 +147,12 @@ async function saveFile() {
 
 async function onSuggestionSelect(item: SuggestionItem) {
     // Insert the selected suggestion into the editor
-    const { from, to } = editor.state.selection;
+    let { from, to } = editor.state.selection;
     editor.commands.insertContentAt({ from, to }, item.label);
 
-    // Hide the autocomplete popup after selection
-    autocompletePopup.value?.hide();
+    // Add some space after the inserted text for better UX
+    from = editor.state.selection.from;
+    editor.commands.insertContentAt({ from, to: from }, ' ');
 }
 
 async function onEditorClick() {
