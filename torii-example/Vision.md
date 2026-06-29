@@ -120,3 +120,25 @@ The Torii ecosystem is specifically designed to be compatible with GIT and the l
 
 When possible, components should not be custom binaries but represented as a human-readable git-frienly data format (such as JSON and YAML). When porting data formats to Torii components this is not always possible (Images or if someone ports Azgaars’ Map engine to Torii).
 
+### "Fun" Vision: Godot Games in Torii
+
+Since the entire concept of Torii is compatible with Godot we could make a fun "demo" of a simple game generator in Torii, in the long-term. The idea is to map Torii record-components to Godot entity-components and compile a prototype.
+
+- The "Article" component will map to a very detailed documentation comment for an entity, some special components to map to Godot components will be needed.
+- "Image" will map to a sprite.
+
+These special components would be useful:
+
+- "Character" which consists of a character image and replaces the image at the top, it's a simple editor with a hitbox radius, and animations. Below the character preview will be some buttons (I'm thinking of assets which look like "stone" buttons) to trigger a certain animation.
+- "Tiles" as individual records containing one or multiple tiles, with or without hitbox.
+- "Level" using tile records and being able to place characters.
+
+And no more, this should be a simple demo. Just a player in a simple level colliding with the world.
+
+
+
+&nbsp;
+
+&nbsp;
+
+&nbsp;
