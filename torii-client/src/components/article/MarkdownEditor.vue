@@ -5,6 +5,12 @@
             @click="onEditorClick"
             :editor="editor"
         />
+        <markdown-editor-autocomplete
+            ref="autocompletePopup"
+            :editor-view="editor.view"
+            :suggestions="[{ label: 'Test' }]"
+            @select="console.log('selected', $event)"
+        />
     </div>
 </template>
 
@@ -21,12 +27,17 @@ import {
     AutocompleteExtension,
     type SuggestionItem,
 } from './autocomplete-extension';
+import MarkdownEditorAutocomplete from './MarkdownEditorAutocomplete.vue';
 
 const props = defineProps<{
     directory: string | null;
     name: string | null;
     autocompleteSuggestion: (name: string) => Promise<SuggestionItem[]>;
 }>();
+
+const autocompletePopup = ref<InstanceType<
+    typeof MarkdownEditorAutocomplete
+> | null>(null);
 
 const ignoreFirstSave = ref(true);
 const editor = new Editor({
@@ -45,7 +56,9 @@ const editor = new Editor({
                 marks: [
                     {
                         type: 'link',
-                        attrs: { href: `./${encodeURIComponent(item.label)}.md` },
+                        attrs: {
+                            href: `./${encodeURIComponent(item.label)}.md`,
+                        },
                     },
                 ],
                 text: item.label,
@@ -63,7 +76,22 @@ const editor = new Editor({
     onUpdate: saveFile,
 });
 
-onMounted(loadFile);
+editor.on('focus', () => {
+    autocompletePopup.value?.show();
+    autocompletePopup.value?.realign();
+});
+
+editor.on('selectionUpdate', () => {
+    autocompletePopup.value?.realign();
+});
+
+onMounted(async () => {
+    // Load the file content when the component is mounted.
+    await loadFile();
+
+    // Hide the autocomplete popup (load file triggers autocomplete show)
+    autocompletePopup.value?.hide();
+});
 
 watch(
     () => props.name,
