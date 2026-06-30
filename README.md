@@ -2,7 +2,7 @@
 
 [![Publish](https://github.com/Anatoly03/Torii/actions/workflows/publish.yml/badge.svg)](https://github.com/Anatoly03/Torii/actions/workflows/publish.yml)
 
-Torii Project is a tool for world builders and story writers to document vast worlds.
+Torii Project is a tool for world builders and story writers to document vast worlds. Currently Torii supports managing markdown notes.
 
 ### Running
 

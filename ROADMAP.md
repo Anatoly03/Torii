@@ -33,7 +33,7 @@ The first stage of the project is to create a simple file browser like applicati
 -   [x] Rewrite Tauri code to support component system stubs.
 -   [x] Image Component: Ability to view images.
 
-### `v0.0.0-dev4` [CURRENT]
+### `v0.0.0-dev4` [COMPLETED]
 
 -   [x] Fix CSS on Apple devices
 -   [x] Add tabulation support to navigate the project
@@ -42,7 +42,14 @@ The first stage of the project is to create a simple file browser like applicati
     -   [x] Autocomplete File Links
     -   [x] File Links Support (Click)
 
-### `v0.0.0-dev5`
+### `v0.0.0-dev5` [CURRENT]
+
+-   [ ] Add footer to editing components
+    -   [ ] Word Count
+-   [ ] Add Settings
+    -   [ ] Enable/ Disable Word Count
+
+### `v0.0.0-dev6`
 
 -   [ ] Extend Markdown
     -   [ ] Image embed support

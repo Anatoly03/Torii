@@ -6,7 +6,11 @@ Like a [Japanese Torii](https://en.wikipedia.org/wiki/Torii) gate, the idea for 
 
 ---
 
-### v0.0.0-dev4
+### v0.0.0-dev5
+
+- TBA
+
+### [v0.0.0-dev4](https://github.com/Anatoly03/Torii/releases/tag/app-v0.0.0-dev4)
 
 - Add minor support for tabulation accross the project.
 - Added very simple autocomplete feature for linking markdown notes (e.g. [Flower](./Flower.md), [Vision](./Vision.md)).

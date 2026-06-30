@@ -8,7 +8,7 @@ The following is a list of all features currently possible in Torii. If you have
 
 - View, (Create) Open &amp; Unlink Recent Projects
 - View, Create &amp; Remove Records
-- View, Edit Markdown Components (`.md`)
+- View &amp; Edit Markdown Components (`.md`)
 - View &amp; Delete Image Component (`.png`)
 - ...
 
