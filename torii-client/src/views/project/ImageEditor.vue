@@ -1,6 +1,6 @@
 <template>
-    <div class="file-editor-image" v-if="imageSrc">
-        <img class="file-image-preview" :src="imageSrc" alt="Image Preview" />
+    <div class="file-editor-image" v-if="imageBlob">
+        <img class="file-image-preview" :src="imageBlob" alt="Image Preview" />
         <button class="delete-btn" @click="removeImage" title="Delete image">
             <NIcon size="16">
                 <CloseOutline />
@@ -39,22 +39,43 @@ watch(
 );
 
 const imageData = ref<Uint8Array | null>(null);
-const imageSrc = computed(() => {
-    revokeImageUrl(); // Revoke the previous object URL to avoid memory leaks
-    return imageData.value ? createImageUrl(imageData.value) : '';
-});
+const imageBlob = ref<string | null>(null);
+
+function createImageUrl(bytes: Uint8Array, mimeType = 'image/png'): string {
+    const blob = new Blob([bytes], { type: mimeType });
+    return URL.createObjectURL(blob);
+}
+
+function revokeImageUrl() {
+    if (!imageBlob.value) return;
+    URL.revokeObjectURL(imageBlob.value);
+}
+
+function refreshImageBlob() {
+    revokeImageUrl();
+
+    if (imageData.value) {
+        imageBlob.value = createImageUrl(imageData.value);
+    } else {
+        imageBlob.value = null;
+    }
+}
 
 async function loadFile() {
     try {
-        imageData.value = await invoke<Uint8Array>('get_record_component', {
+        const file = await invoke<Uint8Array>('get_record_component', {
             directory: props.directory,
             name: props.name,
             component: 'image',
         });
-    } catch(e) {
+
+        imageData.value = file.byteLength ? file : null;
+    } catch (e) {
         console.warn(e);
         imageData.value = null;
     }
+
+    refreshImageBlob();
 }
 
 async function removeImage() {
@@ -66,19 +87,7 @@ async function removeImage() {
         component: 'image',
     });
 
-    imageData.value = null;
     emit('refresh');
-}
-
-function createImageUrl(bytes: Uint8Array, mimeType = 'image/png'): string {
-    const blob = new Blob([bytes], { type: mimeType });
-    return URL.createObjectURL(blob);
-}
-
-function revokeImageUrl() {
-    if (imageSrc.value) {
-        URL.revokeObjectURL(imageSrc.value);
-    }
 }
 
 onMounted(loadFile);

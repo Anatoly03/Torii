@@ -44,6 +44,7 @@ The first stage of the project is to create a simple file browser like applicati
 
 ### `v0.0.0-dev5` [CURRENT]
 
+-   [ ] Add Image Banner component.
 -   [ ] Add footer to editing components
     -   [ ] Word Count
 -   [ ] Add Settings

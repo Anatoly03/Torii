@@ -20,10 +20,11 @@
         </div> -->
         <div class="view-project-content">
             <ImageEditor
+                :key="currentFile.directory + '/' + currentFile.name"
                 :directory="markdownDirectory"
                 :name="markdownName"
                 @refresh="loadComponents()"
-                v-if="currentFile && recordComponents.includes('image')"
+                v-if="currentFile"
             />
             <MarkdownEditor
                 :directory="markdownDirectory"
