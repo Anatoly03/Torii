@@ -1,14 +1,27 @@
 <template>
-    <div class="file-editor-image" v-if="imageBlob">
-        <img class="file-image-preview" :src="imageBlob" alt="Image Preview" />
-        <button class="delete-btn" @click="removeImage" title="Delete image">
-            <NIcon size="16">
-                <CloseOutline />
-            </NIcon>
-        </button>
-    </div>
-    <div v-else class="file-editor-image">
-        <div class="file-image-placeholder">
+    <div
+        class="file-editor-image"
+        :class="{ 'drag-over': isDragOver, 'has-image': imageBlob }"
+        @dragenter.prevent="isDragOver = true"
+        @dragleave.prevent="isDragOver = false"
+    >
+        <div v-if="imageBlob" class="image-preview">
+            <img
+                class="file-image-preview"
+                :src="imageBlob"
+                alt="Image Preview"
+            />
+            <button
+                class="delete-btn"
+                @click="removeImage"
+                title="Delete image"
+            >
+                <NIcon size="16">
+                    <CloseOutline />
+                </NIcon>
+            </button>
+        </div>
+        <div v-else class="image-placeholder">
             <NIcon size="32">
                 <ImageOutline />
             </NIcon>
@@ -20,11 +33,13 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { invoke } from '@tauri-apps/api/core';
 import { NIcon } from 'naive-ui';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 import { CloseOutline, ImageOutline } from '@vicons/ionicons5';
 
 const props = defineProps<{
     directory: string | null;
     name: string | null;
+    component: string;
 }>();
 
 const emit = defineEmits<{
@@ -38,8 +53,25 @@ watch(
     }
 );
 
+const currentWindow = getCurrentWindow();
 const imageData = ref<Uint8Array | null>(null);
 const imageBlob = ref<string | null>(null);
+const isDragOver = ref(false);
+const unlistenDragDrop = ref<() => void>(() => void 0);
+
+// Listen for file drops
+currentWindow
+    .onDragDropEvent(async (event) => {
+        if (event.payload.type === 'drop') {
+            const path = event.payload.paths[0];
+            console.log('Dropped file path:', path);
+
+            // TODO
+        }
+    })
+    .then((unlisten) => {
+        unlistenDragDrop.value = unlisten;
+    });
 
 function createImageUrl(bytes: Uint8Array, mimeType = 'image/png'): string {
     const blob = new Blob([bytes], { type: mimeType });
@@ -66,7 +98,7 @@ async function loadFile() {
         const file = await invoke<Uint8Array>('get_record_component', {
             directory: props.directory,
             name: props.name,
-            component: 'image',
+            component: props.component,
         });
 
         imageData.value = file.byteLength ? file : null;
@@ -84,14 +116,17 @@ async function removeImage() {
     await invoke('remove_record_component', {
         directory: props.directory,
         name: props.name,
-        component: 'image',
+        component: props.component,
     });
 
     emit('refresh');
 }
 
 onMounted(loadFile);
-onUnmounted(revokeImageUrl);
+onUnmounted(async () => {
+    (await unlistenDragDrop.value)(); // Stop listening for file drops
+    revokeImageUrl();
+});
 </script>
 
 <style lang="scss" scoped>
@@ -99,11 +134,28 @@ onUnmounted(revokeImageUrl);
     position: relative;
     justify-content: center;
     align-items: center;
-    padding: 16px;
+    margin: 16px;
     display: inline-block;
+    min-width: 200px;
+    max-width: 200px;
+    min-height: 200px;
+    max-height: 200px;
+    aspect-ratio: 1 / 1;
+    background-color: #fafafa;
+    z-index: 10;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+
+    // existing styles
+    &.drag-over {
+        outline: 2px solid #42b983;
+        background-color: rgba(66, 185, 131, 0.1);
+    }
 
     .file-image-preview {
-        max-height: 200px;
+        max-width: 100%;
+        max-height: 100%;
         object-fit: contain;
         display: block;
     }
@@ -140,11 +192,8 @@ onUnmounted(revokeImageUrl);
         opacity: 1;
     }
 
-    .file-image-placeholder {
-        width: 200px;
-        height: 200px;
-        border: 2px dashed #ccc;
-        border-radius: 8px;
+    .image-placeholder {
+        height: 100%;
         color: #ccc;
         display: flex;
         align-items: center;

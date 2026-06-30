@@ -23,6 +23,7 @@
                 :key="currentFile.directory + '/' + currentFile.name"
                 :directory="markdownDirectory"
                 :name="markdownName"
+                component="image"
                 @refresh="loadComponents()"
                 v-if="currentFile"
             />
@@ -42,8 +43,10 @@ import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { invoke } from '@tauri-apps/api/core';
 import FileTree, { Record } from '../../components/file/FileTree.vue';
+
+// Components
 import MarkdownEditor from '../../components/article/MarkdownEditor.vue';
-import ImageEditor from './ImageEditor.vue';
+import ImageEditor from '../../components/image/ImageEditor.vue';
 
 const route = useRoute();
 const router = useRouter();
