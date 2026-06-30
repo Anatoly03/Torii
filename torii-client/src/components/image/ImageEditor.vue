@@ -62,12 +62,23 @@ const unlistenDragDrop = ref<() => void>(() => void 0);
 // Listen for file drops
 currentWindow
     .onDragDropEvent(async (event) => {
-        if (event.payload.type === 'drop') {
+        if (event.payload.type !== 'drop') return;
+
+        try {
             const path = event.payload.paths[0];
-            console.log('Dropped file path:', path);
+            const file: ArrayBuffer = await invoke('read_file', {
+                path,
+                mimeType: 'image',
+            });
+
+            console.log('read drop', file);
 
             // TODO
+        } catch (e) {
+            console.warn('Error reading dropped file:', e);
         }
+
+        loadFile();
     })
     .then((unlisten) => {
         unlistenDragDrop.value = unlisten;

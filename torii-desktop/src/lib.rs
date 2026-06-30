@@ -16,6 +16,7 @@ pub fn run() {
             recent::list_recent_projects,
             recent::add_recent_project,
             recent::remove_recent_project,
+            project::read_file,
             project::record::list_records,
             project::record::rename_record,
             project::record::remove_record,
@@ -31,7 +32,8 @@ pub fn run() {
 /// Enable logging for the application. This will log messages to
 /// the console when in debug mode.
 pub fn enable_logging(app: &mut App) -> Result<(), Box<dyn Error>> {
-    if cfg!(debug_assertions) {
+    #[cfg(debug_assertions)]
+    {
         app.handle().plugin(
             tauri_plugin_log::Builder::default()
                 .level(log::LevelFilter::Info)
