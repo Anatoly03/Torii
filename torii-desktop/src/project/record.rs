@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use std::{collections::HashSet, fs::read_dir, io::ErrorKind, path::PathBuf};
 use tauri::ipc::Response;
 
-use crate::components::get_component_by_name;
+use crate::components::{ArticleComponent, ImageComponent, ToriiComponent, get_component_by_name};
 
 /// A record in a Torii project. This is used to represent a single "thing"
 /// in the project, such as an encyclopedia entry, a character sheet or a book
@@ -70,15 +70,20 @@ impl Record {
 
     /// Lists the components attached to a specific record.
     pub fn list_components(&self) -> Result<Vec<String>, String> {
-        let mut components = vec!["article".to_string()];
+        let components: Vec<Box<dyn ToriiComponent>> =
+            vec![Box::new(ArticleComponent), Box::new(ImageComponent)];
 
-        // If the record has an image, add the "image" component to the list.
-        let image_path = self.directory.join(format!("{}.png", self.name));
-        if image_path.exists() {
-            components.push("image".to_string());
-        }
+        let record = self.directory.join(&self.name);
 
-        Ok(components)
+        let listed = components
+            .iter()
+            .filter_map(|comp| match comp.is_attached(&record) {
+                true => Some(comp.component_name().to_string()),
+                false => None,
+            })
+            .collect::<Vec<String>>();
+
+        Ok(listed)
     }
 
     /// Retrieve all files in the directory which define the record. When deleting a record,
@@ -97,12 +102,6 @@ impl Record {
             })
             .collect();
         Ok(files)
-    }
-
-    /// Returns the path to the markdown file of the record. This is used to read
-    /// and write the "Article" component of the record.
-    pub fn get_markdown_path(&self) -> PathBuf {
-        self.directory.join(format!("{}.md", self.name))
     }
 }
 

@@ -32,8 +32,8 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { invoke } from '@tauri-apps/api/core';
-import { NIcon } from 'naive-ui';
 import { getCurrentWindow } from '@tauri-apps/api/window';
+import { NIcon } from 'naive-ui';
 import { CloseOutline, ImageOutline } from '@vicons/ionicons5';
 
 const props = defineProps<{
@@ -147,7 +147,8 @@ onUnmounted(async () => {
     justify-content: center;
     align-items: center;
     margin: 16px;
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
     min-width: 200px;
     max-width: 200px;
     min-height: 200px;

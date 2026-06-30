@@ -33,7 +33,25 @@ impl ToriiComponent for ArticleComponent {
     ///
     /// When a component is detached from a record, all files associated with that component
     /// who have no other associated components should be deleted.
+    ///
+    /// # Example
+    ///
+    /// ```text
+    /// Hello World.md
+    /// Hello World.png
+    /// ```
+    ///
+    /// The "Article" component oversees the file "Hello World.md" and will reject the file "Hello
+    /// World.png".
     fn is_associated(&self, path: &PathBuf) -> bool {
         path.extension().is_some_and(|ext| ext == "md")
+    }
+
+    /// Reads the record file path and yields whether the record implements the article component.
+    ///
+    /// For example if the record is "Diana Loewe", we scan for "Diana Loewe.md" in the record's
+    /// directory. If this file exists, then the record implements the article component.
+    fn is_attached(&self, path: &PathBuf) -> bool {
+        path.with_extension("md").exists()
     }
 }

@@ -33,7 +33,25 @@ impl ToriiComponent for ImageComponent {
     /// 
     /// When a component is detached from a record, all files associated with that component
     /// who have no other associated components should be deleted.
+    /// 
+    /// # Example
+    ///
+    /// ```text
+    /// Hello World.md
+    /// Hello World.png
+    /// ```
+    ///
+    /// The "Image" component oversees the file "Hello World.png" and will reject the file "Hello
+    /// World.md".
     fn is_associated(&self, path: &PathBuf) -> bool {
         path.extension().is_some_and(|ext| ext == "png")
+    }
+    
+    /// Reads the record file path and yields whether the record implements the image component.
+    /// 
+    /// For example if the record is "Diana Loewe", we scan for "Diana Loewe.png" in the record's
+    /// directory. If this file exists, then the record implements the image component.
+    fn is_attached(&self, path: &PathBuf) -> bool {
+        path.with_extension("png").exists()
     }
 }

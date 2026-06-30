@@ -31,8 +31,9 @@
                 :directory="markdownDirectory"
                 :name="markdownName"
                 :autocomplete-suggestion="(v) => autocompleteMarkdown(v)"
+                :placeholder="!recordComponents.includes('article')"
                 @open-file="openFile"
-                v-if="currentFile && recordComponents.includes('article')"
+                v-if="currentFile"
             />
         </div>
     </div>
@@ -93,6 +94,8 @@ async function loadComponents() {
         directory,
         name,
     });
+
+    console.log('Components listed:', recordComponents.value);
 }
 
 async function autocompleteMarkdown(name: string): Promise<any> {
