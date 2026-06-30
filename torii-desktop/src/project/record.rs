@@ -4,7 +4,9 @@ use serde::{Deserialize, Serialize};
 use std::{collections::HashSet, fs::read_dir, io::ErrorKind, path::PathBuf};
 use tauri::ipc::Response;
 
-use crate::components::{ArticleComponent, ImageComponent, ToriiComponent, get_component_by_name};
+use crate::components::{
+    ArticleComponent, ImageComponent, ToriiComponent, get_all_components, get_component_by_name,
+};
 
 /// A record in a Torii project. This is used to represent a single "thing"
 /// in the project, such as an encyclopedia entry, a character sheet or a book
@@ -70,12 +72,10 @@ impl Record {
 
     /// Lists the components attached to a specific record.
     pub fn list_components(&self) -> Result<Vec<String>, String> {
-        let components: Vec<Box<dyn ToriiComponent>> =
-            vec![Box::new(ArticleComponent), Box::new(ImageComponent)];
-
         let record = self.directory.join(&self.name);
 
-        let listed = components
+        // Retrieve all components and find which are attached to the record.
+        let listed = get_all_components()
             .iter()
             .filter_map(|comp| match comp.is_attached(&record) {
                 true => Some(comp.component_name().to_string()),

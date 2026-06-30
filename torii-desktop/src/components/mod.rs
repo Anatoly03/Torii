@@ -34,10 +34,10 @@ pub trait ToriiComponent {
     }
 
     /// Reads the record file path and yields whether the record implements this component.
-    /// 
+    ///
     /// For example if the record is "Users/Anatoly/Teada Recors/Diana Loewe", an "Article"
     /// component will check if the file "Users/Anatoly/Teada Recors/Diana Loewe.md" exists.
-    /// The general rule is that if this file exists, so does the component. 
+    /// The general rule is that if this file exists, so does the component.
     fn is_attached(&self, path: &PathBuf) -> bool;
 
     /// Reads through multiple files and filters for files that are associated with this component.
@@ -62,4 +62,13 @@ pub fn get_component_by_name(name: &str) -> Option<Box<dyn ToriiComponent>> {
         "image" => Some(Box::new(image::ImageComponent)),
         _ => None,
     }
+}
+
+/// Returns a boxed instance of a component based on its name. If the component name is not
+/// recognized, it returns None.
+pub fn get_all_components() -> Vec<Box<dyn ToriiComponent>> {
+    vec![
+        Box::new(article::ArticleComponent),
+        Box::new(image::ImageComponent),
+    ]
 }
