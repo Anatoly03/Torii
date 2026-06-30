@@ -94,7 +94,30 @@ async function loadFile() {
     refreshImageBlob();
 }
 
-function onImageDrop(event: DragEvent) {
+async function loadImageFromHTML(html: string) {
+    // Parse the HTML to see if the top-most element is an <img> tag,
+    // then extract the src attribute
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+
+    if (doc.body.firstElementChild?.tagName !== 'IMG') return;
+    const element = doc.body.firstElementChild! as HTMLImageElement;
+
+    console.log(element.src);
+
+    // Fetch the image data from the src URL and convert it to a Uint8Array.
+    // This should work for URLs but probably not for local files paths (cors).
+    const response = await fetch(element.src);
+    const blob = await response.blob();
+    const arrayBuffer = await blob.arrayBuffer();
+
+    imageData.value = new Uint8Array(arrayBuffer);
+    console.log('Loaded image data:', imageData.value);
+
+    refreshImageBlob();
+}
+
+async function onImageDrop(event: DragEvent) {
     event.preventDefault();
     isDragOver.value = false;
 
@@ -115,7 +138,8 @@ function onImageDrop(event: DragEvent) {
     // Handle HTML
     const html = dt.getData('text/html');
     if (html) {
-        console.log('HTML dropped:', html);
+        await loadImageFromHTML(html);
+        return;
     }
 }
 
