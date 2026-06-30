@@ -10,6 +10,8 @@ Like a [Japanese Torii](https://en.wikipedia.org/wiki/Torii) gate, the idea for 
 
 - TBA
 
+---
+
 ### [v0.0.0-dev4](https://github.com/Anatoly03/Torii/releases/tag/app-v0.0.0-dev4)
 
 - Add minor support for tabulation accross the project.

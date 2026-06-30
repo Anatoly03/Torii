@@ -2,7 +2,9 @@
 //!
 //! It provides functionality to read article files and handle article-related operations.
 
-use std::path::PathBuf;
+use std::{io::ErrorKind, path::PathBuf};
+
+use tauri::ipc::Response;
 
 use super::ToriiComponent;
 
@@ -53,5 +55,19 @@ impl ToriiComponent for ArticleComponent {
     /// directory. If this file exists, then the record implements the article component.
     fn is_attached(&self, path: &PathBuf) -> bool {
         path.with_extension("md").exists()
+    }
+
+    /// Gets a read request to view the "Article" component data for a record. This returns a
+    /// [Response][ipc::Response] containing the markdown string of the article.
+    fn read(&self, record: &PathBuf) -> Result<Response, String> {
+        let path = record.with_extension("md");
+
+        let file = match std::fs::read(path) {
+            Ok(file) => file,
+            Err(e) if e.kind() == ErrorKind::NotFound => vec![],
+            Err(e) => return Err(format!("Failed to read markdown file: {e}")),
+        };
+
+        Ok(Response::new(file))
     }
 }

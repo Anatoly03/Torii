@@ -97,8 +97,6 @@ async function loadFile() {
 }
 
 async function loadImageFromHTML(html: string) {
-    console.trace('loadImageFromHTML', html);
-
     // This is an expensive operation.
     loading.value += 1;
 
@@ -110,19 +108,21 @@ async function loadImageFromHTML(html: string) {
     if (doc.body.firstElementChild?.tagName !== 'IMG') return;
     const element = doc.body.firstElementChild! as HTMLImageElement;
 
-    console.log(element.src);
-
     // Fetch the image data from the src URL and convert it to a Uint8Array.
     // This should work for URLs but probably not for local files paths (cors).
     const response = await fetch(element.src);
     const blob = await response.blob();
     const arrayBuffer = await blob.arrayBuffer();
+    const byteLength = arrayBuffer.byteLength;
 
     imageData.value = new Uint8Array(arrayBuffer);
-    console.log('Loaded image data:', imageData.value);
-
     refreshImageBlob();
+
+    console.debug(`Loaded ${byteLength} bytes from ${element.src}`);
     loading.value -= 1;
+
+    // Save the image data to the backend
+    
 }
 
 async function onImageDrop(event: DragEvent) {
@@ -200,10 +200,6 @@ onUnmounted(async () => {
     &.drag-over {
         outline: 2px solid #42b983;
         background-color: rgba(66, 185, 131, 0.1);
-    }
-
-    .image-preview {
-        pointer-events: none;
     }
 
     .file-image-preview {

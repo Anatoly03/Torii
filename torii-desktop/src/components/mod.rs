@@ -5,6 +5,7 @@ mod image;
 
 pub use article::ArticleComponent;
 pub use image::ImageComponent;
+use tauri::ipc::Response;
 
 pub trait ToriiComponent {
     /// Retrieves the name of the component. Examples includes "article" and "image".
@@ -52,6 +53,13 @@ pub trait ToriiComponent {
     fn filter_associated<'a>(&self, path: &'a [PathBuf]) -> Vec<&'a PathBuf> {
         path.iter().filter(|p| self.is_associated(p)).collect()
     }
+
+    /// Gets a read request to view the component data for a record. This returns a
+    /// [Response][ipc::Response].
+    ///
+    /// For example, the "Article" component will return a markdown string, while the "Image"
+    /// component will return a raw byte array of the image data.
+    fn read(&self, record: &PathBuf) -> Result<Response, String>;
 }
 
 /// Returns a boxed instance of a component based on its name. If the component name is not
