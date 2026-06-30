@@ -4,7 +4,7 @@
             <FileTree
                 ref="fileTree"
                 :root="projectPath"
-                @update:current-file="currentFile = $event"
+                @update:current-file="setCurrentFile"
             />
             <div class="view-project-quick-settings">
                 <button
@@ -28,6 +28,8 @@
             <MarkdownEditor
                 :directory="markdownDirectory"
                 :name="markdownName"
+                :autocomplete-suggestion="(v) => autocompleteMarkdown(v)"
+                @open-file="openFile"
                 v-if="currentFile && recordComponents.includes('article')"
             />
         </div>
@@ -38,8 +40,8 @@
 import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { invoke } from '@tauri-apps/api/core';
-import FileTree from '../../components/file/FileTree.vue';
-import MarkdownEditor from './MarkdownEditor.vue';
+import FileTree, { Record } from '../../components/file/FileTree.vue';
+import MarkdownEditor from '../../components/article/MarkdownEditor.vue';
 import ImageEditor from './ImageEditor.vue';
 
 const route = useRoute();
@@ -50,10 +52,12 @@ const markdownDirectory = ref<string | null>(null);
 const markdownName = ref<string | null>(null);
 const recordComponents = ref<string[]>([]);
 const fileTree = ref<InstanceType<typeof FileTree> | null>(null);
+const records = ref<Record[]>([]);
 
 onMounted(async () => {
     const files = await fileTree.value?.loadFiles();
     const readme = files?.find((r) => r.name === 'README');
+    records.value = files || [];
 
     if (readme) {
         currentFile.value = readme;
@@ -67,6 +71,10 @@ watch(currentFile, (newFile) => {
         markdownDirectory.value = newFile.directory;
         markdownName.value = newFile.name;
         loadComponents();
+
+        if (fileTree.value) {
+            fileTree.value.setCurrentFile(newFile);
+        }
     } else {
         markdownDirectory.value = null;
         markdownName.value = null;
@@ -81,6 +89,27 @@ async function loadComponents() {
         directory,
         name,
     });
+}
+
+async function autocompleteMarkdown(name: string): Promise<any> {
+    return records.value
+        .filter((record) => record.name.startsWith(name))
+        .map((record) => ({
+            label: record.name,
+            value: record.name,
+        }));
+}
+
+async function openFile(name: string) {
+    const record = records.value.find((r) => r.name === name);
+    if (!record) return;
+
+    currentFile.value = record;
+}
+
+function setCurrentFile(file: Record | null) {
+    if (!file) return;
+    currentFile.value = file;
 }
 
 if (!projectPath) {

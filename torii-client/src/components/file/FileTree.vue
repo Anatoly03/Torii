@@ -4,7 +4,8 @@
     <div class="view-file-tree">
         <n-tree
             :align="'left'"
-            :value="currentFile"
+            :selected-keys="selectedKeys"
+            @update-selected-keys="selectedKeys = $event"
             :data="treeData"
             :render-label="renderLabel"
             :render-prefix="(_) => null"
@@ -12,7 +13,6 @@
             :render-switcher-icon="(_) => null"
             block-line
             block-node
-            @update:selected-keys="onSelectFile"
         >
             <template #empty> Empty workspace. </template>
         </n-tree>
@@ -34,9 +34,9 @@ import { NIcon, NTree, NInput, NButton, NSpace, NDropdown } from 'naive-ui';
 import { Component, h, onMounted, ref, nextTick, watch, VNodeChild } from 'vue';
 import { invoke } from '@tauri-apps/api/core';
 import FileTreeCreateFile from './FileTreeCreateFile.vue';
-import { TreeRenderProps } from 'naive-ui/es/tree/src/interface';
+import { Key, TreeRenderProps } from 'naive-ui/es/tree/src/interface';
 
-interface Record {
+export interface Record {
     directory: string;
     name: string;
 }
@@ -55,12 +55,22 @@ const emit = defineEmits<{
 }>();
 
 const treeData = ref<(TreeOption & { record: Record })[]>([]);
+const selectedKeys = ref<Key[]>([]);
 const currentFile = ref<{ directory: string; name: string } | null>();
 const isLoading = ref(false);
 const isCreatingNew = ref(false);
 
 watch(currentFile, (newFile) => {
     emit('update:current-file', newFile ?? null);
+});
+
+watch(selectedKeys, (keys, oldKeys) => {
+    if (!keys.length) {
+        selectedKeys.value = oldKeys; // Prevent deselecting all
+        return;
+    }
+
+    onSelectFile(keys);
 });
 
 // Special key for the "new file" input node
@@ -150,7 +160,7 @@ function renderFileOptions(tree_props: TreeRenderProps): VNodeChild {
     );
 }
 
-function onSelectFile(keys: string[]) {
+function onSelectFile(keys: Key[]) {
     const fileKeys = keys.filter((key) => key !== NEW_FILE_KEY);
 
     if (!fileKeys.length) {
@@ -248,15 +258,17 @@ async function refreshFiles(): Promise<Record[]> {
             directory: props.root,
         });
 
-        const newData = files.map((file) => {
-            return {
-                record: file,
-                key: file.directory + '/' + file.name,
-                label: file.name,
-                isLeaf: true,
-                prefix: createIcon(FileTrayFullOutline),
-            };
-        });
+        const newData = files
+            .map((file) => {
+                return {
+                    record: file,
+                    key: file.directory + '/' + file.name,
+                    label: file.name,
+                    isLeaf: true,
+                    prefix: createIcon(FileTrayFullOutline),
+                };
+            })
+            .sort((a, b) => a.label.localeCompare(b.label));
 
         // Preserve the "new file" input if it's active
         if (isCreatingNew.value) {
@@ -290,11 +302,25 @@ function loadFiles() {
     return refreshFiles();
 }
 
+function setCurrentFile(file: Record | null) {
+    if (!file) return;
+
+    const key = file.directory + '/' + file.name;
+    const node = treeData.value.find((n) => n.key === key);
+    selectedKeys.value = node?.key ? [node.key] : [];
+
+    currentFile.value = node?.record;
+
+    console.log('Node found:', node);
+    console.log('Current file set to:', currentFile.value);
+}
+
 // Expose refresh method
 defineExpose({
     loadFiles,
     refreshFiles,
     currentFile,
+    setCurrentFile,
 });
 
 onMounted(() => {

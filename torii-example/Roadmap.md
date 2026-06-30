@@ -9,8 +9,10 @@ Like a [Japanese Torii](https://en.wikipedia.org/wiki/Torii) gate, the idea for 
 ### v0.0.0-dev4
 
 - Add minor support for tabulation accross the project.
+- Added very simple autocomplete feature for linking markdown notes (e.g. [Flower](./Flower.md), [Vision](./Vision.md)).
 - Fix minor CSS issuesses on Mac.
 - Fix minor bug with recent projects where "Torii Dev" workspace would duplicate itself into the local project list.
+- Fix state reactivity with sidebar file tree and prevent unselecting files.
 
 ---
 

@@ -104,11 +104,17 @@ impl RecentProjectMetadata {
     /// Saves the recent project metadata to the recent projects file. This is used
     /// when a project is added to the list of recent projects.
     pub async fn save(app: AppHandle, list: Vec<Self>) -> Result<(), String> {
-        let recent_projects_list = app
+        let app_local_data_dir = app
             .path()
             .app_local_data_dir()
-            .map_err(|e| format!("Failed to get app local data directory: {e}"))?
-            .join(RECENT_PROJECTS_FILE);
+            .map_err(|e| format!("Failed to get app local data directory: {e}"))?;
+        let recent_projects_list = app_local_data_dir.join(RECENT_PROJECTS_FILE);
+
+        // On some operating systems, [File::create] will fail if the parent directory
+        // does not exist.
+        std::fs::create_dir_all(app_local_data_dir)
+            .map_err(|e| format!("Failed to create app local data directory: {e}"))?;
+
         let file = File::create(recent_projects_list)
             .map_err(|e| format!("Failed to create recent projects file: {e}"))?;
         // invoke the "export()" method to hide some generated fields from the JSON file.
