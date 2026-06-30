@@ -1,10 +1,11 @@
 <template>
-    <div
+    <n-spin
         class="file-editor-image"
         :class="{ 'drag-over': isDragOver, 'has-image': imageBlob }"
         @dragenter.prevent="isDragOver = true"
         @dragleave.prevent="isDragOver = false"
         @drop="onImageDrop"
+        :show="loading > 0"
     >
         <div v-if="imageBlob" class="image-preview">
             <img
@@ -27,13 +28,13 @@
                 <ImageOutline />
             </NIcon>
         </div>
-    </div>
+    </n-spin>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { invoke } from '@tauri-apps/api/core';
-import { NIcon } from 'naive-ui';
+import { NIcon, NSpin } from 'naive-ui';
 import { CloseOutline, ImageOutline } from '@vicons/ionicons5';
 
 const props = defineProps<{
@@ -55,6 +56,7 @@ watch(
 
 const imageData = ref<Uint8Array | null>(null);
 const imageBlob = ref<string | null>(null);
+const loading = ref(0);
 const isDragOver = ref(false);
 
 function createImageUrl(bytes: Uint8Array, mimeType = 'image/png'): string {
@@ -95,6 +97,11 @@ async function loadFile() {
 }
 
 async function loadImageFromHTML(html: string) {
+    console.trace('loadImageFromHTML', html);
+
+    // This is an expensive operation.
+    loading.value += 1;
+
     // Parse the HTML to see if the top-most element is an <img> tag,
     // then extract the src attribute
     const parser = new DOMParser();
@@ -115,6 +122,7 @@ async function loadImageFromHTML(html: string) {
     console.log('Loaded image data:', imageData.value);
 
     refreshImageBlob();
+    loading.value -= 1;
 }
 
 async function onImageDrop(event: DragEvent) {
@@ -156,7 +164,14 @@ async function removeImage() {
     emit('refresh');
 }
 
-onMounted(loadFile);
+onMounted(async () => {
+    // Start loading after 100ms if the image does not load immediately.
+    // The delay is to prevent spinner flickering.
+    setTimeout(() => loading.value += 1, 100);
+
+    await loadFile();
+    loading.value -= 1;
+});
 onUnmounted(async () => {
     revokeImageUrl();
 });
