@@ -4,6 +4,7 @@
         :class="{ 'drag-over': isDragOver, 'has-image': imageBlob }"
         @dragenter.prevent="isDragOver = true"
         @dragleave.prevent="isDragOver = false"
+        @drop="onImageDrop"
     >
         <div v-if="imageBlob" class="image-preview">
             <img
@@ -32,7 +33,6 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { invoke } from '@tauri-apps/api/core';
-import { getCurrentWindow } from '@tauri-apps/api/window';
 import { NIcon } from 'naive-ui';
 import { CloseOutline, ImageOutline } from '@vicons/ionicons5';
 
@@ -53,36 +53,9 @@ watch(
     }
 );
 
-const currentWindow = getCurrentWindow();
 const imageData = ref<Uint8Array | null>(null);
 const imageBlob = ref<string | null>(null);
 const isDragOver = ref(false);
-const unlistenDragDrop = ref<() => void>(() => void 0);
-
-// Listen for file drops
-currentWindow
-    .onDragDropEvent(async (event) => {
-        if (event.payload.type !== 'drop') return;
-
-        try {
-            const path = event.payload.paths[0];
-            const file: ArrayBuffer = await invoke('read_file', {
-                path,
-                mimeType: 'image',
-            });
-
-            console.log('read drop', file);
-
-            // TODO
-        } catch (e) {
-            console.warn('Error reading dropped file:', e);
-        }
-
-        loadFile();
-    })
-    .then((unlisten) => {
-        unlistenDragDrop.value = unlisten;
-    });
 
 function createImageUrl(bytes: Uint8Array, mimeType = 'image/png'): string {
     const blob = new Blob([bytes], { type: mimeType });
@@ -121,6 +94,31 @@ async function loadFile() {
     refreshImageBlob();
 }
 
+function onImageDrop(event: DragEvent) {
+    event.preventDefault();
+    isDragOver.value = false;
+
+    const dt = event.dataTransfer;
+    if (!dt) return;
+
+    // Check if files are dropped
+    if (dt.files && dt.files.length > 0) {
+        console.log('Files dropped:', dt.files);
+    }
+
+    // Check if text is dropped
+    const text = dt.getData('text/plain');
+    if (text) {
+        console.log('Text dropped:', text);
+    }
+
+    // Handle HTML
+    const html = dt.getData('text/html');
+    if (html) {
+        console.log('HTML dropped:', html);
+    }
+}
+
 async function removeImage() {
     if (!props.directory || !props.name) return;
 
@@ -136,7 +134,6 @@ async function removeImage() {
 
 onMounted(loadFile);
 onUnmounted(async () => {
-    (await unlistenDragDrop.value)(); // Stop listening for file drops
     revokeImageUrl();
 });
 </script>
@@ -166,11 +163,16 @@ onUnmounted(async () => {
         background-color: rgba(66, 185, 131, 0.1);
     }
 
+    .image-preview {
+        pointer-events: none;
+    }
+
     .file-image-preview {
         max-width: 100%;
         max-height: 100%;
         object-fit: contain;
         display: block;
+        pointer-events: none;
     }
 
     .delete-btn {
