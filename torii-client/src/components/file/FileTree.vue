@@ -248,15 +248,17 @@ async function refreshFiles(): Promise<Record[]> {
             directory: props.root,
         });
 
-        const newData = files.map((file) => {
-            return {
-                record: file,
-                key: file.directory + '/' + file.name,
-                label: file.name,
-                isLeaf: true,
-                prefix: createIcon(FileTrayFullOutline),
-            };
-        });
+        const newData = files
+            .map((file) => {
+                return {
+                    record: file,
+                    key: file.directory + '/' + file.name,
+                    label: file.name,
+                    isLeaf: true,
+                    prefix: createIcon(FileTrayFullOutline),
+                };
+            })
+            .sort((a, b) => a.label.localeCompare(b.label));
 
         // Preserve the "new file" input if it's active
         if (isCreatingNew.value) {
