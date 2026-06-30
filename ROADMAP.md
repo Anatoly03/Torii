@@ -51,6 +51,8 @@ The first stage of the project is to create a simple file browser like applicati
 
 ### `v0.0.0-dev6`
 
+-   [ ] Add Windows builds to publish workflow.
+    -   [ ] Add Windows versioning fixer script
 -   [ ] Extend Markdown
     -   [ ] Image embed support
 -   [ ] Refactor to Theme Support
