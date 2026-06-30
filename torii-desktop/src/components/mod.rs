@@ -1,10 +1,11 @@
-use std::path::PathBuf;
+//! This module contains the definition of the [ToriiComponent] trait and its core implementations.
 
 mod article;
 mod image;
 
 pub use article::ArticleComponent;
 pub use image::ImageComponent;
+use std::path::PathBuf;
 use tauri::ipc::Response;
 
 pub trait ToriiComponent {
@@ -30,9 +31,7 @@ pub trait ToriiComponent {
     ///
     /// The "Image" component oversees the file "Hello World.png". The components "Article" an
     /// "Brief" oversees the file "Hello World.md".
-    fn is_associated(&self, path: &PathBuf) -> bool {
-        false
-    }
+    fn is_associated(&self, path: &PathBuf) -> bool;
 
     /// Reads the record file path and yields whether the record implements this component.
     ///
@@ -84,14 +83,34 @@ pub trait ToriiComponent {
     fn write_from_file(&self, _record: &PathBuf, _source: &PathBuf) -> Option<Result<(), String>> {
         None
     }
+
+    /// Gets a remove request to delete the component data for a record. This method is
+    /// optional and the return type is to be understood as follows:
+    ///
+    /// - [None]: The component does not implement a custom remove method. The default
+    ///   behaviour (pointer calculation and file deletion) will be used.
+    /// - [Some(Ok)][Some]: The component was successfully deleted.
+    /// - [Some(Err)][Some]: The component failed to delete the component data for the
+    ///   record.
+    ///
+    /// Since a component can be associated with multiple files, and multiple components
+    /// can be associated with the same file, this method is expected to remove all files
+    /// that are solely associated with this component. 
+    /// 
+    /// For example, the "Article" component will remove the file "Diana Loewe.md", overriding
+    /// the default behaviour of removing all (!) markdown files, as well will the "Image"
+    /// component only check for the exact file "Diana Loewe.png" and remove it, but keep
+    /// the "Banner" component's file "Diana Loewe.banner.png" intact.
+    fn remove(&self, record: &PathBuf) -> Option<Result<(), String>>;
 }
 
 /// Returns a boxed instance of a component based on its name. If the component name is not
 /// recognized, it returns None.
 pub fn get_component_by_name(name: &str) -> Option<Box<dyn ToriiComponent>> {
     match name {
-        "article" => Some(Box::new(article::ArticleComponent)),
-        "image" => Some(Box::new(image::ImageComponent)),
+        "article" => Some(Box::new(ArticleComponent)),
+        "image" => Some(Box::new(ImageComponent::new("image", "png"))),
+        "banner" => Some(Box::new(ImageComponent::new("banner", "banner.png"))),
         _ => None,
     }
 }
@@ -100,7 +119,8 @@ pub fn get_component_by_name(name: &str) -> Option<Box<dyn ToriiComponent>> {
 /// recognized, it returns None.
 pub fn get_all_components() -> Vec<Box<dyn ToriiComponent>> {
     vec![
-        Box::new(article::ArticleComponent),
-        Box::new(image::ImageComponent),
+        Box::new(ArticleComponent),
+        Box::new(ImageComponent::new("image", "png")),
+        Box::new(ImageComponent::new("banner", "banner.png")),
     ]
 }

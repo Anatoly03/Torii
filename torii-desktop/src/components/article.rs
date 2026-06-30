@@ -80,4 +80,21 @@ impl ToriiComponent for ArticleComponent {
         let path = record.with_extension("md");
         std::fs::write(path, content).map_err(|e| format!("Failed to write markdown file: {e}"))
     }
+
+    /// Gets a remove request to delete the article for a record. The return type
+    /// is to be understood as follows:
+    ///
+    /// - [Some(Ok)][Some]: The article was successfully deleted.
+    /// - [Some(Err)][Some]: The article was not deleted due to an error.
+    ///
+    /// Since a component can be associated with multiple files, and multiple components
+    /// can be associated with the same file, this method is expected to remove all files
+    /// that are solely associated with this component.
+    ///
+    /// The "Article" component will remove the file "<entity>.md"
+    fn remove(&self, _: &PathBuf) -> Option<Result<(), String>> {
+        Some(Err(
+            "The article component can not be removed from a record.".to_string(),
+        ))
+    }
 }

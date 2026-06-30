@@ -122,7 +122,7 @@ async function loadImageFromURL(url: string) {
     await invoke('save_record_component', {
         directory: props.directory,
         name: props.name,
-        component: 'image',
+        component: props.component,
         content,
         contentType: 'image/png',
     });
@@ -156,7 +156,7 @@ async function loadImageFromHTML(html: string) {
                     await invoke('save_record_component_from_local_file', {
                         directory: props.directory,
                         name: props.name,
-                        component: 'image',
+                        component: props.component,
                         source: element.innerHTML.slice(7), // Remove 'file://' prefix
                     });
 

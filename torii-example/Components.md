@@ -15,7 +15,7 @@ For example I have a unique card deck specifically for my world which I call the
 
 ### "Image" Component
 
-- View, Delete
+- Create, View, Delete
 
 Every "image media" in the workspace is a record with an image component. Similar to "Wikimedia", you can write metadata about the image. An app user can make the decision between "coupling" an image with a record or splitting it.
 

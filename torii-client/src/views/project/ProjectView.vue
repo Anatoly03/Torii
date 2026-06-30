@@ -23,7 +23,17 @@
                 :key="currentFile.directory + '/' + currentFile.name"
                 :directory="markdownDirectory"
                 :name="markdownName"
+                component="banner"
+                class="view-project-banner"
+                @refresh="loadComponents()"
+                v-if="currentFile"
+            />
+            <ImageEditor
+                :key="currentFile.directory + '/' + currentFile.name"
+                :directory="markdownDirectory"
+                :name="markdownName"
                 component="image"
+                class="view-project-image"
                 @refresh="loadComponents()"
                 v-if="currentFile"
             />
