@@ -4,6 +4,8 @@ use serde::{Deserialize, Serialize};
 use std::{collections::HashSet, fs::read_dir, io::ErrorKind, path::PathBuf};
 use tauri::ipc::Response;
 
+use crate::components::get_component_by_name;
+
 /// A record in a Torii project. This is used to represent a single "thing"
 /// in the project, such as an encyclopedia entry, a character sheet or a book
 /// chapter.
@@ -95,26 +97,6 @@ impl Record {
             })
             .collect();
         Ok(files)
-    }
-
-    /// Retrieve all files in the directory which define the records' components. When
-    /// detaching a component from a record, all these files should be deleted.
-    pub fn associated_component_files<C: AsRef<str>>(
-        &self,
-        component: C,
-    ) -> Result<Vec<PathBuf>, String> {
-        let predicate = match component.as_ref() {
-            "article" => |p: &PathBuf| p.extension().is_some_and(|ext| ext == "md"),
-            "image" => |p: &PathBuf| p.extension().is_some_and(|ext| ext == "png"),
-            _ => |_: &PathBuf| false, // TODO: implement component-specific filtering
-        };
-
-        let component_files = self
-            .associated_files()?
-            .into_iter()
-            .filter(predicate)
-            .collect();
-        Ok(component_files)
     }
 
     /// Returns the path to the markdown file of the record. This is used to read
@@ -226,8 +208,9 @@ pub fn save_record_component(
     }
 }
 
-/// Removes a specific component for a given record. (It will
-/// be detached from the record)
+/// Removes a specific component for a given record. (It will be detached from the record).
+///
+/// This will also cleanup all files that are managed solely by this component.
 #[tauri::command]
 pub fn remove_record_component(
     directory: PathBuf,
@@ -235,9 +218,14 @@ pub fn remove_record_component(
     component: String,
 ) -> Result<(), String> {
     let record = Record { directory, name };
-    let component_files = record.associated_component_files(&component)?;
+    let component =
+        get_component_by_name(&component).ok_or(format!("Unknown component: {component}"))?;
+    let record_files = record.associated_files()?;
 
-    component_files
+    // TODO: for each other components, keep files which still have a component attached
+
+    component
+        .filter_associated(&record_files)
         .iter()
         .map(|file| {
             std::fs::remove_file(&file)

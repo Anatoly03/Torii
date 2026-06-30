@@ -130,6 +130,7 @@ async function removeImage() {
         component: props.component,
     });
 
+    loadFile();
     emit('refresh');
 }
 
