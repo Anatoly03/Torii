@@ -121,8 +121,18 @@ async function loadImageFromHTML(html: string) {
     console.debug(`Loaded ${byteLength} bytes from ${element.src}`);
     loading.value -= 1;
 
-    // Save the image data to the backend
+    // Convert the image data to a base64 string for saving
+    // which is required for mime type "image"
+    let content = btoa(String.fromCharCode(...imageData.value));
     
+    // Save the image data to the backend
+    await invoke('save_record_component', {
+        directory: props.directory,
+        name: props.name,
+        component: 'image',
+        content,
+        contentType: 'image/png',
+    });
 }
 
 async function onImageDrop(event: DragEvent) {
@@ -167,7 +177,7 @@ async function removeImage() {
 onMounted(async () => {
     // Start loading after 100ms if the image does not load immediately.
     // The delay is to prevent spinner flickering.
-    setTimeout(() => loading.value += 1, 100);
+    setTimeout(() => (loading.value += 1), 100);
 
     await loadFile();
     loading.value -= 1;

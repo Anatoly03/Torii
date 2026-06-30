@@ -222,6 +222,7 @@ async function createFile(name: string) {
             name,
             component: 'article',
             content: `# ${name}\n\n- Source: ${path}\n- Parent: ${props.root}\n- Name: ${name}\n\n`,
+            contentType: 'text/markdown',
         });
 
         // Refresh the file list

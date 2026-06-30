@@ -1,5 +1,9 @@
 //! This module exposes the interface to manage a Torii record.
 
+use base64::{
+    Engine as _, alphabet,
+    engine::{self, general_purpose},
+};
 use serde::{Deserialize, Serialize};
 use std::{collections::HashSet, fs::read_dir, io::ErrorKind, path::PathBuf};
 use tauri::ipc::Response;
@@ -105,40 +109,6 @@ impl Record {
     }
 }
 
-/// Gets the markdown file ("Article" component) of a record.
-pub fn get_markdown_file(directory: PathBuf, name: String) -> Result<Vec<u8>, String> {
-    let path = directory.join(format!("{}.md", name));
-
-    match std::fs::read(path) {
-        Ok(file) => Ok(file),
-        Err(e) if e.kind() == ErrorKind::NotFound => Ok(vec![]),
-        Err(e) => return Err(format!("Failed to read markdown file: {e}")),
-    }
-}
-
-/// Gets the image file ("Image" component) of a record.
-pub fn get_image_file(directory: PathBuf, name: String) -> Result<Vec<u8>, String> {
-    let path = directory.join(format!("{}.png", name));
-
-    match std::fs::read(path) {
-        Ok(file) => Ok(file),
-        Err(e) if e.kind() == ErrorKind::NotFound => Ok(vec![]),
-        Err(e) => return Err(format!("Failed to read image file: {e}")),
-    }
-}
-
-/// Saves (or creates) the markdown file ("Article" component) of a record.
-pub fn save_markdown_file(directory: PathBuf, name: String, content: String) -> Result<(), String> {
-    let path = directory.join(format!("{}.md", name));
-    std::fs::write(path, content).map_err(|e| format!("Failed to write markdown file: {e}"))
-}
-
-/// Removes the markdown file ("Article" component) of a record.
-pub fn remove_markdown_file(directory: PathBuf, name: String) -> Result<(), String> {
-    let path = directory.join(format!("{}.md", name));
-    std::fs::remove_file(path).map_err(|e| format!("Failed to remove markdown file: {e}"))
-}
-
 /// Lists all records in the given directory. This is used to populate the file tree
 /// in the workspace UI.
 #[tauri::command]
@@ -185,11 +155,10 @@ pub fn get_record_component(
     name: String,
     component: String,
 ) -> Result<Response, String> {
-    match component.as_str() {
-        "article" => get_markdown_file(directory, name).map(Response::new),
-        "image" => get_image_file(directory, name).map(Response::new),
-        _ => Err(format!("Unknown component: {component}")),
-    }
+    let path = directory.join(&name);
+    let component =
+        get_component_by_name(&component).ok_or(format!("Unknown component: {component}"))?;
+    component.read(&path)
 }
 
 /// Saves (or creates) a specific component for a given record.
@@ -199,12 +168,22 @@ pub fn save_record_component(
     name: String,
     component: String,
     content: String,
+    content_type: String,
 ) -> Result<(), String> {
-    match component.as_str() {
-        "article" => save_markdown_file(directory, name, content),
-        "image" => Err("Saving image component is not implemented yet".to_string()),
-        _ => Err(format!("Unknown component: {component}")),
-    }
+    let path = directory.join(&name);
+    let component =
+        get_component_by_name(&component).ok_or(format!("Unknown component: {component}"))?;
+    let content_type = content_type.split('/').next().unwrap_or("").to_lowercase();
+
+    let bytes = match content_type.as_str() {
+        "text" => content.into_bytes(),
+        "image" => general_purpose::STANDARD
+            .decode(content)
+            .map_err(|e| format!("Failed to decode base64 content: {e}"))?,
+        _ => return Err(format!("Unsupported content type: {content_type}")),
+    };
+
+    component.write(&path, &bytes)
 }
 
 /// Removes a specific component for a given record. (It will be detached from the record).

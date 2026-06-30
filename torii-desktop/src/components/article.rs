@@ -70,4 +70,14 @@ impl ToriiComponent for ArticleComponent {
 
         Ok(Response::new(file))
     }
+
+    /// Gets a write request to save the component data for a record. This takes a
+    /// base64 encoded string representing the binary data to be saved.
+    ///
+    /// The "Article" component will interpret the resulting binary as a markdown
+    /// string.
+    fn write(&self, record: &PathBuf, content: &[u8]) -> Result<(), String> {
+        let path = record.with_extension("md");
+        std::fs::write(path, content).map_err(|e| format!("Failed to write markdown file: {e}"))
+    }
 }

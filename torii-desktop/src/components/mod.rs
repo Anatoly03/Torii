@@ -60,6 +60,14 @@ pub trait ToriiComponent {
     /// For example, the "Article" component will return a markdown string, while the "Image"
     /// component will return a raw byte array of the image data.
     fn read(&self, record: &PathBuf) -> Result<Response, String>;
+
+    /// Gets a write request to save the component data for a record. This takes a
+    /// base64 encoded string representing the binary data to be saved.
+    ///
+    /// For example, the "Article" component will interpret the resulting binary as a
+    /// markdown string, while the "Image" component will interpret content as raw byte
+    /// data.
+    fn write(&self, record: &PathBuf, content: &[u8]) -> Result<(), String>;
 }
 
 /// Returns a boxed instance of a component based on its name. If the component name is not

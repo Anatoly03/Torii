@@ -178,6 +178,7 @@ async function saveFile() {
         name: props.name,
         component: 'article',
         content,
+        contentType: 'text/markdown',
     });
 }
 
