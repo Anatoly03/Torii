@@ -79,4 +79,19 @@ impl ToriiComponent for ImageComponent {
         let path = record.with_extension("png");
         std::fs::write(path, content).map_err(|e| format!("Failed to write image file: {e}"))
     }
+
+    /// Gets a write request to save the "Image" component for a record, taking a local
+    /// file path as the copy source. This method returns the following:
+    ///
+    /// - [Some(Ok)][Some]: The component successfully copied the file to the record's directory.
+    /// - [Some(Err)][Some]: The component failed to copy the file to the record's directory.
+    ///
+    /// The "Image" component will accept a file path and copy the file to the record's directory.
+    fn write_from_file(&self, record: &PathBuf, source: &PathBuf) -> Option<Result<(), String>> {
+        let destination = record.with_extension("png");
+        match std::fs::copy(source, &destination) {
+            Ok(_) => Some(Ok(())),
+            Err(e) => Some(Err(format!("Failed to copy image file: {e}"))),
+        }
+    }
 }

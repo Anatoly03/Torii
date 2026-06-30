@@ -96,21 +96,14 @@ async function loadFile() {
     refreshImageBlob();
 }
 
-async function loadImageFromHTML(html: string) {
-    // This is an expensive operation.
-    loading.value += 1;
-
-    // Parse the HTML to see if the top-most element is an <img> tag,
-    // then extract the src attribute
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
-
-    if (doc.body.firstElementChild?.tagName !== 'IMG') return;
-    const element = doc.body.firstElementChild! as HTMLImageElement;
-
+/**
+ *
+ * @param url URL of the image to load.
+ */
+async function loadImageFromURL(url: string) {
     // Fetch the image data from the src URL and convert it to a Uint8Array.
     // This should work for URLs but probably not for local files paths (cors).
-    const response = await fetch(element.src);
+    const response = await fetch(url);
     const blob = await response.blob();
     const arrayBuffer = await blob.arrayBuffer();
     const byteLength = arrayBuffer.byteLength;
@@ -118,13 +111,13 @@ async function loadImageFromHTML(html: string) {
     imageData.value = new Uint8Array(arrayBuffer);
     refreshImageBlob();
 
-    console.debug(`Loaded ${byteLength} bytes from ${element.src}`);
+    console.debug(`Loaded ${byteLength} bytes from ${url}`);
     loading.value -= 1;
 
     // Convert the image data to a base64 string for saving
     // which is required for mime type "image"
     let content = btoa(String.fromCharCode(...imageData.value));
-    
+
     // Save the image data to the backend
     await invoke('save_record_component', {
         directory: props.directory,
@@ -133,6 +126,51 @@ async function loadImageFromHTML(html: string) {
         content,
         contentType: 'image/png',
     });
+}
+
+async function loadImageFromHTML(html: string) {
+    // This is an expensive operation. Start loading after 100ms
+    // if the image does not load immediately.
+    setTimeout(() => (loading.value += 1), 100);
+
+    // Parse the HTML to see if the top-most element is an <img> tag,
+    // then extract the src attribute
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+
+    // Get the root element
+    const element = doc.body.firstElementChild;
+    const tag = element?.tagName.toLowerCase();
+
+    switch (tag) {
+        case 'img':
+            await loadImageFromURL((element as HTMLImageElement).src);
+            break;
+
+        case 'a':
+            if ((element as HTMLAnchorElement).href) {
+                await loadImageFromURL((element as HTMLAnchorElement).href);
+            } else if (element?.innerHTML.startsWith('file://')) {
+                // Save the image data from a local file path. This is a special case for local files.
+                await invoke('save_record_component_from_local_file', {
+                    directory: props.directory,
+                    name: props.name,
+                    component: 'image',
+                    source: element.innerHTML.slice(7), // Remove 'file://' prefix
+                });
+
+                // Refresh the image data after saving
+                await loadFile();
+            }
+            break;
+
+        default:
+            console.warn(
+                'Unsupported HTML dropped. Only <img> tags are supported.'
+            );
+    }
+
+    loading.value -= 1;
 }
 
 async function onImageDrop(event: DragEvent) {
@@ -182,6 +220,7 @@ onMounted(async () => {
     await loadFile();
     loading.value -= 1;
 });
+
 onUnmounted(async () => {
     revokeImageUrl();
 });

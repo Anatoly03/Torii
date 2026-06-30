@@ -186,6 +186,26 @@ pub fn save_record_component(
     component.write(&path, &bytes)
 }
 
+/// Saves (or creates) a specific component for a given record.
+#[tauri::command]
+pub fn save_record_component_from_local_file(
+    directory: PathBuf,
+    name: String,
+    component: String,
+    source: PathBuf,
+) -> Result<(), String> {
+    let path = directory.join(&name);
+    let component =
+        get_component_by_name(&component).ok_or(format!("Unknown component: {component}"))?;
+    match component.write_from_file(&path, &source) {
+        Some(result) => result,
+        None => Err(format!(
+            "Component {} does not support writing from a file.",
+            component.component_name()
+        )),
+    }
+}
+
 /// Removes a specific component for a given record. (It will be detached from the record).
 ///
 /// This will also cleanup all files that are managed solely by this component.

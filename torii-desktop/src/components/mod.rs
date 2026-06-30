@@ -68,6 +68,22 @@ pub trait ToriiComponent {
     /// markdown string, while the "Image" component will interpret content as raw byte
     /// data.
     fn write(&self, record: &PathBuf, content: &[u8]) -> Result<(), String>;
+
+    /// Gets a write request to save the component data for a record, taking a local
+    /// file path as the copy source. This method is optional and the return type is to
+    /// be unerstood as follows:
+    ///
+    /// - [None]: The component does not support writing from a file.
+    /// - [Some(Ok)][Some]: The component successfully wrote the file.
+    /// - [Some(Err)][Some]: The component understanding the request but failed to write
+    ///   the file.
+    ///
+    /// For example, the "Article" component will reject the request to write from a file,
+    /// while the "Image" component will accept a file path and copy the file to the record's
+    /// directory.
+    fn write_from_file(&self, _record: &PathBuf, _source: &PathBuf) -> Option<Result<(), String>> {
+        None
+    }
 }
 
 /// Returns a boxed instance of a component based on its name. If the component name is not
