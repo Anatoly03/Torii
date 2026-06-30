@@ -1,16 +1,11 @@
 //! This module exposes the interface to manage a Torii record.
 
-use base64::{
-    Engine as _, alphabet,
-    engine::{self, general_purpose},
-};
+use base64::{Engine as _, engine::general_purpose};
 use serde::{Deserialize, Serialize};
-use std::{collections::HashSet, fs::read_dir, io::ErrorKind, path::PathBuf};
+use std::{collections::HashSet, fs::read_dir, path::PathBuf};
 use tauri::ipc::Response;
 
-use crate::components::{
-    ArticleComponent, ImageComponent, ToriiComponent, get_all_components, get_component_by_name,
-};
+use crate::components::{get_all_components, get_component_by_name};
 
 /// A record in a Torii project. This is used to represent a single "thing"
 /// in the project, such as an encyclopedia entry, a character sheet or a book

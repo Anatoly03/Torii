@@ -133,41 +133,45 @@ async function loadImageFromHTML(html: string) {
     // if the image does not load immediately.
     setTimeout(() => (loading.value += 1), 100);
 
-    // Parse the HTML to see if the top-most element is an <img> tag,
-    // then extract the src attribute
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
+    try {
+        // Parse the HTML to see if the top-most element is an <img> tag,
+        // then extract the src attribute
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
 
-    // Get the root element
-    const element = doc.body.firstElementChild;
-    const tag = element?.tagName.toLowerCase();
+        // Get the root element
+        const element = doc.body.firstElementChild;
+        const tag = element?.tagName.toLowerCase();
 
-    switch (tag) {
-        case 'img':
-            await loadImageFromURL((element as HTMLImageElement).src);
-            break;
+        switch (tag) {
+            case 'img':
+                await loadImageFromURL((element as HTMLImageElement).src);
+                break;
 
-        case 'a':
-            if ((element as HTMLAnchorElement).href) {
-                await loadImageFromURL((element as HTMLAnchorElement).href);
-            } else if (element?.innerHTML.startsWith('file://')) {
-                // Save the image data from a local file path. This is a special case for local files.
-                await invoke('save_record_component_from_local_file', {
-                    directory: props.directory,
-                    name: props.name,
-                    component: 'image',
-                    source: element.innerHTML.slice(7), // Remove 'file://' prefix
-                });
+            case 'a':
+                if ((element as HTMLAnchorElement).href) {
+                    await loadImageFromURL((element as HTMLAnchorElement).href);
+                } else if (element?.innerHTML.startsWith('file://')) {
+                    // Save the image data from a local file path. This is a special case for local files.
+                    await invoke('save_record_component_from_local_file', {
+                        directory: props.directory,
+                        name: props.name,
+                        component: 'image',
+                        source: element.innerHTML.slice(7), // Remove 'file://' prefix
+                    });
 
-                // Refresh the image data after saving
-                await loadFile();
-            }
-            break;
+                    // Refresh the image data after saving
+                    await loadFile();
+                }
+                break;
 
-        default:
-            console.warn(
-                'Unsupported HTML dropped. Only <img> tags are supported.'
-            );
+            default:
+                console.warn(
+                    'Unsupported HTML dropped. Only <img> tags are supported.'
+                );
+        }
+    } catch(e) {
+        console.error('Failed to load image from HTML:', e);
     }
 
     loading.value -= 1;
@@ -194,6 +198,7 @@ async function onImageDrop(event: DragEvent) {
     // Handle HTML
     const html = dt.getData('text/html');
     if (html) {
+        console.log('HTML dropped:', html);
         await loadImageFromHTML(html);
         return;
     }
