@@ -71,6 +71,10 @@ watch(currentFile, (newFile) => {
         markdownDirectory.value = newFile.directory;
         markdownName.value = newFile.name;
         loadComponents();
+
+        if (fileTree.value) {
+            fileTree.value.setCurrentFile(newFile);
+        }
     } else {
         markdownDirectory.value = null;
         markdownName.value = null;
