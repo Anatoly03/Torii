@@ -1,8 +1,11 @@
 //! This module exposes the interface to manage a Torii record.
 
+use base64::{Engine as _, engine::general_purpose};
 use serde::{Deserialize, Serialize};
-use std::{collections::HashSet, fs::read_dir, io::ErrorKind, path::PathBuf};
+use std::{collections::HashSet, fs::read_dir, path::PathBuf};
 use tauri::ipc::Response;
+
+use crate::components::{get_all_components, get_component_by_name};
 
 /// A record in a Torii project. This is used to represent a single "thing"
 /// in the project, such as an encyclopedia entry, a character sheet or a book
@@ -68,15 +71,18 @@ impl Record {
 
     /// Lists the components attached to a specific record.
     pub fn list_components(&self) -> Result<Vec<String>, String> {
-        let mut components = vec!["article".to_string()];
+        let record = self.directory.join(&self.name);
 
-        // If the record has an image, add the "image" component to the list.
-        let image_path = self.directory.join(format!("{}.png", self.name));
-        if image_path.exists() {
-            components.push("image".to_string());
-        }
+        // Retrieve all components and find which are attached to the record.
+        let listed = get_all_components()
+            .iter()
+            .filter_map(|comp| match comp.is_attached(&record) {
+                true => Some(comp.component_name().to_string()),
+                false => None,
+            })
+            .collect::<Vec<String>>();
 
-        Ok(components)
+        Ok(listed)
     }
 
     /// Retrieve all files in the directory which define the record. When deleting a record,
@@ -96,66 +102,6 @@ impl Record {
             .collect();
         Ok(files)
     }
-
-    /// Retrieve all files in the directory which define the records' components. When
-    /// detaching a component from a record, all these files should be deleted.
-    pub fn associated_component_files<C: AsRef<str>>(
-        &self,
-        component: C,
-    ) -> Result<Vec<PathBuf>, String> {
-        let predicate = match component.as_ref() {
-            "article" => |p: &PathBuf| p.extension().is_some_and(|ext| ext == "md"),
-            "image" => |p: &PathBuf| p.extension().is_some_and(|ext| ext == "png"),
-            _ => |_: &PathBuf| false, // TODO: implement component-specific filtering
-        };
-
-        let component_files = self
-            .associated_files()?
-            .into_iter()
-            .filter(predicate)
-            .collect();
-        Ok(component_files)
-    }
-
-    /// Returns the path to the markdown file of the record. This is used to read
-    /// and write the "Article" component of the record.
-    pub fn get_markdown_path(&self) -> PathBuf {
-        self.directory.join(format!("{}.md", self.name))
-    }
-}
-
-/// Gets the markdown file ("Article" component) of a record.
-pub fn get_markdown_file(directory: PathBuf, name: String) -> Result<Vec<u8>, String> {
-    let path = directory.join(format!("{}.md", name));
-
-    match std::fs::read(path) {
-        Ok(file) => Ok(file),
-        Err(e) if e.kind() == ErrorKind::NotFound => Ok(vec![]),
-        Err(e) => return Err(format!("Failed to read markdown file: {e}")),
-    }
-}
-
-/// Gets the image file ("Image" component) of a record.
-pub fn get_image_file(directory: PathBuf, name: String) -> Result<Vec<u8>, String> {
-    let path = directory.join(format!("{}.png", name));
-
-    match std::fs::read(path) {
-        Ok(file) => Ok(file),
-        Err(e) if e.kind() == ErrorKind::NotFound => Ok(vec![]),
-        Err(e) => return Err(format!("Failed to read image file: {e}")),
-    }
-}
-
-/// Saves (or creates) the markdown file ("Article" component) of a record.
-pub fn save_markdown_file(directory: PathBuf, name: String, content: String) -> Result<(), String> {
-    let path = directory.join(format!("{}.md", name));
-    std::fs::write(path, content).map_err(|e| format!("Failed to write markdown file: {e}"))
-}
-
-/// Removes the markdown file ("Article" component) of a record.
-pub fn remove_markdown_file(directory: PathBuf, name: String) -> Result<(), String> {
-    let path = directory.join(format!("{}.md", name));
-    std::fs::remove_file(path).map_err(|e| format!("Failed to remove markdown file: {e}"))
 }
 
 /// Lists all records in the given directory. This is used to populate the file tree
@@ -204,11 +150,10 @@ pub fn get_record_component(
     name: String,
     component: String,
 ) -> Result<Response, String> {
-    match component.as_str() {
-        "article" => get_markdown_file(directory, name).map(Response::new),
-        "image" => get_image_file(directory, name).map(Response::new),
-        _ => Err(format!("Unknown component: {component}")),
-    }
+    let path = directory.join(&name);
+    let component =
+        get_component_by_name(&component).ok_or(format!("Unknown component: {component}"))?;
+    component.read(&path)
 }
 
 /// Saves (or creates) a specific component for a given record.
@@ -218,16 +163,47 @@ pub fn save_record_component(
     name: String,
     component: String,
     content: String,
+    content_type: String,
 ) -> Result<(), String> {
-    match component.as_str() {
-        "article" => save_markdown_file(directory, name, content),
-        "image" => Err("Saving image component is not implemented yet".to_string()),
-        _ => Err(format!("Unknown component: {component}")),
+    let path = directory.join(&name);
+    let component =
+        get_component_by_name(&component).ok_or(format!("Unknown component: {component}"))?;
+    let content_type = content_type.split('/').next().unwrap_or("").to_lowercase();
+
+    let bytes = match content_type.as_str() {
+        "text" => content.into_bytes(),
+        "image" => general_purpose::STANDARD
+            .decode(content)
+            .map_err(|e| format!("Failed to decode base64 content: {e}"))?,
+        _ => return Err(format!("Unsupported content type: {content_type}")),
+    };
+
+    component.write(&path, &bytes)
+}
+
+/// Saves (or creates) a specific component for a given record.
+#[tauri::command]
+pub fn save_record_component_from_local_file(
+    directory: PathBuf,
+    name: String,
+    component: String,
+    source: PathBuf,
+) -> Result<(), String> {
+    let path = directory.join(&name);
+    let component =
+        get_component_by_name(&component).ok_or(format!("Unknown component: {component}"))?;
+    match component.write_from_file(&path, &source) {
+        Some(result) => result,
+        None => Err(format!(
+            "Component {} does not support writing from a file.",
+            component.component_name()
+        )),
     }
 }
 
-/// Removes a specific component for a given record. (It will
-/// be detached from the record)
+/// Removes a specific component for a given record. (It will be detached from the record).
+///
+/// This will also cleanup all files that are managed solely by this component.
 #[tauri::command]
 pub fn remove_record_component(
     directory: PathBuf,
@@ -235,9 +211,14 @@ pub fn remove_record_component(
     component: String,
 ) -> Result<(), String> {
     let record = Record { directory, name };
-    let component_files = record.associated_component_files(&component)?;
+    let component =
+        get_component_by_name(&component).ok_or(format!("Unknown component: {component}"))?;
+    let record_files = record.associated_files()?;
 
-    component_files
+    // TODO: for each other components, keep files which still have a component attached
+
+    component
+        .filter_associated(&record_files)
         .iter()
         .map(|file| {
             std::fs::remove_file(&file)

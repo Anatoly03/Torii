@@ -8,7 +8,9 @@ Like a [Japanese Torii](https://en.wikipedia.org/wiki/Torii) gate, the idea for 
 
 ### v0.0.0-dev5
 
-- TBA
+- Add drag and drop feature to create the image component.
+
+---
 
 ### [v0.0.0-dev4](https://github.com/Anatoly03/Torii/releases/tag/app-v0.0.0-dev4)
 

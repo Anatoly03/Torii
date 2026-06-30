@@ -17,3 +17,5 @@ log = "0.4"
 tauri = { version = "2.11", features = [] }
 tauri-plugin-log = "2"
 tauri-plugin-dialog = "2.7"
+tauri-plugin-cors-fetch = "5.0.0"
+base64 = "0.22.1"

@@ -11,6 +11,12 @@
             :suggestions="suggestions"
             @select="onSuggestionSelect"
         />
+        <!-- <div v-else class="placeholder">
+            <NIcon size="32">
+                <TextOutline />
+            </NIcon>
+            Article
+        </div> -->
     </div>
 </template>
 
@@ -20,6 +26,8 @@ import { invoke } from '@tauri-apps/api/core';
 import { Editor, EditorContent } from '@tiptap/vue-3';
 import { Markdown } from '@tiptap/markdown';
 import { TaskList, TaskItem } from '@tiptap/extension-list';
+import { NIcon } from 'naive-ui';
+import { CloseOutline, TextOutline } from '@vicons/ionicons5';
 
 // tiptap extensions
 import StarterKit from '@tiptap/starter-kit';
@@ -32,6 +40,7 @@ import MarkdownEditorAutocomplete from './MarkdownEditorAutocomplete.vue';
 const props = defineProps<{
     directory: string | null;
     name: string | null;
+    // placeholder: boolean;
     autocompleteSuggestion: (name: string) => Promise<SuggestionItem[]>;
 }>();
 
@@ -169,6 +178,7 @@ async function saveFile() {
         name: props.name,
         component: 'article',
         content,
+        contentType: 'text/markdown',
     });
 }
 
@@ -190,17 +200,37 @@ onUnmounted(() => {
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .view-component-article-editor {
+    display: flex;
+    flex-direction: column;
     width: 100%;
     height: 100%;
-}
 
+    // .placeholder {
+    //     position: relative;
+    //     display: flex;
+    //     flex-direction: row;
+    //     justify-content: center;
+    //     align-items: end;
+    //     gap: 8px;
+    //     border: 2px dashed #ccc;
+    //     border-radius: 8px;
+    //     margin: 0 16px;
+    //     padding: 16px;
+    //     box-sizing: border-box;
+    // }
+}
+</style>
+
+<!-- Override TipTap Editor (Global Style) -->
+<style lang="scss">
 .file-editor-md {
     width: 100%;
     height: 100%;
     box-sizing: border-box;
-    padding: 16px;
+    padding: 0 16px;
+    cursor: text;
 
     .ProseMirror {
         outline: none;

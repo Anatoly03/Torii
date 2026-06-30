@@ -20,17 +20,20 @@
         </div> -->
         <div class="view-project-content">
             <ImageEditor
+                :key="currentFile.directory + '/' + currentFile.name"
                 :directory="markdownDirectory"
                 :name="markdownName"
+                component="image"
                 @refresh="loadComponents()"
-                v-if="currentFile && recordComponents.includes('image')"
+                v-if="currentFile"
             />
             <MarkdownEditor
                 :directory="markdownDirectory"
                 :name="markdownName"
                 :autocomplete-suggestion="(v) => autocompleteMarkdown(v)"
+                :placeholder="!recordComponents.includes('article')"
                 @open-file="openFile"
-                v-if="currentFile && recordComponents.includes('article')"
+                v-if="currentFile"
             />
         </div>
     </div>
@@ -41,8 +44,10 @@ import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { invoke } from '@tauri-apps/api/core';
 import FileTree, { Record } from '../../components/file/FileTree.vue';
+
+// Components
 import MarkdownEditor from '../../components/article/MarkdownEditor.vue';
-import ImageEditor from './ImageEditor.vue';
+import ImageEditor from '../../components/image/ImageEditor.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -89,6 +94,8 @@ async function loadComponents() {
         directory,
         name,
     });
+
+    console.log('Components listed:', recordComponents.value);
 }
 
 async function autocompleteMarkdown(name: string): Promise<any> {
