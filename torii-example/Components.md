@@ -13,7 +13,7 @@ Every markdown note is an "Article". It is a what-you-see-is-what-you-get type e
 
 For example I have a unique card deck specifically for my world which I call the "Crown Cards", they consist of 80 cards, and while in theory I could make 80 records, it's most simple to simply put an article and define everything there. 
 
-### "Image" Component
+### "Image" and "Banner" Components
 
 - Create, View, Delete
 
