@@ -47,25 +47,28 @@ The first stage of the project is to create a simple file browser like applicati
 -   [x] Add Image component functionality: Create/ Replace Image (Drag and Drop)
 -   [x] Fix Drag and Drop error with local file paths using Japanese locale.
 -   [x] Add Image Banner component
--   [ ] Fix bug where opening new record sometimes scrolls to an offset.
 -   [x] Scrolling should remove autocomplete popup.
--   [ ] Fix program crash when closing project to go to launcher (Markdowns' TipTap Editor is destroyed but still invoked)
+-   [x] Fix program crash when closing project to go to launcher (Markdowns' TipTap Editor is destroyed but still invoked)
+
+### `v0.0.0-dev6`
+
 -   [ ] Add footer to editing components
     -   [ ] Word Count
 -   [ ] Add Settings
     -   [ ] Enable/ Disable Word Count
-
-### `v0.0.0-dev6`
-
--   [ ] Add Windows builds to publish workflow.
-    -   [ ] Add Windows versioning fixer script
 -   [ ] Extend Markdown
     -   [ ] Image embed support
+
+### `v0.0.0-dev7`
+
+-   [ ] Fix bug where opening new record sometimes scrolls to an offset.
+-   [ ] Add Windows builds to publish workflow.
+    -   [ ] Add Windows versioning fixer script
 -   [ ] Refactor to Theme Support
     -   [ ] Light Mode
     -   [ ] Dark Mode
 
-### `v0.0.0-dev7`
+### `v0.0.0-dev8`
 
 -   [ ] Add index tracking for backlinks (records referencing other records, maintain pointers)
 -   [ ] Add ability to rename files with fixes in backlinks

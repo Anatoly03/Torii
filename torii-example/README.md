@@ -10,5 +10,6 @@ The following is a list of all features currently possible in Torii. If you have
 - View, Create &amp; Remove Records
 - View &amp; Edit Markdown Components (`.md`)
 - Add, View &amp; Delete Image Component (`.png`)
+- Add, View &amp; Delete Image banner Component (`.banner.png`)
 - ...
 

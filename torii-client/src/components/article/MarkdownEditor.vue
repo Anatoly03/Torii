@@ -92,6 +92,24 @@ const editor = new Editor({
     onUpdate: saveFile,
 });
 
+/**
+ * Handles control+click
+ */
+function onLinkClick(event: MouseEvent) {
+    if (!event.ctrlKey && !event.metaKey) return;
+    const link = (event.target as HTMLElement).closest('a');
+    if (!link) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const href = link.getAttribute('href');
+    if (!href) return;
+    const match = href.match(/^\.\/(.+)\.md$/);
+    if (match) {
+        const fileName = decodeURIComponent(match[1]);
+        emit('open-file', fileName);
+    }
+}
+
 onMounted(async () => {
     // Load the file content when the component is mounted.
     await loadFile();
@@ -108,22 +126,6 @@ onMounted(async () => {
     });
 
     const dom = editor.view.dom;
-
-    function onLinkClick(event: MouseEvent) {
-        if (!event.ctrlKey && !event.metaKey) return;
-        const link = (event.target as HTMLElement).closest('a');
-        if (!link) return;
-        event.preventDefault();
-        event.stopPropagation();
-        const href = link.getAttribute('href');
-        if (!href) return;
-        const match = href.match(/^\.\/(.+)\.md$/);
-        if (match) {
-            const fileName = decodeURIComponent(match[1]);
-            emit('open-file', fileName);
-        }
-    }
-
     dom.addEventListener('click', onLinkClick, { capture: true });
 });
 
@@ -197,10 +199,9 @@ async function onEditorClick() {
 }
 
 onUnmounted(() => {
-    editor.destroy();
-
     const dom = editor.view.dom;
     dom.removeEventListener('click', onLinkClick, { capture: true });
+    editor.destroy();
 });
 
 defineExpose({
