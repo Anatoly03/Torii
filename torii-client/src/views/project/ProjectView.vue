@@ -24,7 +24,7 @@
         <!-- <div class="view-project-content-placeholder" v-if="!currentFile">
             Project View: {{ projectPath }}<br />
         </div> -->
-        <div class="view-project-content">
+        <div class="view-project-content" @scroll="onScrollProjectContent">
             <ImageEditor
                 :key="currentFile.directory + '/' + currentFile.name"
                 :directory="markdownDirectory"
@@ -46,6 +46,7 @@
                 v-if="currentFile"
             />
             <MarkdownEditor
+                ref="markdownEditor"
                 :directory="markdownDirectory"
                 :name="markdownName"
                 :autocomplete-suggestion="(v) => autocompleteMarkdown(v)"
@@ -78,6 +79,7 @@ const markdownDirectory = ref<string | null>(null);
 const markdownName = ref<string | null>(null);
 const recordComponents = ref<string[]>([]);
 const fileTree = ref<InstanceType<typeof FileTree> | null>(null);
+const markdownEditor = ref<InstanceType<typeof MarkdownEditor> | null>(null);
 const records = ref<Record[]>([]);
 
 onMounted(async () => {
@@ -138,6 +140,10 @@ async function openFile(name: string) {
 function setCurrentFile(file: Record | null) {
     if (!file) return;
     currentFile.value = file;
+}
+
+function onScrollProjectContent(event: Event) {
+    markdownEditor.value?.onScrollProjectContent(event);
 }
 
 if (!projectPath) {

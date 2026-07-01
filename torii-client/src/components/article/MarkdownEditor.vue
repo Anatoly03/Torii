@@ -182,6 +182,10 @@ async function saveFile() {
     });
 }
 
+function onScrollProjectContent(event: Event) {
+    autocompletePopup.value?.hide();
+}
+
 // Call command from autocomplete extension.
 async function onSuggestionSelect(item: SuggestionItem) {
     editor.commands.autocomplete(item);
@@ -197,6 +201,10 @@ onUnmounted(() => {
 
     const dom = editor.view.dom;
     dom.removeEventListener('click', onLinkClick, { capture: true });
+});
+
+defineExpose({
+    onScrollProjectContent,
 });
 </script>
 

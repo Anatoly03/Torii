@@ -48,7 +48,7 @@ The first stage of the project is to create a simple file browser like applicati
 -   [ ] Fix Drag and Drop error with local file paths using Japanese locale.
 -   [x] Add Image Banner component
 -   [ ] Fix bug where opening new record sometimes scrolls to an offset.
--   [ ] Scrolling should remove autocomplete popup.
+-   [x] Scrolling should remove autocomplete popup.
 -   [ ] Add footer to editing components
     -   [ ] Word Count
 -   [ ] Add Settings
@@ -66,6 +66,9 @@ The first stage of the project is to create a simple file browser like applicati
 
 ### `v0.0.0-dev7`
 
+-   [ ] Add index tracking for backlinks (records referencing other records, maintain pointers)
+-   [ ] Add ability to rename files with fixes in backlinks
+    -   [ ] Add component trait method: Invoked on records with backlinks, rename link within component.
 -   [ ] Add recursion support to file system
 -   [ ] Add workspace directories
 

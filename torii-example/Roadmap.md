@@ -10,6 +10,8 @@ Like a [Japanese Torii](https://en.wikipedia.org/wiki/Torii) gate, the idea for 
 
 - Add drag and drop feature to create the image component.
 - Add decorative banner component which is behind the header image.
+- Scrolling in a project now removes the autocomplete popup.
+- Settings can now be accessed from project view.
 
 ---
 
