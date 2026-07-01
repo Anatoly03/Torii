@@ -2,14 +2,24 @@
 //!
 //! It provides functionality to read image files and handle image-related operations.
 
+use super::ToriiComponent;
 use std::{io::ErrorKind, path::PathBuf};
-
 use tauri::ipc::Response;
 
-use super::ToriiComponent;
-
 /// Represents an image component in a Torii project.
-pub struct ImageComponent;
+pub struct ImageComponent {
+    component_name: String,
+    file_suffix: String,
+}
+
+impl ImageComponent {
+    pub fn new(component_name: impl AsRef<str>, file_suffix: impl AsRef<str>) -> Self {
+        Self {
+            component_name: component_name.as_ref().into(),
+            file_suffix: file_suffix.as_ref().into(),
+        }
+    }
+}
 
 impl ToriiComponent for ImageComponent {
     /// Retrieves the name of the component, which is "image".
@@ -21,7 +31,7 @@ impl ToriiComponent for ImageComponent {
     /// assert_eq!(image_component.component_name(), "image");
     /// ```
     fn component_name(&self) -> &str {
-        "image"
+        &self.component_name
     }
 
     /// Reads the file path and yields wether the file is associated with the image component.
@@ -46,7 +56,7 @@ impl ToriiComponent for ImageComponent {
     /// The "Image" component oversees the file "Hello World.png" and will reject the file "Hello
     /// World.md".
     fn is_associated(&self, path: &PathBuf) -> bool {
-        path.extension().is_some_and(|ext| ext == "png")
+        path.file_name().is_some_and(|name| name.to_string_lossy().ends_with(&self.file_suffix))
     }
 
     /// Reads the record file path and yields whether the record implements the image component.
@@ -54,13 +64,13 @@ impl ToriiComponent for ImageComponent {
     /// For example if the record is "Diana Loewe", we scan for "Diana Loewe.png" in the record's
     /// directory. If this file exists, then the record implements the image component.
     fn is_attached(&self, path: &PathBuf) -> bool {
-        path.with_extension("png").exists()
+        path.with_extension(&self.file_suffix).exists()
     }
 
     /// Gets a read request to view the "Image" component data for a record. This returns a
     /// [Response][ipc::Response] containing the image data.
     fn read(&self, record: &PathBuf) -> Result<Response, String> {
-        let path = record.with_extension("png");
+        let path = record.with_extension(&self.file_suffix);
 
         let file = match std::fs::read(path) {
             Ok(file) => file,
@@ -76,7 +86,7 @@ impl ToriiComponent for ImageComponent {
     ///
     /// The "Image" component will interpret content as raw byte data.
     fn write(&self, record: &PathBuf, content: &[u8]) -> Result<(), String> {
-        let path = record.with_extension("png");
+        let path = record.with_extension(&self.file_suffix);
         std::fs::write(path, content).map_err(|e| format!("Failed to write image file: {e}"))
     }
 
@@ -88,10 +98,48 @@ impl ToriiComponent for ImageComponent {
     ///
     /// The "Image" component will accept a file path and copy the file to the record's directory.
     fn write_from_file(&self, record: &PathBuf, source: &PathBuf) -> Option<Result<(), String>> {
-        let destination = record.with_extension("png");
+        let destination = record.with_extension(&self.file_suffix);
         match std::fs::copy(source, &destination) {
             Ok(_) => Some(Ok(())),
             Err(e) => Some(Err(format!("Failed to copy image file: {e}"))),
         }
+    }
+    
+    /// Gets a remove request to delete the image data for a record. The return type
+    /// is to be understood as follows:
+    ///
+    /// - [Some(Ok)][Some]: The image was successfully deleted.
+    /// - [Some(Err)][Some]: The image was not deleted due to an error.
+    ///
+    /// Since a component can be associated with multiple files, and multiple components
+    /// can be associated with the same file, this method is expected to remove all files
+    /// that are solely associated with this component. 
+    /// 
+    /// The "Article" component will remove the file "<entity>.md"
+    fn remove(&self, record: &PathBuf) -> Option<Result<(), String>> {
+        let path = record.with_extension(&self.file_suffix);
+        match std::fs::remove_file(&path) {
+            Ok(_) => Some(Ok(())),
+            Err(e) if e.kind() == ErrorKind::NotFound => Some(Ok(())),
+            Err(e) => Some(Err(format!("Failed to remove image file: {e}"))),
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_associated_files() {
+        let image_component = ImageComponent::new("image", "png");
+        // assert!(!image_component.is_associated(&PathBuf::from("Hello World.banner.png")));
+        assert!(image_component.is_associated(&PathBuf::from("Hello World.png")));
+        assert!(!image_component.is_associated(&PathBuf::from("Hello World.md")));
+        
+        let banner_component = ImageComponent::new("banner", "banner.png");
+        assert!(banner_component.is_associated(&PathBuf::from("Hello World.banner.png")));
+        assert!(!banner_component.is_associated(&PathBuf::from("Hello World.png")));
+        assert!(!banner_component.is_associated(&PathBuf::from("Hello World.md")));
     }
 }

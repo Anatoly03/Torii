@@ -23,7 +23,19 @@
                 :key="currentFile.directory + '/' + currentFile.name"
                 :directory="markdownDirectory"
                 :name="markdownName"
+                component="banner"
+                placeholder-text="Banner"
+                placeholder-anchor="left"
+                class="view-project-banner"
+                @refresh="loadComponents()"
+                v-if="currentFile"
+            />
+            <ImageEditor
+                :key="currentFile.directory + '/' + currentFile.name"
+                :directory="markdownDirectory"
+                :name="markdownName"
                 component="image"
+                class="view-project-image"
                 @refresh="loadComponents()"
                 v-if="currentFile"
             />
@@ -160,6 +172,7 @@ if (!projectPath) {
     }
 
     .view-project-content {
+        position: relative;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -167,6 +180,25 @@ if (!projectPath) {
         flex: 1;
         text-align: left;
         overflow-y: auto;
+
+        .view-project-banner {
+            position: absolute;
+            width: 100%;
+            height: 176px;
+            border-bottom: 2px dashed #ccc;
+            overflow: hidden;
+        }
+
+        .view-project-image {
+            position: relative;
+            min-width: 200px;
+            min-height: 200px;
+            z-index: 10;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            margin: 16px;
+            background-color: #fafafaaa;
+        }
     }
 }
 </style>

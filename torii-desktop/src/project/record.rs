@@ -213,10 +213,19 @@ pub fn remove_record_component(
     let record = Record { directory, name };
     let component =
         get_component_by_name(&component).ok_or(format!("Unknown component: {component}"))?;
-    let record_files = record.associated_files()?;
+
+    // If the component implements a custom remove method, use it. Otherwise, fall back to the default
+    // implementation.
+    match component.remove(&record.directory.join(&record.name)) {
+        Some(result) => return result,
+        None => (),
+    };
+
+    // Here begins the default component destructor.
 
     // TODO: for each other components, keep files which still have a component attached
 
+    let record_files = record.associated_files()?;
     component
         .filter_associated(&record_files)
         .iter()

@@ -46,8 +46,9 @@ The first stage of the project is to create a simple file browser like applicati
 
 -   [x] Add Image component functionality: Create/ Replace Image (Drag and Drop)
 -   [ ] Fix Drag and Drop error with local file paths using Japanese locale.
--   [ ] Add Image Banner component
+-   [x] Add Image Banner component
 -   [ ] Fix bug where opening new record sometimes scrolls to an offset.
+-   [ ] Scrolling should remove autocomplete popup.
 -   [ ] Add footer to editing components
     -   [ ] Word Count
 -   [ ] Add Settings

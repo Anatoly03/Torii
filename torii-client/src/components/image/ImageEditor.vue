@@ -23,10 +23,20 @@
                 </NIcon>
             </button>
         </div>
-        <div v-else class="image-placeholder">
+        <div
+            v-else
+            class="image-placeholder"
+            :class="{
+                ['image-placeholder-' + props.placeholderAnchor]:
+                    props.placeholderAnchor !== undefined,
+            }"
+        >
             <NIcon size="32">
                 <ImageOutline />
             </NIcon>
+            <span v-if="props.placeholderText">{{
+                props.placeholderText
+            }}</span>
         </div>
     </n-spin>
 </template>
@@ -41,6 +51,8 @@ const props = defineProps<{
     directory: string | null;
     name: string | null;
     component: string;
+    placeholderText?: string;
+    placeholderAnchor: 'top' | 'bottom' | 'left' | 'right' | 'center';
 }>();
 
 const emit = defineEmits<{
@@ -122,7 +134,7 @@ async function loadImageFromURL(url: string) {
     await invoke('save_record_component', {
         directory: props.directory,
         name: props.name,
-        component: 'image',
+        component: props.component,
         content,
         contentType: 'image/png',
     });
@@ -156,7 +168,7 @@ async function loadImageFromHTML(html: string) {
                     await invoke('save_record_component_from_local_file', {
                         directory: props.directory,
                         name: props.name,
-                        component: 'image',
+                        component: props.component,
                         source: element.innerHTML.slice(7), // Remove 'file://' prefix
                     });
 
@@ -170,7 +182,7 @@ async function loadImageFromHTML(html: string) {
                     'Unsupported HTML dropped. Only <img> tags are supported.'
                 );
         }
-    } catch(e) {
+    } catch (e) {
         console.error('Failed to load image from HTML:', e);
     }
 
@@ -233,21 +245,12 @@ onUnmounted(async () => {
 
 <style lang="scss" scoped>
 .file-editor-image {
-    position: relative;
     justify-content: center;
     align-items: center;
-    margin: 16px;
     display: flex;
     flex-direction: column;
     min-width: 200px;
-    max-width: 200px;
-    min-height: 200px;
-    max-height: 200px;
     aspect-ratio: 1 / 1;
-    background-color: #fafafa;
-    z-index: 10;
-    border: 2px dashed #ccc;
-    border-radius: 8px;
     overflow: hidden;
 
     // existing styles
@@ -296,12 +299,48 @@ onUnmounted(async () => {
         opacity: 1;
     }
 
+    &:not(.has-image) {
+        &:has(.image-placeholder-left) {
+            align-items: flex-start;
+
+            .image-placeholder {
+                padding-left: 16px;
+            }
+        }
+
+        &:has(.image-placeholder-right) {
+            align-items: flex-end;
+
+            .image-placeholder {
+                padding-right: 16px;
+            }
+        }
+
+        &:has(.image-placeholder-top) {
+            justify-content: flex-start;
+
+            .image-placeholder {
+                padding-top: 16px;
+            }
+        }
+
+        &:has(.image-placeholder-bottom) {
+            justify-content: flex-end;
+
+            .image-placeholder {
+                padding-bottom: 16px;
+            }
+        }
+    }
+
     .image-placeholder {
         height: 100%;
         color: #ccc;
         display: flex;
-        align-items: center;
+        gap: 8px;
+        align-items: end;
         justify-content: center;
+        font-size: 18px;
     }
 }
 </style>
