@@ -69,6 +69,7 @@ jobs:
 
       - name: Retrieve the current Tauri version
         id: get-version
+        shell: bash
         run: |
           VERSION=$(npm run version --silent)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
