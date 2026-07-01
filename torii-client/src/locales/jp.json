@@ -9,7 +9,8 @@
             "open": "プロジェクトを開く",
             "close": "プロジェクトを閉じる",
             "recent": "最近のプロジェクト",
-            "noRecent": "最近のプロジェクトはありません。"
+            "noRecent": "最近のプロジェクトはありません。",
+            "wordCount": "0語 | {count}語 | {count}語"
         },
         "settings": {
             "title": "設定",
