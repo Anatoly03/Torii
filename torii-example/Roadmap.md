@@ -8,7 +8,7 @@ Like a [Japanese Torii](https://en.wikipedia.org/wiki/Torii) gate, the idea for 
 
 ### v0.0.0-dev5
 
-- Add drag and drop feature to create the image component.
+- Add drag and drop feature to create the image component. You can now also click the placeholer to open a file dialog.
 - Add decorative banner component which is behind the header image.
 - Scrolling in a project now removes the autocomplete popup.
 - Settings can now be accessed from project view.

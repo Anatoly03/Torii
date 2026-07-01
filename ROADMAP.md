@@ -44,7 +44,9 @@ The first stage of the project is to create a simple file browser like applicati
 
 ### `v0.0.0-dev5` [CURRENT]
 
--   [x] Add Image component functionality: Create/ Replace Image (Drag and Drop)
+-   [x] Add Image component functionality: Create/ Replace Image
+    -   [x] Drag and Drop
+    -   [x] Click to open file dialog and select
 -   [x] Fix Drag and Drop error with local file paths using Japanese locale.
 -   [x] Add Image Banner component
 -   [x] Scrolling should remove autocomplete popup.

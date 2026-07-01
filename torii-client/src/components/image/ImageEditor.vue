@@ -5,6 +5,7 @@
         @dragenter.prevent="isDragOver = true"
         @dragleave.prevent="isDragOver = false"
         @drop="onImageDrop"
+        @click="onImageClick"
         :show="loading > 0"
     >
         <div v-if="imageBlob" class="image-preview">
@@ -44,6 +45,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { invoke } from '@tauri-apps/api/core';
+import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
 import { NIcon, NSpin } from 'naive-ui';
 import { CloseOutline, ImageOutline } from '@vicons/ionicons5';
 
@@ -263,6 +265,29 @@ async function onImageDrop(event: DragEvent) {
     }
 }
 
+/**
+ * If image was clicked and there is no image currently, open file
+ * dialog and select image.
+ */
+async function onImageClick(event: MouseEvent) {
+    if (imageBlob.value) return;
+
+    const path = await openFileDialog();
+    if (!path) return;
+
+    // Load the image from the selected file path using the copy
+    // command.
+    await invoke('save_record_component_from_local_file', {
+        directory: props.directory,
+        name: props.name,
+        component: props.component,
+        source: path,
+    });
+
+    // Refresh the image data after saving
+    await loadFile();
+}
+
 async function removeImage() {
     if (!props.directory || !props.name) return;
 
@@ -300,10 +325,15 @@ onUnmounted(async () => {
     aspect-ratio: 1 / 1;
     overflow: hidden;
 
+    &:not(.has-image) {
+        cursor: pointer;
+    }
+
     // existing styles
     &.drag-over {
         outline: 2px solid #42b983;
         background-color: rgba(66, 185, 131, 0.1);
+        cursor: default;
     }
 
     .file-image-preview {
