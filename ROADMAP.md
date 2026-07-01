@@ -54,6 +54,8 @@ The first stage of the project is to create a simple file browser like applicati
 
 ### `v0.0.0-dev6` [CURRENT]
 
+-   [x] Add Windows builds to publish workflow.
+    -   [x] Add Windows versioning fixer script
 -   [ ] Add footer to editing components
     -   [ ] Word Count
     -   [ ] Edit/ View mode (hides placeholder grids vs. allows to edit article & enables drag and drop)
@@ -65,8 +67,6 @@ The first stage of the project is to create a simple file browser like applicati
 ### `v0.0.0-dev7`
 
 -   [ ] Fix bug where opening new record sometimes scrolls to an offset.
--   [ ] Add Windows builds to publish workflow.
-    -   [ ] Add Windows versioning fixer script
 -   [ ] Refactor to Theme Support
     -   [ ] Light Mode
     -   [ ] Dark Mode

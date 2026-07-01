@@ -28,9 +28,8 @@ jobs:
             args: ''
         #   - platform: 'ubuntu-24.04-arm'
         #     args: ''
-        # windows builds are currently disabled in `-dev` versions.
-        #   - platform: 'windows-latest'
-        #     args: ''
+          - platform: 'windows-latest'
+            args: ''
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -67,6 +66,10 @@ jobs:
 
       - name: install frontend dependencies
         run: npm ci --prefer-offline
+
+      - name: adjust versioning convention for windows devices
+        if: matrix.platform == 'windows-latest'
+        run: npm run fix-windows-version
 
       - uses: tauri-apps/tauri-action@v0
         env:
