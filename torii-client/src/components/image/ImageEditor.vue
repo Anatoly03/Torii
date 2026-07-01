@@ -109,10 +109,45 @@ async function loadFile() {
 }
 
 /**
+ * Loads image from a "File" object.
+ */
+async function loadImageFromFile(file: File) {
+    // This is an expensive operation. Start loading after 100ms
+    // if the image does not load immediately.
+    setTimeout(() => (loading.value += 1), 100);
+
+    // Read as ArrayBuffer (binary)
+    const arrayBuffer = await file.arrayBuffer();
+    const uint8Array = new Uint8Array(arrayBuffer);
+
+    console.log(file);
+    console.log(arrayBuffer);
+
+    // Send to Rust via invoke (base64)
+    const base64 = btoa(String.fromCharCode(...uint8Array));
+    await invoke('save_record_component', {
+        directory: props.directory,
+        name: props.name,
+        component: 'image',
+        content: base64,
+        contentType: file.type,
+    });
+
+    // Refresh the image data after saving
+    await loadFile();
+
+    loading.value -= 1;
+}
+
+/**
  *
  * @param url URL of the image to load.
  */
 async function loadImageFromURL(url: string) {
+    // This is an expensive operation. Start loading after 100ms
+    // if the image does not load immediately.
+    setTimeout(() => (loading.value += 1), 100);
+
     // Fetch the image data from the src URL and convert it to a Uint8Array.
     // This should work for URLs but probably not for local files paths (cors).
     const response = await fetch(url);
@@ -124,7 +159,6 @@ async function loadImageFromURL(url: string) {
     refreshImageBlob();
 
     console.debug(`Loaded ${byteLength} bytes from ${url}`);
-    loading.value -= 1;
 
     // Convert the image data to a base64 string for saving
     // which is required for mime type "image"
@@ -138,6 +172,8 @@ async function loadImageFromURL(url: string) {
         content,
         contentType: 'image/png',
     });
+
+    loading.value -= 1;
 }
 
 async function loadImageFromHTML(html: string) {
@@ -166,7 +202,9 @@ async function loadImageFromHTML(html: string) {
                 } else if (element?.innerHTML.startsWith('file://')) {
                     // Remove 'file://' prefix and decode the URI component (converts percentage-
                     // encoded Japanese locale to proper Japanese characters.)
-                    const source = decodeURIComponent(element.innerHTML.slice(7));
+                    const source = decodeURIComponent(
+                        element.innerHTML.slice(7)
+                    );
 
                     // Save the image data from a local file path. This is a special case for local files.
                     await invoke('save_record_component_from_local_file', {
@@ -202,7 +240,12 @@ async function onImageDrop(event: DragEvent) {
 
     // Check if files are dropped
     if (dt.files && dt.files.length > 0) {
-        console.log('Files dropped:', dt.files);
+        const file = dt.files[0];
+
+        if (file.type.startsWith('image/')) {
+            await loadImageFromFile(file);
+            return;
+        }
     }
 
     // Check if text is dropped

@@ -54,6 +54,7 @@ The first stage of the project is to create a simple file browser like applicati
 
 -   [ ] Add footer to editing components
     -   [ ] Word Count
+    -   [ ] Edit/ View mode (hides placeholder grids vs. allows to edit article & enables drag and drop)
 -   [ ] Add Settings
     -   [ ] Enable/ Disable Word Count
 -   [ ] Extend Markdown
