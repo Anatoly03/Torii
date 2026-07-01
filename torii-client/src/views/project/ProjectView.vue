@@ -13,6 +13,12 @@
                 >
                     {{ $t('app.project.close') }}
                 </button>
+                <button
+                    class="view-home-settings-button"
+                    @click="openSettingsWindow()"
+                >
+                    <Icon><SettingsOutline /></Icon>
+                </button>
             </div>
         </div>
         <!-- <div class="view-project-content-placeholder" v-if="!currentFile">
@@ -56,6 +62,9 @@ import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { invoke } from '@tauri-apps/api/core';
 import FileTree, { Record } from '../../components/file/FileTree.vue';
+import { Icon } from '@vicons/utils';
+import { SettingsOutline } from '@vicons/ionicons5';
+import { openSettingsWindow } from '../../composables/settings-window.ts';
 
 // Components
 import MarkdownEditor from '../../components/article/MarkdownEditor.vue';
@@ -154,8 +163,17 @@ if (!projectPath) {
         .view-project-quick-settings {
             display: flex;
             flex-direction: row;
+            align-items: center;
             gap: 8px;
             min-height: 2em;
+
+            .view-project-return-to-menu {
+                flex: 1;
+            }
+
+            .view-home-settings-button {
+                flex: 0;
+            }
 
             button {
                 flex: 1;

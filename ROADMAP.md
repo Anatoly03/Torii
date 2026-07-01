@@ -64,6 +64,11 @@ The first stage of the project is to create a simple file browser like applicati
     -   [ ] Light Mode
     -   [ ] Dark Mode
 
+### `v0.0.0-dev7`
+
+-   [ ] Add recursion support to file system
+-   [ ] Add workspace directories
+
 # Daiishi 台石
 
 ### `v1.0.0`

@@ -24,14 +24,13 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { getVersion } from '@tauri-apps/api/app';
-import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
 import { Icon } from '@vicons/utils';
 import { SettingsOutline } from '@vicons/ionicons5';
 import LanguageSelect from '@/components/LanguageSelect.vue';
 import RecentProjectsView from './RecentProjectsView.vue';
+import { openSettingsWindow } from '../composables/settings-window.ts';
 
 const version = ref('Invalid Version');
-const settingsWindow = ref<WebviewWindow | null>(null);
 
 onMounted(async () => {
     try {
@@ -40,42 +39,6 @@ onMounted(async () => {
         console.error('Failed to get app version:', error);
     }
 });
-
-function openSettingsWindow() {
-    // Avoid opening multiple settings windows.
-    if (settingsWindow.value) {
-        settingsWindow.value.setFocus();
-        return;
-    }
-
-    settingsWindow.value = new WebviewWindow('settings', {
-        url: '/settings',
-        title: 'Settings',
-        width: 860,
-        height: 500,
-        center: true,
-        resizable: true,
-        fullscreen: false,
-    });
-
-    settingsWindow.value.once('tauri://created', () => {
-        console.log('Settings window created');
-    });
-
-    settingsWindow.value.once('tauri://close-requested', (e) => {
-        settingsWindow.value?.close();
-        settingsWindow.value = null;
-    });
-
-    settingsWindow.value.once('tauri://error', (e) => {
-        console.error('Failed to create settings window', e);
-    });
-
-    settingsWindow.value.once('tauri://error', (e) => {
-        console.error('Failed to create settings window', e);
-        settingsWindow.value = null; // Also clear on error
-    });
-}
 </script>
 
 <style lang="scss" scoped>
