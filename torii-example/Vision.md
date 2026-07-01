@@ -114,6 +114,21 @@ Let's say you want to know the average age of all characters in your world. Sinc
 
 The idea of queries is to use structured data and get an understanding of their relations. You can also split the book into smaller "Chapters" and then simply collect it all into one file. **With Torii we want to provide world builders with powerful tools, not tell you how to use them!**
 
+### The JSON File
+
+There should be a JSON file in the entity directory at `<entity>.json` which is of type `{[component]: data}` can store small data. This can be used for components which are very small and do not need an entire file, or components which need to store a bit more than a standalone binary.
+
+For example, the "Banner" component can store the banner image at `<entity>.banner.png` and also store information such as offset, and image positioning in this config file.
+
+We should discuss if we go for YAML or JSON.
+
+```json
+{
+  "banner": { "offset_y": 0.0, "offset_x": 0.0 },
+  "article": { "links": ["Other Record", "Hello World"] }
+}
+```
+
 ### Version Controlling &amp; File System
 
 The Torii ecosystem is specifically designed to be compatible with GIT and the local filesystem.. All components are individual files that can be committed and tracked, but also individually removed and managed. 
