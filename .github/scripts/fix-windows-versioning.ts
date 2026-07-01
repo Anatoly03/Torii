@@ -16,7 +16,6 @@ import * as fs from "fs";
 /**
  * @brief Path to the Tauri configuration file.
  */
-// TODO
 const TAURI_CONFIG_PATH = "torii-desktop/tauri.conf.json";
 
 /**
@@ -47,6 +46,9 @@ function fixWindowsVersioning() {
     const fixedVersion = removeLetters(originalVersion);
     tauriConfig.version = fixedVersion;
     fs.writeFileSync(TAURI_CONFIG_PATH, JSON.stringify(tauriConfig, null, 4));
+
+    console.log('Torii Version:           ', originalVersion)
+    console.log('Torii Version (Windows): ', fixedVersion)
 }
 
 // Run the versioning fix.

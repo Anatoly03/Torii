@@ -17,6 +17,7 @@
         "build": "npm run build --workspace=torii-client",
         "lint": "npm run lint --workspace=torii-client",
         "tauri": "tauri",
-        "fix-windows-version": "tsx .github/scripts/fix-windows-versioning.ts"
+        "fix-windows-version": "tsx .github/scripts/fix-windows-versioning.ts",
+        "version": "tsx .github/scripts/print-tauri-version.ts"
     }
 }
