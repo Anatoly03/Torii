@@ -41,6 +41,7 @@
                 :directory="markdownDirectory"
                 :name="markdownName"
                 component="image"
+                placeholder-anchor="center"
                 class="view-project-image"
                 @refresh="loadComponents()"
                 v-if="currentFile"
