@@ -6,7 +6,13 @@ Like a [Japanese Torii](https://en.wikipedia.org/wiki/Torii) gate, the idea for 
 
 ---
 
-### v0.0.0-dev5
+### v0.0.0-dev6
+
+- TBA
+
+---
+
+### [v0.0.0-dev5](https://github.com/Anatoly03/Torii/releases/tag/app-v0.0.0-dev5)
 
 - Add drag and drop feature to create the image component. You can now also click the placeholer to open a file dialog.
 - Add decorative banner component which is behind the header image.

@@ -42,7 +42,7 @@ The first stage of the project is to create a simple file browser like applicati
     -   [x] Autocomplete File Links
     -   [x] File Links Support (Click)
 
-### `v0.0.0-dev5` [CURRENT]
+### `v0.0.0-dev5` [COMPLETED]
 
 -   [x] Add Image component functionality: Create/ Replace Image
     -   [x] Drag and Drop
@@ -52,7 +52,7 @@ The first stage of the project is to create a simple file browser like applicati
 -   [x] Scrolling should remove autocomplete popup.
 -   [x] Fix program crash when closing project to go to launcher (Markdowns' TipTap Editor is destroyed but still invoked)
 
-### `v0.0.0-dev6`
+### `v0.0.0-dev6` [CURRENT]
 
 -   [ ] Add footer to editing components
     -   [ ] Word Count
