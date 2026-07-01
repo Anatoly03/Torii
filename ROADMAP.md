@@ -56,6 +56,7 @@ The first stage of the project is to create a simple file browser like applicati
 
 -   [x] Add Windows builds to publish workflow.
     -   [x] Add Windows versioning fixer script
+-   [ ] Fix hot reload bug where settings can't be opened after reload.
 -   [ ] Add footer to editing components
     -   [ ] Word Count
     -   [ ] Edit/ View mode (hides placeholder grids vs. allows to edit article & enables drag and drop)

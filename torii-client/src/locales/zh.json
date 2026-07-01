@@ -10,7 +10,9 @@
             "close": "关闭项目",
             "recent": "最近的项目",
             "noRecent": "没有最近的项目。",
-            "wordCount": "0 个字 | {count} 个字 | {count} 个字"
+            "wordCount": "0 个字 | {count} 个字 | {count} 个字",
+            "newFile": "新建文件",
+            "bannerPlaceholder": "横幅"
         },
         "settings": {
             "title": "设置",

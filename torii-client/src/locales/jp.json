@@ -10,7 +10,9 @@
             "close": "プロジェクトを閉じる",
             "recent": "最近のプロジェクト",
             "noRecent": "最近のプロジェクトはありません。",
-            "wordCount": "0語 | {count}語 | {count}語"
+            "wordCount": "0語 | {count}語 | {count}語",
+            "newFile": "新しいファイル",
+            "bannerPlaceholder": "バナー"
         },
         "settings": {
             "title": "設定",

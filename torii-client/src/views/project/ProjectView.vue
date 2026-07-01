@@ -28,7 +28,7 @@
                     :directory="markdownDirectory"
                     :name="markdownName"
                     component="banner"
-                    placeholder-text="Banner"
+                    :placeholder-text="$t('app.project.bannerPlaceholder')"
                     placeholder-anchor="left"
                     class="view-project-banner"
                     @refresh="loadComponents()"

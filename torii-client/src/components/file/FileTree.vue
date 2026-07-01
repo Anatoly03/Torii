@@ -18,7 +18,7 @@
         </n-tree>
         <button @click="startNewFile" class="new-file-btn">
             <NIcon><AddOutline /></NIcon>
-            New File
+            {{ $t('app.project.newFile') }}
         </button>
     </div>
 </template>
