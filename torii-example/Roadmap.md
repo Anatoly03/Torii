@@ -12,6 +12,7 @@ Like a [Japanese Torii](https://en.wikipedia.org/wiki/Torii) gate, the idea for 
 - Add decorative banner component which is behind the header image.
 - Scrolling in a project now removes the autocomplete popup.
 - Settings can now be accessed from project view.
+- Fix minor bug with trying to drag and drop images whose path included characters in a non-English locale.
 
 ---
 

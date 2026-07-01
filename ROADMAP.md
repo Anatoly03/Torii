@@ -45,10 +45,11 @@ The first stage of the project is to create a simple file browser like applicati
 ### `v0.0.0-dev5` [CURRENT]
 
 -   [x] Add Image component functionality: Create/ Replace Image (Drag and Drop)
--   [ ] Fix Drag and Drop error with local file paths using Japanese locale.
+-   [x] Fix Drag and Drop error with local file paths using Japanese locale.
 -   [x] Add Image Banner component
 -   [ ] Fix bug where opening new record sometimes scrolls to an offset.
 -   [x] Scrolling should remove autocomplete popup.
+-   [ ] Fix program crash when closing project to go to launcher (Markdowns' TipTap Editor is destroyed but still invoked)
 -   [ ] Add footer to editing components
     -   [ ] Word Count
 -   [ ] Add Settings

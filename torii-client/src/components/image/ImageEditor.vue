@@ -164,12 +164,16 @@ async function loadImageFromHTML(html: string) {
                 if ((element as HTMLAnchorElement).href) {
                     await loadImageFromURL((element as HTMLAnchorElement).href);
                 } else if (element?.innerHTML.startsWith('file://')) {
+                    // Remove 'file://' prefix and decode the URI component (converts percentage-
+                    // encoded Japanese locale to proper Japanese characters.)
+                    const source = decodeURIComponent(element.innerHTML.slice(7));
+
                     // Save the image data from a local file path. This is a special case for local files.
                     await invoke('save_record_component_from_local_file', {
                         directory: props.directory,
                         name: props.name,
                         component: props.component,
-                        source: element.innerHTML.slice(7), // Remove 'file://' prefix
+                        source,
                     });
 
                     // Refresh the image data after saving
