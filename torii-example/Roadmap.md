@@ -8,7 +8,7 @@ Like a [Japanese Torii](https://en.wikipedia.org/wiki/Torii) gate, the idea for 
 
 ### v0.0.0-dev6
 
-- Add project footer containg a word count.
+- Add a setting which can enable a project footer containg the article word count.
 - Add some missing localizations.
 
 ---

@@ -11,5 +11,6 @@ The following is a list of all features currently possible in Torii. If you have
 - View &amp; Edit Markdown Components (`.md`)
 - Add, View &amp; Delete Image Component (`.png`)
 - Add, View &amp; Delete Image Banner Component (`.banner.png`)
+- Settings: Localization, Enable Word Count Display
 - ...
 
