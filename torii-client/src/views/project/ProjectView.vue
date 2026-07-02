@@ -1,6 +1,6 @@
 <template>
     <div class="view-project">
-        <div class="view-project-side">
+        <div class="view-project-sidebar">
             <FileTree
                 ref="fileTree"
                 :root="projectPath"
@@ -21,40 +21,45 @@
                 </button>
             </div>
         </div>
-        <!-- <div class="view-project-content-placeholder" v-if="!currentFile">
-            Project View: {{ projectPath }}<br />
-        </div> -->
-        <div class="view-project-content" @scroll="onScrollProjectContent">
-            <ImageEditor
-                :key="currentFile.directory + '/' + currentFile.name"
-                :directory="markdownDirectory"
-                :name="markdownName"
-                component="banner"
-                placeholder-text="Banner"
-                placeholder-anchor="left"
-                class="view-project-banner"
-                @refresh="loadComponents()"
-                v-if="currentFile"
-            />
-            <ImageEditor
-                :key="currentFile.directory + '/' + currentFile.name"
-                :directory="markdownDirectory"
-                :name="markdownName"
-                component="image"
-                placeholder-anchor="center"
-                class="view-project-image"
-                @refresh="loadComponents()"
-                v-if="currentFile"
-            />
-            <MarkdownEditor
-                ref="markdownEditor"
-                :directory="markdownDirectory"
-                :name="markdownName"
-                :autocomplete-suggestion="(v) => autocompleteMarkdown(v)"
-                :placeholder="!recordComponents.includes('article')"
-                @open-file="openFile"
-                v-if="currentFile"
-            />
+        <div class="view-project-layout">
+            <div class="view-project-content" @scroll="onScrollProjectContent">
+                <ImageEditor
+                    :key="currentFile.directory + '/' + currentFile.name"
+                    :directory="markdownDirectory"
+                    :name="markdownName"
+                    component="banner"
+                    :placeholder-text="$t('app.project.bannerPlaceholder')"
+                    placeholder-anchor="left"
+                    class="view-project-banner"
+                    @refresh="loadComponents()"
+                    v-if="currentFile"
+                />
+                <ImageEditor
+                    :key="currentFile.directory + '/' + currentFile.name"
+                    :directory="markdownDirectory"
+                    :name="markdownName"
+                    component="image"
+                    placeholder-anchor="center"
+                    class="view-project-image"
+                    @refresh="loadComponents()"
+                    v-if="currentFile"
+                />
+                <MarkdownEditor
+                    ref="markdownEditor"
+                    v-model:word-count="wordCount"
+                    :directory="markdownDirectory"
+                    :name="markdownName"
+                    :autocomplete-suggestion="(v) => autocompleteMarkdown(v)"
+                    :placeholder="!recordComponents.includes('article')"
+                    @open-file="openFile"
+                    v-if="currentFile"
+                />
+            </div>
+            <div class="view-project-footer" v-if="settings.enableWordCount">
+                <span class="view-record-word-count">
+                    {{ $t('app.project.wordCount', { count: wordCount }) }}
+                </span>
+            </div>
         </div>
     </div>
 </template>
@@ -67,6 +72,7 @@ import FileTree, { Record } from '../../components/file/FileTree.vue';
 import { Icon } from '@vicons/utils';
 import { SettingsOutline } from '@vicons/ionicons5';
 import { openSettingsWindow } from '../../composables/settings-window.ts';
+import { useSettingsStore } from '@/stores/settings';
 
 // Components
 import MarkdownEditor from '../../components/article/MarkdownEditor.vue';
@@ -74,6 +80,7 @@ import ImageEditor from '../../components/image/ImageEditor.vue';
 
 const route = useRoute();
 const router = useRouter();
+const settings = useSettingsStore();
 const projectPath = route.query.project as string;
 const currentFile = ref<{ directory: string; name: string } | null>(null);
 const markdownDirectory = ref<string | null>(null);
@@ -82,6 +89,7 @@ const recordComponents = ref<string[]>([]);
 const fileTree = ref<InstanceType<typeof FileTree> | null>(null);
 const markdownEditor = ref<InstanceType<typeof MarkdownEditor> | null>(null);
 const records = ref<Record[]>([]);
+const wordCount = ref<number | undefined>(undefined);
 
 onMounted(async () => {
     const files = await fileTree.value?.loadFiles();
@@ -159,7 +167,7 @@ if (!projectPath) {
     flex-direction: row;
     height: 100%;
 
-    .view-project-side {
+    .view-project-sidebar {
         display: flex;
         flex-direction: column;
         width: 200px;
@@ -188,13 +196,19 @@ if (!projectPath) {
         }
     }
 
-    .view-project-content-placeholder {
+    .view-project-layout {
         display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
         flex: 1;
     }
+
+    // .view-project-content-placeholder {
+    //     display: flex;
+    //     flex-direction: column;
+    //     align-items: center;
+    //     justify-content: center;
+    //     flex: 1;
+    // }
 
     .view-project-content {
         position: relative;
@@ -224,6 +238,15 @@ if (!projectPath) {
             margin: 16px;
             background-color: #fafafaaa;
         }
+    }
+
+    .view-project-footer {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: start;
+        padding: 8px;
+        border-top: 1px solid #ccc;
     }
 }
 </style>

@@ -5,8 +5,10 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue';
 import { watchLocale } from './composables/watch-locale';
+import { loadSettings } from './stores/settings.ts';
 
 watchLocale();
+loadSettings();
 
 function preventDefault(e: { preventDefault: () => void }) {
     e.preventDefault();

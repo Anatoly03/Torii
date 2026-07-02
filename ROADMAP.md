@@ -1,6 +1,6 @@
 ### `v0.0.0-1` - GitHub CI Test
 
--   [x] Verify the integration works and can build artefacts.
+-   [x] Verify the continuous integration works and can build artefacts.
 
 # Hajime 始め
 
@@ -56,29 +56,38 @@ The first stage of the project is to create a simple file browser like applicati
 
 -   [x] Add Windows builds to publish workflow.
     -   [x] Add Windows versioning fixer script
--   [ ] Add footer to editing components
-    -   [ ] Word Count
+-   [x] Fix hot reload bug where settings can't be opened after reload.
+-   [x] Add footer
+    -   [x] Word Count
     -   [ ] Edit/ View mode (hides placeholder grids vs. allows to edit article & enables drag and drop)
--   [ ] Add Settings
-    -   [ ] Enable/ Disable Word Count
-    -   [ ] Keybinds
--   [ ] Extend Markdown
-    -   [ ] Image embed support
+-   [x] Add Settings System
+    -   [x] Enable/ Disable Word Count
+    -   [x] Synchronize setting changes between Tauri windows
+    -   [x] Store settings persisted on the file system
 
 ### `v0.0.0-dev7`
 
+-   [ ] Keybinds
 -   [ ] Fix bug where opening new record sometimes scrolls to an offset.
+-   [ ] Extend Markdown
+    -   [ ] Image embed support
+
+### `v0.0.0-dev8`
+
 -   [ ] Refactor to Theme Support
     -   [ ] Light Mode
     -   [ ] Dark Mode
 
-### `v0.0.0-dev8`
+### `v0.0.0-dev9`
+
+-   [ ] Add directory component: If entity path is a directory, it can contain records.
+-   [ ] Add recursion support to file system records, ability to display
+
+### `v0.0.0-dev10`
 
 -   [ ] Add index tracking for backlinks (records referencing other records, maintain pointers)
 -   [ ] Add ability to rename files with fixes in backlinks
-    -   [ ] Add component trait method: Invoked on records with backlinks, rename link within component.
--   [ ] Add recursion support to file system
--   [ ] Add workspace directories
+    -   [ ] Add component trait method `rename_link`: Invoked on records with backlinks, rename link within component.
 
 # Daiishi 台石
 

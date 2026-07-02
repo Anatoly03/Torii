@@ -9,7 +9,10 @@
             "open": "Open Project",
             "close": "Close Project",
             "recent": "Recent Projects",
-            "noRecent": "No recent projects."
+            "noRecent": "No recent projects.",
+            "wordCount": "0 words | {count} word | {count} words",
+            "newFile": "New File",
+            "bannerPlaceholder": "Banner"
         },
         "settings": {
             "title": "Settings",
