@@ -59,7 +59,6 @@ The first stage of the project is to create a simple file browser like applicati
 -   [x] Fix hot reload bug where settings can't be opened after reload.
 -   [x] Add footer
     -   [x] Word Count
-    -   [ ] Edit/ View mode (hides placeholder grids vs. allows to edit article & enables drag and drop)
 -   [x] Add Settings System
     -   [x] Enable/ Disable Word Count
     -   [x] Synchronize setting changes between Tauri windows
@@ -67,7 +66,9 @@ The first stage of the project is to create a simple file browser like applicati
 
 ### `v0.0.0-dev7`
 
--   [ ] Keybinds
+-   [ ] General Keybinds and keybinds to overwrite [TipTap Keybinds](https://tiptap.dev/docs/editor/core-concepts/keyboard-shortcuts)
+-   [ ] Expand Footer
+    -   [ ] Edit/ View mode (hides placeholder grids vs. allows to edit article & enables drag and drop)
 -   [ ] Fix bug where opening new record sometimes scrolls to an offset.
 -   [ ] Extend Markdown
     -   [ ] Image embed support
