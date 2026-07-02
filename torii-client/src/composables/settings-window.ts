@@ -10,6 +10,17 @@ export function openSettingsWindow() {
         return;
     }
 
+    // On hot reload, set settingsWindow to current window because it is still open.
+    if (import.meta.hot) {
+        WebviewWindow.getByLabel('settings').then((existingWindow) => {
+            if (existingWindow) {
+                settingsWindow.value = existingWindow;
+                settingsWindow.value.setFocus();
+                return;
+            }
+        });
+    }
+
     settingsWindow.value = new WebviewWindow('settings', {
         url: '/settings',
         title: 'Settings',
