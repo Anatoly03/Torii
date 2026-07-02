@@ -17,7 +17,8 @@
         "settings": {
             "title": "Settings",
             "general": "General",
-            "themes": "Themes"
+            "themes": "Themes",
+            "enableWordCount": "Enable Word Count"
         },
         "menu": {
             "home": "Home",

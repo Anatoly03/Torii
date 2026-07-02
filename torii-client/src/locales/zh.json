@@ -17,7 +17,8 @@
         "settings": {
             "title": "设置",
             "general": "常规",
-            "themes": "主题"
+            "themes": "主题",
+            "enableWordCount": "启用字数统计"
         },
         "menu": {
             "home": "主页",

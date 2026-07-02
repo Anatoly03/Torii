@@ -17,7 +17,8 @@
         "settings": {
             "title": "設定",
             "general": "一般",
-            "themes": "テーマ"
+            "themes": "テーマ",
+            "enableWordCount": "単語数を有効にする"
         },
         "menu": {
             "home": "ホーム",

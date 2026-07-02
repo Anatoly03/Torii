@@ -4,7 +4,7 @@
         <n-form-item label="Language">
             <LanguageSelect />
         </n-form-item>
-        <n-form-item label="Enable Word Count">
+        <n-form-item :label="$t('app.settings.enableWordCount')">
             <n-switch v-model:value="settings.enableWordCount" />
         </n-form-item>
     </n-form>
