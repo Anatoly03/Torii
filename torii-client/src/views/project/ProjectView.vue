@@ -55,7 +55,7 @@
                     v-if="currentFile"
                 />
             </div>
-            <div class="view-project-footer">
+            <div class="view-project-footer" v-if="settings.enableWordCount">
                 <span class="view-record-word-count">
                     {{ $t('app.project.wordCount', { count: wordCount }) }}
                 </span>
@@ -72,6 +72,7 @@ import FileTree, { Record } from '../../components/file/FileTree.vue';
 import { Icon } from '@vicons/utils';
 import { SettingsOutline } from '@vicons/ionicons5';
 import { openSettingsWindow } from '../../composables/settings-window.ts';
+import { useSettingsStore } from '@/stores/settings';
 
 // Components
 import MarkdownEditor from '../../components/article/MarkdownEditor.vue';
@@ -79,6 +80,7 @@ import ImageEditor from '../../components/image/ImageEditor.vue';
 
 const route = useRoute();
 const router = useRouter();
+const settings = useSettingsStore();
 const projectPath = route.query.project as string;
 const currentFile = ref<{ directory: string; name: string } | null>(null);
 const markdownDirectory = ref<string | null>(null);

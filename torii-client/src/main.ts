@@ -14,6 +14,9 @@ const i18n = createI18n({
     messages: { en, jp, zh },
 });
 
+import { createPinia } from 'pinia';
+const pinia = createPinia();
+
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
 
@@ -30,4 +33,4 @@ mainWindow.listen('tauri://close-requested', async (_event) => {
 
 import '@/styles/global.scss';
 
-createApp(App).use(router).use(i18n).mount("#app");
+createApp(App).use(router).use(pinia).use(i18n).mount('#app');
