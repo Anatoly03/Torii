@@ -60,14 +60,14 @@ The first stage of the project is to create a simple file browser like applicati
 -   [x] Add footer
     -   [x] Word Count
     -   [ ] Edit/ View mode (hides placeholder grids vs. allows to edit article & enables drag and drop)
--   [ ] Add Settings
+-   [x] Add Settings System
     -   [x] Enable/ Disable Word Count
     -   [x] Synchronize setting changes between Tauri windows
-    -   [ ] Store settings persisted on the file system
-    -   [ ] Keybinds
+    -   [x] Store settings persisted on the file system
 
 ### `v0.0.0-dev7`
 
+-   [ ] Keybinds
 -   [ ] Fix bug where opening new record sometimes scrolls to an offset.
 -   [ ] Extend Markdown
     -   [ ] Image embed support
