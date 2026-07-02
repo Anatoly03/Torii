@@ -18,6 +18,7 @@
             "title": "Settings",
             "general": "General",
             "themes": "Themes",
+            "keybinds": "Keybinds",
             "enableWordCount": "Enable Word Count"
         },
         "menu": {

@@ -18,6 +18,7 @@
             "title": "設定",
             "general": "一般",
             "themes": "テーマ",
+            "keybinds": "キーバインド",
             "enableWordCount": "単語数を有効にする"
         },
         "menu": {

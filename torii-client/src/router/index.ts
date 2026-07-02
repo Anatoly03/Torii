@@ -41,6 +41,14 @@ const routes: Array<RouteRecordRaw> = [
                         /* webpackChunkName: "settings-theme" */ '../views/settings/ThemeSettingsView.vue'
                     ),
             },
+            {
+                path: 'keybinds',
+                name: 'settings-keybinds',
+                component: () =>
+                    import(
+                        /* webpackChunkName: "settings-keybinds" */ '../views/settings/KeybindSettingsView.vue'
+                    ),
+            },
         ],
     },
 ];

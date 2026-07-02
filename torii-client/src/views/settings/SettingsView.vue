@@ -32,6 +32,10 @@ const menuOptions = computed(() => [
         label: i18n.t('app.settings.themes'),
         key: 'settings-theme',
     },
+    {
+        label: i18n.t('app.settings.keybinds'),
+        key: 'settings-keybinds',
+    },
 ]);
 
 function openSetting(key: string) {

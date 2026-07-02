@@ -66,7 +66,6 @@ The first stage of the project is to create a simple file browser like applicati
 
 ### `v0.0.0-dev7`[CURRENT]
 
--   [ ] Opt-In Setting: Citation Tracking Component (Store URLs for uploaded Images and inserted content.)
 -   [ ] General Keybinds and keybinds to overwrite [TipTap Keybinds](https://tiptap.dev/docs/editor/core-concepts/keyboard-shortcuts)
 
 ### `v0.0.0-dev8`
@@ -74,6 +73,7 @@ The first stage of the project is to create a simple file browser like applicati
 -   [ ] Expand Footer
     -   [ ] Edit/ View mode (hides placeholder grids vs. allows to edit article & enables drag and drop)
 -   [ ] Fix bug where opening new record sometimes scrolls to an offset.
+-   [ ] Opt-In Setting: Citation Tracking Component (Store URLs for uploaded Images and inserted content.)
 
 ### `v0.0.0-dev9`
 
@@ -105,7 +105,15 @@ The first stage of the project is to create a simple file browser like applicati
 
 ### `v0.0.0-dev13`
 
--   TBA
+-   [ ] TBA
+
+### `v0.0.1`
+
+-   [ ] Add support for [automatic updates](https://v2.tauri.app/plugin/updater/)
+
+### `v0.0.1-dev1`
+
+-   [ ] TBA
 
 # Daiishi 台石
 
@@ -125,6 +133,7 @@ The first stage of the project is to create a simple file browser like applicati
 ### `v1.0.1`
 
 -   [ ] To-Do: Far future
+-   [ ] Publish extension API [to package managers](https://github.com/Anatoly03/Torii/packages)
 
 <!-- Daiishi / Kamebara -->
 <!-- Hashira -->
