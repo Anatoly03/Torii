@@ -79,6 +79,24 @@ Some worlds lead their own calendars. For authors who deeply care about proper t
 
 Fragment of a chapter, a scene is an article describing events occuring in a certain place (record), at a certain time in a time system (record) with certain characters present (records).
 
+### "Folder" Component
+
+Every "Folder" in the workspace should also itself be a record, which can be expanded with articles and is therefore a page that can be viewed. The "Folder" component extends only in the file tree, allowing to list child records of the folder. For example you can create the record "Characters" and add "Characters/Sarah Vermillion" and "Characters/Naki Pagong", and in the parent record "Characters" you describe the concept of story characters and maybe list all characters?
+
+Other idea for such pages are "Artefacts", "Clans" or in-world "Flora and Fauna". The world builder using Torii should chose.
+
+### "Citation" Component
+
+Some people like me prefer to keep "track" of where ideas came from, wether it's Pinterest or a wikipedia page, but I always found it really weird how I should do it. The citation problem will solve exactly this by automatically keeping track of remote links when using image drag and drop, and scan for file source when uploading images, or copy pasting text.
+
+When exporting you can also opt in to add a references section.
+
+```
+{
+  "banner": { "url": "image.png", "accessed": 11299584, ... },
+}
+```
+
 ### Minor Component Ideas
 
 Below are minor component ideas which are too small for their own subtitle.

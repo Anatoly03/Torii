@@ -23,7 +23,7 @@ const TAURI_CONFIG_PATH = "torii-desktop/tauri.conf.json";
  * @return Version string with non-leading letters removed.
  * @example
  *
- * assert.equal(removeLetters("0.0.0-dev5"), "0.0.0-5");
+ * assert.equal(removeLetters("0.0.0-dev2"), "0.0.0-2");
  * assert.equal(removeLetters("0.0.1"), "0.0.1");
  * assert.equal(removeLetters("0.1.0-alpha"), "0.1.0"); // not allowed by our versioning scheme
  */

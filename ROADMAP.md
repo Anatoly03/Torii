@@ -52,7 +52,7 @@ The first stage of the project is to create a simple file browser like applicati
 -   [x] Scrolling should remove autocomplete popup.
 -   [x] Fix program crash when closing project to go to launcher (Markdowns' TipTap Editor is destroyed but still invoked)
 
-### `v0.0.0-dev6` [CURRENT]
+### `v0.0.0-dev6` [COMPLETED]
 
 -   [x] Add Windows builds to publish workflow.
     -   [x] Add Windows versioning fixer script
@@ -64,31 +64,48 @@ The first stage of the project is to create a simple file browser like applicati
     -   [x] Synchronize setting changes between Tauri windows
     -   [x] Store settings persisted on the file system
 
-### `v0.0.0-dev7`
+### `v0.0.0-dev7`[CURRENT]
 
+-   [ ] Opt-In Setting: Citation Tracking Component (Store URLs for uploaded Images and inserted content.)
 -   [ ] General Keybinds and keybinds to overwrite [TipTap Keybinds](https://tiptap.dev/docs/editor/core-concepts/keyboard-shortcuts)
+
+### `v0.0.0-dev8`
+
 -   [ ] Expand Footer
     -   [ ] Edit/ View mode (hides placeholder grids vs. allows to edit article & enables drag and drop)
 -   [ ] Fix bug where opening new record sometimes scrolls to an offset.
--   [ ] Extend Markdown
-    -   [ ] Image embed support
 
-### `v0.0.0-dev8`
+### `v0.0.0-dev9`
 
 -   [ ] Refactor to Theme Support
     -   [ ] Light Mode
     -   [ ] Dark Mode
 
-### `v0.0.0-dev9`
+### `v0.0.0-dev10`
 
 -   [ ] Add directory component: If entity path is a directory, it can contain records.
 -   [ ] Add recursion support to file system records, ability to display
+-   [ ] Breadcrumb Header
+-   [ ] Add Record search (filter records by search pattern)
 
-### `v0.0.0-dev10`
+### `v0.0.0-dev11`
 
+-   [ ] Extend Markdown
+    -   [ ] Image embed support (new images are stored as a child-record in this records' directory)
 -   [ ] Add index tracking for backlinks (records referencing other records, maintain pointers)
 -   [ ] Add ability to rename files with fixes in backlinks
     -   [ ] Add component trait method `rename_link`: Invoked on records with backlinks, rename link within component.
+
+### `v0.0.0-dev12`
+
+-   [ ] Export one record or entire workspace
+    -   [ ] PDF
+    -   [ ] HTML
+    -   [ ] LaTeX
+
+### `v0.0.0-dev13`
+
+-   TBA
 
 # Daiishi 台石
 
