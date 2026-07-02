@@ -126,7 +126,10 @@ async function loadImageFromFile(file: File) {
     console.log(arrayBuffer);
 
     // Send to Rust via invoke (base64)
-    const base64 = btoa(String.fromCharCode(...uint8Array));
+    const base64 = btoa(
+        uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '')
+    );
+
     await invoke('save_record_component', {
         directory: props.directory,
         name: props.name,
@@ -156,22 +159,25 @@ async function loadImageFromURL(url: string) {
     const blob = await response.blob();
     const arrayBuffer = await blob.arrayBuffer();
     const byteLength = arrayBuffer.byteLength;
+    const uint8Array = new Uint8Array(arrayBuffer);
 
-    imageData.value = new Uint8Array(arrayBuffer);
+    imageData.value = uint8Array;
     refreshImageBlob();
 
     console.debug(`Loaded ${byteLength} bytes from ${url}`);
 
     // Convert the image data to a base64 string for saving
     // which is required for mime type "image"
-    let content = btoa(String.fromCharCode(...imageData.value));
+    const base64 = btoa(
+        uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '')
+    );
 
     // Save the image data to the backend
     await invoke('save_record_component', {
         directory: props.directory,
         name: props.name,
         component: props.component,
-        content,
+        content: base64,
         contentType: 'image/png',
     });
 
