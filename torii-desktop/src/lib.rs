@@ -1,8 +1,6 @@
 //! Desktop library for the Torii desktop application, built using Tauri.
 
-mod components;
-mod project;
-mod recent;
+pub use components::Component;
 
 use std::error::Error;
 use tauri::App;

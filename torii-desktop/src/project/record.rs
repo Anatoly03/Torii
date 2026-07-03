@@ -1,11 +1,10 @@
 //! This module contains the [Record] struct.
 
+use crate::{Component, components::get_all_components};
 use base64::{Engine as _, engine::general_purpose};
 use serde::{Deserialize, Serialize};
 use std::{collections::HashSet, fs::read_dir, path::PathBuf};
 use tauri::ipc::Response;
-
-use crate::components::{get_all_components, get_component_by_name};
 
 /// A record in a Torii project. This is used to represent a single "thing"
 /// in the project, such as an encyclopedia entry, a character sheet or a book
@@ -148,12 +147,9 @@ pub fn list_record_components(directory: PathBuf, name: String) -> Result<Vec<St
 pub fn get_record_component(
     directory: PathBuf,
     name: String,
-    component: String,
+    component: Box<dyn Component>,
 ) -> Result<Response, String> {
-    let path = directory.join(&name);
-    let component =
-        get_component_by_name(&component).ok_or(format!("Unknown component: {component}"))?;
-    component.read(&path)
+    component.read(&directory.join(&name))
 }
 
 /// Saves (or creates) a specific component for a given record.
@@ -161,13 +157,11 @@ pub fn get_record_component(
 pub fn save_record_component(
     directory: PathBuf,
     name: String,
-    component: String,
+    component: Box<dyn Component>,
     content: String,
     content_type: String,
 ) -> Result<(), String> {
     let path = directory.join(&name);
-    let component =
-        get_component_by_name(&component).ok_or(format!("Unknown component: {component}"))?;
     let content_type = content_type.split('/').next().unwrap_or("").to_lowercase();
 
     let bytes = match content_type.as_str() {
@@ -186,12 +180,10 @@ pub fn save_record_component(
 pub fn save_record_component_from_local_file(
     directory: PathBuf,
     name: String,
-    component: String,
+    component: Box<dyn Component>,
     source: PathBuf,
 ) -> Result<(), String> {
     let path = directory.join(&name);
-    let component =
-        get_component_by_name(&component).ok_or(format!("Unknown component: {component}"))?;
     match component.write_from_file(&path, &source) {
         Some(result) => result,
         None => Err(format!(
@@ -208,11 +200,9 @@ pub fn save_record_component_from_local_file(
 pub fn remove_record_component(
     directory: PathBuf,
     name: String,
-    component: String,
+    component: Box<dyn Component>,
 ) -> Result<(), String> {
     let record = Record { directory, name };
-    let component =
-        get_component_by_name(&component).ok_or(format!("Unknown component: {component}"))?;
 
     // If the component implements a custom remove method, use it. Otherwise, fall back to the default
     // implementation.

@@ -47,6 +47,7 @@ impl<'de> Visitor<'de> for RecordVisitor {
             .write_str("a map with fields `workspace` and `record`, representing a record object")
     }
 
+    /// The input contains a key-value map.
     fn visit_map<A>(self, mut map: A) -> Result<Self::Value, A::Error>
     where
         A: MapAccess<'de>,
