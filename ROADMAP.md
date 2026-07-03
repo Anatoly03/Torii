@@ -66,6 +66,7 @@ The first stage of the project is to create a simple file browser like applicati
 
 ### `v0.0.0-dev7`[CURRENT]
 
+-   [ ] Rust Refactoring
 -   [x] Add directory component: If entity path is a directory, it can contain records
 -   [x] Add recursion support to file system UI, ability to display child records
 -   [ ] Drag and drop support to move records into directories

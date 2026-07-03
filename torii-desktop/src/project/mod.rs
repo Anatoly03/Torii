@@ -1,4 +1,4 @@
-//! The project API for the Torii project.
+//! The module contains the project API.
 //!
 //! This module exposes the interface to manage a Torii project.
 

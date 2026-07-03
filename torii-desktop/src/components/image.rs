@@ -2,7 +2,7 @@
 //!
 //! It provides functionality to read image files and handle image-related operations.
 
-use super::ToriiComponent;
+use super::Component;
 use std::{io::ErrorKind, path::PathBuf};
 use tauri::ipc::Response;
 
@@ -21,7 +21,7 @@ impl ImageComponent {
     }
 }
 
-impl ToriiComponent for ImageComponent {
+impl Component for ImageComponent {
     /// Retrieves the name of the component, which is "image".
     ///
     /// # Example

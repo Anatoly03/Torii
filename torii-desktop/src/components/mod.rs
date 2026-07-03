@@ -1,8 +1,9 @@
-//! This module contains the definition of the [ToriiComponent] trait and its core implementations.
+//! This module contains the [Component] trait.
 
 mod article;
 mod folder;
 mod image;
+mod serde;
 
 pub use article::ArticleComponent;
 pub use folder::FolderComponent;
@@ -10,7 +11,7 @@ pub use image::ImageComponent;
 use std::path::PathBuf;
 use tauri::ipc::Response;
 
-pub trait ToriiComponent {
+pub trait Component {
     /// Retrieves the name of the component. Examples includes "article" and "image".
     fn component_name(&self) -> &str;
 
@@ -108,7 +109,7 @@ pub trait ToriiComponent {
 
 /// Returns a boxed instance of a component based on its name. If the component name is not
 /// recognized, it returns None.
-pub fn get_component_by_name(name: &str) -> Option<Box<dyn ToriiComponent>> {
+pub fn get_component_by_name(name: &str) -> Option<Box<dyn Component>> {
     match name {
         "article" => Some(Box::new(ArticleComponent)),
         "image" => Some(Box::new(ImageComponent::new("image", "png"))),
@@ -120,7 +121,7 @@ pub fn get_component_by_name(name: &str) -> Option<Box<dyn ToriiComponent>> {
 
 /// Returns a boxed instance of a component based on its name. If the component name is not
 /// recognized, it returns None.
-pub fn get_all_components() -> Vec<Box<dyn ToriiComponent>> {
+pub fn get_all_components() -> Vec<Box<dyn Component>> {
     vec![
         Box::new(ArticleComponent),
         Box::new(ImageComponent::new("image", "png")),

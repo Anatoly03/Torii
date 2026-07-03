@@ -2,7 +2,7 @@
 //!
 //! It provides functionality to read directory contents and handle folder-related operations.
 
-use super::ToriiComponent;
+use super::Component;
 use serde_json::json;
 use std::{io::ErrorKind, path::PathBuf};
 use tauri::ipc::Response;
@@ -10,7 +10,7 @@ use tauri::ipc::Response;
 /// Represents a folder component in a Torii project.
 pub struct FolderComponent;
 
-impl ToriiComponent for FolderComponent {
+impl Component for FolderComponent {
     /// Retrieves the name of the component, which is "folder".
     ///
     /// # Example
