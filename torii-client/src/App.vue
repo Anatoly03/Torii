@@ -6,9 +6,11 @@
 import { onMounted, onUnmounted } from 'vue';
 import { watchLocale } from './composables/watch-locale';
 import { loadSettings } from './stores/settings.ts';
+import { loadKeybinds } from './stores/keybinds.ts';
 
 watchLocale();
 loadSettings();
+loadKeybinds();
 
 function preventDefault(e: { preventDefault: () => void }) {
     e.preventDefault();

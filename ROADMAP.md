@@ -106,7 +106,12 @@ The first stage of the project is to create a simple file browser like applicati
 
 ### `v0.0.0-dev13`
 
--   [ ] TBA
+-   [ ] Refactor Code
+    -   [ ] Create a client-side plugin abstraction, but no dynamic plugin loader yet.
+-   [ ] Github CI
+    -   [ ] cargo test
+    -   [ ] cargo doc
+    -   [ ] typescript docs
 
 ### `v0.0.1`
 

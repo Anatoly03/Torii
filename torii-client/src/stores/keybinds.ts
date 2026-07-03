@@ -88,8 +88,17 @@ export const useKeybindsStore = defineStore('keybinds', () => {
     });
 
     return {
-        textActionBold: createKeybind('textActionBold', [['Mod', 'B']]),
-        textActionItalic: createKeybind('textActionItalic', [['Mod', 'I']]),
-        textActionUnderline: createKeybind('textActionUnderline', [['Mod', 'U']]),
+        textActionBold: createKeybind('textActionBold', [
+            ['Cntrl', 'B'],
+            ['Cmd', 'B'],
+        ]),
+        textActionItalic: createKeybind('textActionItalic', [
+            ['Cntrl', 'I'],
+            ['Cmd', 'I'],
+        ]),
+        textActionUnderline: createKeybind('textActionUnderline', [
+            ['Cntrl', 'U'],
+            ['Cmd', 'U'],
+        ]),
     };
 });
