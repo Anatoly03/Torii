@@ -1,5 +1,6 @@
 /**
  * @file torii-client/src/stores/settings.ts
+ * @brief Pinia Store for the Torii client application. This store manages the settings for the application.
  */
 
 import { defineStore } from 'pinia';
