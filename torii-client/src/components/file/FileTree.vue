@@ -3,16 +3,18 @@
 <template>
     <div class="view-file-tree">
         <n-tree
+            draggable
             :align="'left'"
-            :selected-keys="selectedKeys"
-            @update-selected-keys="selectedKeys = $event"
             :data="treeData"
+            :on-load="loadNode"
             :render-label="renderLabel"
             :render-prefix="(_) => null"
             :render-suffix="renderFileOptions"
-            :render-switcher-icon="(_) => null"
+            :expanded-keys="expandedKeysRef"
+            @update-selected-keys="onSelectKey"
+            @update:expanded-keys="handleExpandedKeysChange"
+            @handleDrop="handleDrop"
             block-line
-            block-node
         >
             <template #empty> Empty workspace. </template>
         </n-tree>
@@ -55,7 +57,8 @@ const emit = defineEmits<{
 }>();
 
 const treeData = ref<(TreeOption & { record: Record })[]>([]);
-const selectedKeys = ref<Key[]>([]);
+// const selectedKeys = ref<Key[]>([]);
+const expandedKeysRef = ref<Key[]>([]);
 const currentFile = ref<{ directory: string; name: string } | null>();
 const isLoading = ref(false);
 const isCreatingNew = ref(false);
@@ -64,14 +67,14 @@ watch(currentFile, (newFile) => {
     emit('update:current-file', newFile ?? null);
 });
 
-watch(selectedKeys, (keys, oldKeys) => {
-    if (!keys.length) {
-        selectedKeys.value = oldKeys; // Prevent deselecting all
-        return;
-    }
+// watch(selectedKeys, (keys, oldKeys) => {
+//     if (!keys.length) {
+//         selectedKeys.value = oldKeys; // Prevent deselecting all
+//         return;
+//     }
 
-    onSelectFile(keys);
-});
+//     onSelectFile(keys);
+// });
 
 // Special key for the "new file" input node
 const NEW_FILE_KEY = '__new_file__';
@@ -111,7 +114,7 @@ function renderLabel({ option }: { option: TreeOption }) {
             onKeydown: (e: KeyboardEvent) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    onSelectFile([option.key as string]);
+                    onSelectFile(option);
                 }
             },
         },
@@ -160,18 +163,7 @@ function renderFileOptions(tree_props: TreeRenderProps): VNodeChild {
     );
 }
 
-function onSelectFile(keys: Key[]) {
-    const fileKeys = keys.filter((key) => key !== NEW_FILE_KEY);
-
-    if (!fileKeys.length) {
-        currentFile.value = null;
-        emit('file-selected', undefined);
-        return;
-    }
-
-    const key = fileKeys[0]!;
-    const data = treeData.value.find((node) => node.key === key)!;
-
+function onSelectFile(data: any) {
     currentFile.value = data.record;
     emit('update:current-file', currentFile.value);
     emit('file-selected', currentFile.value);
@@ -250,31 +242,57 @@ async function createFile(name: string) {
     }
 }
 
-async function refreshFiles(): Promise<Record[]> {
-    if (!props.root) return [];
-
+/**
+ *
+ */
+async function loadNodes(directory: string) {
     try {
-        // Lists all records.
-        const files = await invoke<Record[]>('list_records', {
-            directory: props.root,
-        });
+        const files = await invoke<Record[]>('list_records', { directory });
 
-        const newData = files
-            .map((file) => {
+        const newData = await Promise.all(
+            files.map(async (file) => {
+                const components = await invoke<string[]>(
+                    'list_record_components',
+                    {
+                        directory: file.directory,
+                        name: file.name,
+                    }
+                );
+
+                const isFolder = components.some((c) => c === 'folder');
+
                 return {
                     record: file,
                     key: file.directory + '/' + file.name,
                     label: file.name,
-                    isLeaf: true,
+                    isLeaf: !isFolder,
                     prefix: createIcon(FileTrayFullOutline),
                 };
             })
-            .sort((a, b) => a.label.localeCompare(b.label));
+        );
+
+        const sortedData = newData.sort((a, b) =>
+            a.label.localeCompare(b.label)
+        );
+
+        return sortedData;
+    } catch (error) {
+        console.error('Failed to list records:', error);
+        return [];
+    }
+}
+
+async function refreshFiles() {
+    if (!props.root) return [];
+
+    try {
+        // Lists all records.
+        treeData.value = await loadNodes(props.root);
 
         // Preserve the "new file" input if it's active
         if (isCreatingNew.value) {
             treeData.value = [
-                ...newData,
+                ...treeData.value,
                 {
                     key: NEW_FILE_KEY,
                     label: '',
@@ -283,11 +301,9 @@ async function refreshFiles(): Promise<Record[]> {
                     record: null!,
                 },
             ];
-        } else {
-            treeData.value = newData;
         }
 
-        return files;
+        return treeData.value;
     } catch (error) {
         console.error('Failed to list files:', error);
     }
@@ -308,12 +324,35 @@ function setCurrentFile(file: Record | null) {
 
     const key = file.directory + '/' + file.name;
     const node = treeData.value.find((n) => n.key === key);
-    selectedKeys.value = node?.key ? [node.key] : [];
+    // selectedKeys.value = node?.key ? [node.key] : [];
 
     currentFile.value = node?.record;
 
     console.log('Node found:', node);
     console.log('Current file set to:', currentFile.value);
+}
+
+function handleExpandedKeysChange(expandedKeys: string[]) {
+    expandedKeysRef.value = expandedKeys;
+}
+
+function onSelectKey(value: Key[], options: Array<TreeOption | null>) {
+    const option = options.filter((o) => o !== null)[0];
+    if (!option) return;
+
+    onSelectFile(option);
+}
+
+async function loadNode(node: TreeOption) {
+    const records = await loadNodes(
+        node.record.directory + '/' + node.record.name
+    );
+
+    node.children = records;
+}
+
+function handleDrop(event: any) {
+    console.log('Drop event:', event);
 }
 
 // Expose refresh method
@@ -339,6 +378,7 @@ onMounted(() => {
     font-size: 14px;
     color: #666;
     flex: 1;
+    overflow: auto;
 }
 
 .new-file-btn {

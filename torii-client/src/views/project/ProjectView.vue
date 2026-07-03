@@ -92,7 +92,11 @@ const records = ref<Record[]>([]);
 const wordCount = ref<number | undefined>(undefined);
 
 onMounted(async () => {
-    const files = await fileTree.value?.loadFiles();
+    const files =
+        (await fileTree.value?.loadFiles())?.map((k) => ({
+            directory: k.record.directory,
+            name: k.record.name,
+        })) ?? [];
     const readme = files?.find((r) => r.name === 'README');
     records.value = files || [];
 
@@ -132,7 +136,9 @@ async function loadComponents() {
 
 async function autocompleteMarkdown(name: string): Promise<any> {
     return records.value
-        .filter((record) => record.name.startsWith(name))
+        .filter((record) => {
+            return record.name?.startsWith(name);
+        })
         .map((record) => ({
             label: record.name,
             value: record.name,

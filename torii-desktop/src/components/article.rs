@@ -2,11 +2,9 @@
 //!
 //! It provides functionality to read article files and handle article-related operations.
 
-use std::{io::ErrorKind, path::PathBuf};
-
-use tauri::ipc::Response;
-
 use super::ToriiComponent;
+use std::{io::ErrorKind, path::PathBuf};
+use tauri::ipc::Response;
 
 /// Represents an article component in a Torii project.
 pub struct ArticleComponent;

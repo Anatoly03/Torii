@@ -1,9 +1,11 @@
 //! This module contains the definition of the [ToriiComponent] trait and its core implementations.
 
 mod article;
+mod folder;
 mod image;
 
 pub use article::ArticleComponent;
+pub use folder::FolderComponent;
 pub use image::ImageComponent;
 use std::path::PathBuf;
 use tauri::ipc::Response;
@@ -95,8 +97,8 @@ pub trait ToriiComponent {
     ///
     /// Since a component can be associated with multiple files, and multiple components
     /// can be associated with the same file, this method is expected to remove all files
-    /// that are solely associated with this component. 
-    /// 
+    /// that are solely associated with this component.
+    ///
     /// For example, the "Article" component will remove the file "Diana Loewe.md", overriding
     /// the default behaviour of removing all (!) markdown files, as well will the "Image"
     /// component only check for the exact file "Diana Loewe.png" and remove it, but keep
@@ -111,6 +113,7 @@ pub fn get_component_by_name(name: &str) -> Option<Box<dyn ToriiComponent>> {
         "article" => Some(Box::new(ArticleComponent)),
         "image" => Some(Box::new(ImageComponent::new("image", "png"))),
         "banner" => Some(Box::new(ImageComponent::new("banner", "banner.png"))),
+        "folder" => Some(Box::new(FolderComponent)),
         _ => None,
     }
 }
@@ -122,5 +125,6 @@ pub fn get_all_components() -> Vec<Box<dyn ToriiComponent>> {
         Box::new(ArticleComponent),
         Box::new(ImageComponent::new("image", "png")),
         Box::new(ImageComponent::new("banner", "banner.png")),
+        Box::new(FolderComponent),
     ]
 }
