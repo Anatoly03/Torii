@@ -4,7 +4,7 @@
 
 ### v0.0.0-dev7
 
-- TBA
+- Added technical support to for the "folder" component.
 
 ---
 
