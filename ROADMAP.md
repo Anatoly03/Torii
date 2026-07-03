@@ -70,23 +70,23 @@ The first stage of the project is to create a simple file browser like applicati
 
 ### `v0.0.0-dev8`
 
+-   [ ] Add directory component: If entity path is a directory, it can contain records.
+-   [ ] Add recursion support to file system UI, ability to display child records
+-   [ ] Breadcrumb Header
+
+### `v0.0.0-dev9`
+
 -   [ ] Expand Footer
     -   [ ] Edit/ View mode (hides placeholder grids vs. allows to edit article & enables drag and drop)
 -   [ ] Fix bug where opening new record sometimes scrolls to an offset.
 -   [ ] Opt-In Setting: Citation Tracking Component (Store URLs for uploaded Images and inserted content.)
 
-### `v0.0.0-dev9`
+### `v0.0.0-dev10`
 
 -   [ ] Define CSS variables, modularize CSS
 -   [ ] Refactor to Theme Support
     -   [ ] Light Mode
     -   [ ] Dark Mode
-
-### `v0.0.0-dev10`
-
--   [ ] Add directory component: If entity path is a directory, it can contain records.
--   [ ] Add recursion support to file system records, ability to display
--   [ ] Breadcrumb Header
 -   [ ] Add Record search (filter records by search pattern)
 
 ### `v0.0.0-dev11`
@@ -113,33 +113,50 @@ The first stage of the project is to create a simple file browser like applicati
     -   [ ] cargo doc
     -   [ ] typescript docs
 
+### `v0.0.0-dev14`
+
+-   [ ] Refactor to an embeddable localization system.
+    -   [ ] In dev builds, they are linked with the repository.
+    -   [ ] In production, they are linked with the [resources](https://v2.tauri.app/develop/resources/).
+-   [ ] Add a settings tab to allow creating new localizations.
+    -   [ ] All localization key-values should be editable.
+    -   [ ] User Interface for vertical line: Singular, plural, with bracket placeholders.
+
+### `v0.0.0-dev15`
+
+-   [ ] Refactor to an embeddable client-plugin system. (Currently, statically link all plugins, no dynamic loading)
+
+### `v0.0.0-dev16`
+
+-   [ ] Add project icon
+-   [ ] FULLY COVERED CODE REVIEW BEFORE FIRST RELEASE
+-   [ ] Full Code Documentation
+
+# Daiishi 台石
+
 ### `v0.0.1`
 
 -   [ ] Add support for [automatic updates](https://v2.tauri.app/plugin/updater/)
 
 ### `v0.0.1-dev1`
 
--   [ ] TBA
+-   [ ] Refactor to an embeddable theme system.
+    -   [ ] In dev builds, they are linked with the repository styles.
+    -   [ ] In production, they are linked with the [resources](https://v2.tauri.app/develop/resources/).
 
-# Daiishi 台石
+### `v0.0.1-dev2`
 
-### `v1.0.0`
-
--   [ ] Dynamic Theme Manager
-    -   [ ] Write Default Themes into `$APPDATA/themes/**`
-    -   [ ] View Themes
-        -   [ ] SCSS support
-        -   [ ] Theme name localization support.
 -   [x] Torii API
     -   [ ] Blogposts (Main Menu)
     -   [ ] Torii Auth (reserved, not used, no registration)
+-   [ ] Dynamically load client-plugins
+-   [ ] Publish client-extension API [to package managers](https://github.com/Anatoly03/Torii/packages)
 
 # Nemaki 根巻
 
-### `v1.0.1`
+### `v0.0.2`
 
--   [ ] To-Do: Far future
--   [ ] Publish extension API [to package managers](https://github.com/Anatoly03/Torii/packages)
+-   [ ] TBA: Backend extensions
 
 <!-- Daiishi / Kamebara -->
 <!-- Hashira -->

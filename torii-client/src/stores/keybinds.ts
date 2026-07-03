@@ -89,16 +89,16 @@ export const useKeybindsStore = defineStore('keybinds', () => {
 
     return {
         textActionBold: createKeybind('textActionBold', [
-            ['Cntrl', 'B'],
-            ['Cmd', 'B'],
+            ['Cntrl', 'b'],
+            ['Cmd', 'b'],
         ]),
         textActionItalic: createKeybind('textActionItalic', [
-            ['Cntrl', 'I'],
-            ['Cmd', 'I'],
+            ['Cntrl', 'i'],
+            ['Cmd', 'i'],
         ]),
         textActionUnderline: createKeybind('textActionUnderline', [
-            ['Cntrl', 'U'],
-            ['Cmd', 'U'],
+            ['Cntrl', 'u'],
+            ['Cmd', 'u'],
         ]),
     };
 });

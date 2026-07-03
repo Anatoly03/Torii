@@ -22,7 +22,10 @@
                 {{ renderKey(key) }}
             </span>
         </span>
-        <span class="input-keybind-single-combination input-recording" v-if="recordedKeys.length">
+        <span
+            class="input-keybind-single-combination input-recording"
+            v-if="recordedKeys.length"
+        >
             <span
                 class="input-keybind-single-key"
                 v-for="(key, index) in recordedKeys"
@@ -64,7 +67,9 @@ const holdingKeys = ref<Set<string>>(new Set());
  */
 function onKeyDown(event: KeyboardEvent) {
     if (!recordedKeys.value.includes(event.key)) {
-        recordedKeys.value.push(event.key.length === 1 ? event.key.toUpperCase() : event.key);
+        recordedKeys.value.push(
+            event.key.length === 1 ? event.key.toUpperCase() : event.key
+        );
     }
     holdingKeys.value.add(event.key);
 }
@@ -78,7 +83,10 @@ function onKeyUp(event: KeyboardEvent) {
 
     if (holdingKeys.value.size === 0) {
         if (recordedKeys.value.length !== 0) {
-            keybindsStore[props.name] = [...keybindsStore[props.name], recordedKeys.value];
+            keybindsStore[props.name] = [
+                ...keybindsStore[props.name],
+                recordedKeys.value,
+            ];
         }
 
         recordedKeys.value = [];
@@ -96,11 +104,14 @@ function renderKey(key: string) {
         case ' ':
             return 'Space';
         case 'Control':
+        case 'Ctrl':
             return 'Ctrl';
         case 'Meta':
+        case 'Command':
+        case 'Cmd':
             return 'Cmd';
         default:
-            return key;
+            return key.length == 1 ? key.toUpperCase() : key;
     }
 }
 </script>
