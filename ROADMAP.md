@@ -77,6 +77,7 @@ The first stage of the project is to create a simple file browser like applicati
 
 ### `v0.0.0-dev9`
 
+-   [ ] Define CSS variables, modularize CSS
 -   [ ] Refactor to Theme Support
     -   [ ] Light Mode
     -   [ ] Dark Mode
