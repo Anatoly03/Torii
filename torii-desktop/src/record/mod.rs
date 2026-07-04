@@ -2,12 +2,10 @@
 
 mod serde;
 
-use torii_desktop_macro::ts_bind;
 use crate::workspace::Workspace;
 use std::path::PathBuf;
 
 /// The record struct represents a Torii record.
-#[ts_bind()]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Record {
     /// The [Workspace] that the record belongs to.
@@ -15,10 +13,6 @@ pub struct Record {
 
     /// The file system path to the record, relative to the [Workspace] directory.
     path: PathBuf,
-
-    /// The name of the record, which is the last component of the relative path.
-    #[ts_only]
-    name: String,
 }
 
 impl Record {

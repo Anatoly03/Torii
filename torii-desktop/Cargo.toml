@@ -20,4 +20,3 @@ tauri-plugin-log = "2"
 tauri-plugin-dialog = "2.7"
 tauri-plugin-cors-fetch = "5.0.0"
 tauri-plugin-store = "2.4.3"
-torii-desktop-macro = { path = "../torii-desktop-macro" }
