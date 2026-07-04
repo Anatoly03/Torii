@@ -43,9 +43,12 @@ const TS_FILE_HEADER: &str = "/**
 ///     field3: Option<String>,
 ///     field4: Vec<f64>,
 ///     field5: HashMap<f64, String>,
-///     // Hashmap to optional booleans.
+///     /// Hashmap to optional booleans.
 ///     field6: HashMap<String, Option<bool>>,
 ///     field7: HashMap<String, Option<Vec<f64>>>,
+///     /// Vector of vectors.
+///     field8: Vec<Vec<Vec<f64>>>,
+///     field9: Option<Vec<Option<Vec<Vec<f64>>>>>,
 /// }
 /// ```
 pub(crate) fn bind_struct(strucc: ItemStruct) -> TokenStream {
@@ -60,8 +63,6 @@ pub(crate) fn bind_struct(strucc: ItemStruct) -> TokenStream {
     let bindings_file_path = directory.join("index.d.ts");
     let mut bindings_lock = lock_file(bindings_file_path);
     let mut bindings_guard = bindings_lock.write().unwrap();
-
-    println!("\n{}\n", build_hash);
 
     // Cheeck if build hashes match, otherwise remove `index.d.ts` with stub and write
     // new build hash to `.build-id` file.
@@ -161,11 +162,11 @@ pub(crate) fn bind_struct(strucc: ItemStruct) -> TokenStream {
         }
 
         let field_name = field.ident.as_ref().unwrap().to_string();
-        let mut field_type = rs_type_to_ts(&field.ty);
+        let field_type = rs_type_to_ts(&field.ty);
 
-        if is_optional(&field.ty) {
-            field_type = format!("{} | undefined", field_type);
-        }
+        // if is_optional(&field.ty) {
+        //     field_type = format!("{} | undefined", field_type);
+        // }
 
         bindings_guard
             .write_all(format!("\t{}: {};\n", field_name, field_type).as_bytes())
@@ -177,46 +178,6 @@ pub(crate) fn bind_struct(strucc: ItemStruct) -> TokenStream {
             .write_all("}\n".as_bytes())
             .expect("Failed to write interface footer to index.d.ts file.");
     }
-
-    // let ts_fields = {
-    // strucc
-    //         .fields
-    //         .iter()
-    //         .enumerate()
-    //         .map(|(index, field)| {
-    //             let mut field_binding = String::new();
-
-    //             let field_name = field.ident.as_ref().unwrap().to_string();
-
-    //             // Field Documentation
-    //             let doc_lines = get_documentation(&field.attrs)
-    //                 .iter()
-    //                 .map(|f| format!("\t{}", f))
-    //                 .collect::<Vec<_>>();
-    //             if doc_lines.len() > 0 {
-    //                 field_binding += &format!(
-    //                     "{}\t/**\n{}\n\t */\n",
-    //                     if index == 0 { "" } else { "\n" },
-    //                     doc_lines.join("\n")
-    //                 );
-    //             }
-
-    //             field_binding
-    //         })
-    //         .collect::<Vec<_>>()
-    //         .join("\n")
-    // };
-
-    // let ts_interface = format!(
-    //     "{}interface {} {{\n{}\n}}\n",
-    //     type_documentation,
-    //     strucc.ident.to_string(),
-    //     ts_fields
-    // );
-
-    // bindings_guard
-    //     .write_all(ts_interface.as_bytes())
-    //     .expect("Failed to write documentation to index.d.ts file.");
 
     strucc.to_token_stream()
 }
@@ -237,7 +198,7 @@ pub(crate) fn bind_struct(strucc: ItemStruct) -> TokenStream {
 fn caller_bindings_directory() -> PathBuf {
     let path = PathBuf::from(std::env::var("CARGO_MANIFEST_DIR").unwrap()).join("typescript");
     std::fs::create_dir_all(&path).expect("Failed to create typescript directory.");
-    std::fs::write(&path.join(".gitignore"), "*").expect("Failed to write .gitignore file.");
+    std::fs::write(&path.join(".gitignore"), ".build-id\n.gitignore").expect("Failed to write .gitignore file.");
     path
 }
 
@@ -334,7 +295,7 @@ fn rs_type_to_ts(ty: &Type) -> String {
                     };
 
                     if let Some(GenericArgument::Type(inner_ty)) = generics.first() {
-                        return rs_type_to_ts(inner_ty);
+                        return format!("({} | undefined)", rs_type_to_ts(inner_ty));
                     }
 
                     "any".to_string()
@@ -364,14 +325,9 @@ fn rs_type_to_ts(ty: &Type) -> String {
                     if let Some(GenericArgument::Type(key_ty)) = generics.first() {
                         if let Some(GenericArgument::Type(value_ty)) = generics.iter().nth(1) {
                             return format!(
-                                "{{ [key: {}]: {}{} }}",
+                                "{{ [key: {}]: {} }}",
                                 rs_type_to_ts(key_ty),
                                 rs_type_to_ts(value_ty),
-                                if is_optional(value_ty) {
-                                    " | undefined"
-                                } else {
-                                    ""
-                                },
                             );
                         }
                     }
