@@ -4,12 +4,18 @@ mod serde;
 
 use crate::Record;
 use std::path::PathBuf;
+use torii_desktop_macro::ts_bind;
 
 /// The workspace struct represents a Torii workspace.
+#[ts_bind()]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Workspace {
     /// The file system path to the workspace.
     path: PathBuf,
+
+    /// The name of the workspace, which is the last component of the workspace path.
+    #[ts_only]
+    name: String,
 }
 
 impl Workspace {
