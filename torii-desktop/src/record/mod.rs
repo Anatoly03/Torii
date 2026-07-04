@@ -4,7 +4,7 @@ pub mod commands;
 mod serde;
 
 use crate::{Component, components::get_all_components, workspace::Workspace};
-use std::{collections::HashSet, io::ErrorKind, path::PathBuf};
+use std::{collections::HashSet, path::PathBuf};
 
 /// The record struct represents a Torii record.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -182,7 +182,16 @@ impl Record {
             .filter_map(|e| e.ok())
             .map(|entry| entry.path())
             .filter(|path| path.is_file() || path.is_dir())
-            .filter_map(|path| path.file_prefix().map(|f| f.to_string_lossy().into_owned()))
+            .filter_map(|path| {
+                let name = path.file_prefix().map(|f| f.to_string_lossy().into_owned())?;
+
+                // (security) skip config files. make sure the magic dot character is not
+                // present in the record name
+                match name.contains('.') {
+                    true => None,
+                    false => Some(name),
+                }
+            })
             .collect::<HashSet<_>>();
         let records = record_names
             .into_iter()
@@ -193,7 +202,7 @@ impl Record {
 
     /// Returns true if the record has the given component attached to it.
     pub fn has_component(&self, component: &Box<dyn Component>) -> bool {
-        component.is_attached(&self.path())
+        component.is_attached(&self)
     }
 
     /// Lists the components attached to a specific record.
@@ -218,14 +227,13 @@ impl Record {
     /// assert!(!components.contains(&"banner".to_string()));
     /// assert!(!components.contains(&"folder".to_string()));
     /// ```
-    pub fn list_components(&self) -> Result<Vec<String>, std::io::Error> {
-        let components = get_all_components()
+    pub fn list_components(&self) -> Vec<String> {
+        get_all_components()
             .iter()
             .filter_map(|comp| match self.has_component(comp) {
                 true => Some(comp.component_name().to_string()),
                 false => None,
             })
-            .collect();
-        Ok(components)
+            .collect()
     }
 }

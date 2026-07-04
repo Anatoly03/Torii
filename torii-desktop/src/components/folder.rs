@@ -2,6 +2,8 @@
 //!
 //! It provides functionality to read directory contents and handle folder-related operations.
 
+use crate::Record;
+
 use super::Component;
 use serde_json::json;
 use std::{io::ErrorKind, path::PathBuf};
@@ -52,14 +54,14 @@ impl Component for FolderComponent {
     ///
     /// For example if the record is "Diana Loewe", we scan for "Diana Loewe.md" in the record's
     /// directory. If this file exists, then the record implements the folder component.
-    fn is_attached(&self, path: &PathBuf) -> bool {
-        path.is_dir()
+    fn is_attached(&self, record: &Record) -> bool {
+        record.path().is_dir()
     }
 
     /// Gets a read request to view the "Folder" component data for a record. This returns a
     /// [Response][ipc::Response] containing the list of files and directories within the folder.
-    fn read(&self, record: &PathBuf) -> Result<Response, String> {
-        let files = match std::fs::read_dir(record) {
+    fn read(&self, record: &Record) -> Result<Response, String> {
+        let files = match std::fs::read_dir(record.path()) {
             Ok(entries) => entries
                 .filter_map(|entry| entry.ok())
                 .map(|entry| entry.path().to_string_lossy().to_string())
@@ -77,7 +79,7 @@ impl Component for FolderComponent {
     ///
     /// The "Article" component will interpret the resulting binary as a markdown
     /// string.
-    fn write(&self, _record: &PathBuf, _content: &[u8]) -> Result<(), String> {
+    fn write(&self, _record: &Record, _content: &[u8]) -> Result<(), String> {
         unimplemented!("The folder component does not support writing data.")
     }
 
@@ -92,7 +94,7 @@ impl Component for FolderComponent {
     /// that are solely associated with this component.
     ///
     /// The "Folder" component will remove the file "<entity>.md"
-    fn remove(&self, _: &PathBuf) -> Option<Result<(), String>> {
+    fn remove(&self, _: &Record) -> Option<Result<(), String>> {
         None
     }
 }

@@ -48,10 +48,10 @@ import { invoke } from '@tauri-apps/api/core';
 import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
 import { NIcon, NSpin } from 'naive-ui';
 import { CloseOutline, ImageOutline } from '@vicons/ionicons5';
+import { Record } from 'types';
 
 const props = defineProps<{
-    directory: string | null;
-    name: string | null;
+    record: Record;
     component: string;
     placeholderText?: string;
     placeholderAnchor: 'top' | 'bottom' | 'left' | 'right' | 'center';
@@ -96,8 +96,7 @@ function refreshImageBlob() {
 async function loadFile() {
     try {
         const file = await invoke<Uint8Array>('get_record_component', {
-            directory: props.directory,
-            name: props.name,
+            record: props.record,
             component: props.component,
         });
 
@@ -131,8 +130,7 @@ async function loadImageFromFile(file: File) {
     );
 
     await invoke('save_record_component', {
-        directory: props.directory,
-        name: props.name,
+        record: props.record,
         component: 'image',
         content: base64,
         contentType: file.type,
@@ -174,8 +172,7 @@ async function loadImageFromURL(url: string) {
 
     // Save the image data to the backend
     await invoke('save_record_component', {
-        directory: props.directory,
-        name: props.name,
+        record: props.record,
         component: props.component,
         content: base64,
         contentType: 'image/png',
@@ -216,8 +213,7 @@ async function loadImageFromHTML(html: string) {
 
                     // Save the image data from a local file path. This is a special case for local files.
                     await invoke('save_record_component_from_local_file', {
-                        directory: props.directory,
-                        name: props.name,
+                        record: props.record,
                         component: props.component,
                         source,
                     });
@@ -284,8 +280,7 @@ async function onImageClick(event: MouseEvent) {
     // Load the image from the selected file path using the copy
     // command.
     await invoke('save_record_component_from_local_file', {
-        directory: props.directory,
-        name: props.name,
+        record: props.record,
         component: props.component,
         source: path,
     });
@@ -298,8 +293,7 @@ async function removeImage() {
     if (!props.directory || !props.name) return;
 
     await invoke('remove_record_component', {
-        directory: props.directory,
-        name: props.name,
+        record: props.record,
         component: props.component,
     });
 

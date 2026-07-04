@@ -142,12 +142,7 @@ function renderFileOptions(tree_props: TreeRenderProps): VNodeChild {
             onSelect: async (_, option) => {
                 if (option.key === 'delete') {
                     let record = tree_props.option.record as Record;
-                    await invoke('remove_record', {
-                        record: {
-                            workspace: record.workspace.path,
-                            record: record.relative_path,
-                        },
-                    });
+                    await invoke('remove_record', { record });
                     await refreshFiles();
                 }
             },
@@ -212,8 +207,10 @@ async function createFile(name: string) {
             : props.root + '/' + name + '.md';
 
         await invoke<string>('save_record_component', {
-            directory: props.root,
-            name,
+            record: {
+                workspace: props.root,
+                relative_path: name,
+            },
             component: 'article',
             content: `# ${name}\n\n- Source: ${path}\n- Parent: ${props.root}\n- Name: ${name}\n\n`,
             contentType: 'text/markdown',

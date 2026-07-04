@@ -36,10 +36,10 @@ import {
     type SuggestionItem,
 } from './autocomplete-extension';
 import MarkdownEditorAutocomplete from './MarkdownEditorAutocomplete.vue';
+import { Record } from 'types';
 
 const props = defineProps<{
-    directory: string | null;
-    name: string | null;
+    record: Record;
     // placeholder: boolean;
     autocompleteSuggestion: (name: string) => Promise<SuggestionItem[]>;
 }>();
@@ -134,14 +134,13 @@ onMounted(async () => {
 });
 
 watch(
-    () => props.name,
-    async (name: string | null) => {
-        if (!name) return;
+    () => props.record,
+    async (record: any) => {
+        if (!record) return;
 
         // Load the file content when a new file is selected
         let bytes = await invoke('get_record_component', {
-            directory: props.directory,
-            name,
+            record: props.record,
             component: 'article',
         });
         let content = new TextDecoder().decode(bytes as Uint8Array);
@@ -154,8 +153,7 @@ watch(
 
 async function loadFile() {
     let bytes = await invoke('get_record_component', {
-        directory: props.directory,
-        name: props.name,
+        record: props.record,
         component: 'article',
     });
     console.log(bytes);
@@ -167,8 +165,7 @@ async function loadFile() {
 }
 
 async function saveFile() {
-    if (!props.directory) return;
-    if (!props.name) return;
+    if (!props.record) return;
     if (ignoreFirstSave.value) {
         ignoreFirstSave.value = false;
         return;
@@ -180,8 +177,7 @@ async function saveFile() {
 
     // Save the file content whenever it changes
     await invoke('save_record_component', {
-        directory: props.directory,
-        name: props.name,
+        record: props.record,
         component: 'article',
         content,
         contentType: 'text/markdown',

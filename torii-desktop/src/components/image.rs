@@ -2,6 +2,8 @@
 //!
 //! It provides functionality to read image files and handle image-related operations.
 
+use crate::Record;
+
 use super::Component;
 use std::{io::ErrorKind, path::PathBuf};
 use tauri::ipc::Response;
@@ -63,14 +65,14 @@ impl Component for ImageComponent {
     ///
     /// For example if the record is "Diana Loewe", we scan for "Diana Loewe.png" in the record's
     /// directory. If this file exists, then the record implements the image component.
-    fn is_attached(&self, path: &PathBuf) -> bool {
-        path.with_extension(&self.file_suffix).exists()
+    fn is_attached(&self, record: &Record) -> bool {
+        record.path().with_extension(&self.file_suffix).exists()
     }
 
     /// Gets a read request to view the "Image" component data for a record. This returns a
     /// [Response][ipc::Response] containing the image data.
-    fn read(&self, record: &PathBuf) -> Result<Response, String> {
-        let path = record.with_extension(&self.file_suffix);
+    fn read(&self, record: &Record) -> Result<Response, String> {
+        let path = record.path().with_extension(&self.file_suffix);
 
         let file = match std::fs::read(path) {
             Ok(file) => file,
@@ -85,8 +87,8 @@ impl Component for ImageComponent {
     /// base64 encoded string representing the binary data to be saved.
     ///
     /// The "Image" component will interpret content as raw byte data.
-    fn write(&self, record: &PathBuf, content: &[u8]) -> Result<(), String> {
-        let path = record.with_extension(&self.file_suffix);
+    fn write(&self, record: &Record, content: &[u8]) -> Result<(), String> {
+        let path = record.path().with_extension(&self.file_suffix);
         std::fs::write(path, content).map_err(|e| format!("Failed to write image file: {e}"))
     }
 
@@ -97,8 +99,8 @@ impl Component for ImageComponent {
     /// - [Some(Err)][Some]: The component failed to copy the file to the record's directory.
     ///
     /// The "Image" component will accept a file path and copy the file to the record's directory.
-    fn write_from_file(&self, record: &PathBuf, source: &PathBuf) -> Option<Result<(), String>> {
-        let destination = record.with_extension(&self.file_suffix);
+    fn write_from_file(&self, record: &Record, source: &PathBuf) -> Option<Result<(), String>> {
+        let destination = record.path().with_extension(&self.file_suffix);
         match std::fs::copy(source, &destination) {
             Ok(_) => Some(Ok(())),
             Err(e) => Some(Err(format!("Failed to copy image file: {e}"))),
@@ -116,8 +118,8 @@ impl Component for ImageComponent {
     /// that are solely associated with this component. 
     /// 
     /// The "Article" component will remove the file "<entity>.md"
-    fn remove(&self, record: &PathBuf) -> Option<Result<(), String>> {
-        let path = record.with_extension(&self.file_suffix);
+    fn remove(&self, record: &Record) -> Option<Result<(), String>> {
+        let path = record.path().with_extension(&self.file_suffix);
         match std::fs::remove_file(&path) {
             Ok(_) => Some(Ok(())),
             Err(e) if e.kind() == ErrorKind::NotFound => Some(Ok(())),

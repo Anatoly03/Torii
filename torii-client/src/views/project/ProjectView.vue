@@ -25,8 +25,7 @@
             <div class="view-project-content" @scroll="onScrollProjectContent">
                 <ImageEditor
                     :key="currentFile.directory + '/' + currentFile.name"
-                    :directory="markdownDirectory"
-                    :name="markdownName"
+                    :record="currentFile"
                     component="banner"
                     :placeholder-text="$t('app.project.bannerPlaceholder')"
                     placeholder-anchor="left"
@@ -36,8 +35,7 @@
                 />
                 <ImageEditor
                     :key="currentFile.directory + '/' + currentFile.name"
-                    :directory="markdownDirectory"
-                    :name="markdownName"
+                    :record="currentFile"
                     component="image"
                     placeholder-anchor="center"
                     class="view-project-image"
@@ -47,8 +45,7 @@
                 <MarkdownEditor
                     ref="markdownEditor"
                     v-model:word-count="wordCount"
-                    :directory="markdownDirectory"
-                    :name="markdownName"
+                    :record="currentFile"
                     :autocomplete-suggestion="(v) => autocompleteMarkdown(v)"
                     :placeholder="!recordComponents.includes('article')"
                     @open-file="openFile"
