@@ -9,7 +9,7 @@ use std::io::{Read, Seek, SeekFrom, Write};
 use std::path::PathBuf;
 use syn::Meta::NameValue;
 use syn::{Attribute, ItemStruct, LitStr, PathArguments::AngleBracketed, Type, TypePath, parse};
-use syn::{Fields, FieldsNamed, FieldsUnnamed, GenericArgument};
+use syn::{Fields, FieldsNamed, GenericArgument};
 
 /// This is the header that will be written to the generated TypeScript declaration
 /// file.
@@ -271,26 +271,6 @@ fn overwrite<T: AsRef<str>>(guard: &mut RwLockWriteGuard<File>, content: T) -> s
     guard.set_len(0)?;
     guard.write_all(content.as_ref().as_bytes())?;
     guard.flush()
-}
-
-/// Checks if the given type is an `Option<T>`. If it is, it returns `true`, otherwise
-/// it returns `false`.
-fn is_optional(ty: &Type) -> bool {
-    match ty {
-        Type::Path(TypePath { path, .. }) => {
-            let last_segment = path
-                .segments
-                .last()
-                .expect("Expected a type path to have at least one segment.");
-            let ident_str = last_segment.ident.to_string();
-
-            match ident_str.as_str() {
-                "Option" => return true, // Option<T> is not required
-                _ => false,
-            }
-        }
-        _ => false,
-    }
 }
 
 /// Converts a Rust type to a TypeScript type. This is a simplified version and may not

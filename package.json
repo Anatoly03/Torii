@@ -2,7 +2,8 @@
     "name": "Torii",
     "type": "module",
     "workspaces": [
-        "torii-client"
+        "torii-client",
+        "torii-client-core"
     ],
     "devDependencies": {
         "@tauri-apps/cli": "^2.11.1",
@@ -14,7 +15,7 @@
     },
     "scripts": {
         "serve": "npm run serve --workspace=torii-client",
-        "build": "npm run build --workspace=torii-client",
+        "build": "npm run build --workspaces",
         "lint": "npm run lint --workspace=torii-client",
         "tauri": "tauri",
         "fix-windows-version": "tsx .github/scripts/fix-windows-versioning.ts",

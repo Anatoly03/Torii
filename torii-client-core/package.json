@@ -1,0 +1,5 @@
+{
+    "scripts": {
+        "build": "cargo build -p torii-desktop && cp ../torii-desktop-macro/typescript/index.d.ts src/bindings.d.ts"
+    }
+}
