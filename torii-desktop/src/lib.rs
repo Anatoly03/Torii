@@ -1,5 +1,13 @@
 //! Desktop library for the Torii desktop application, built using Tauri.
 
+pub mod components;
+pub mod project;
+pub mod recent;
+pub mod record;
+pub mod workspace;
+
+pub use record::Record;
+pub use workspace::Workspace;
 pub use components::Component;
 
 use std::error::Error;
@@ -18,7 +26,7 @@ pub fn run() {
             recent::add_recent_project,
             recent::remove_recent_project,
             project::read_file,
-            project::record::list_records,
+            record::commands::list_records,
             project::record::rename_record,
             project::record::remove_record,
             project::record::list_record_components,

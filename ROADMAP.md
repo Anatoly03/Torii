@@ -67,6 +67,10 @@ The first stage of the project is to create a simple file browser like applicati
 ### `v0.0.0-dev7`[CURRENT]
 
 -   [ ] Rust Refactoring
+    -   [x] Add a macro to generate typescript bindings
+    -   [ ] Component methods should be e.g. `remove() -> Option<Fn -> Result>`: None if no action is defined, and it should return a lazy callback.
+-   [ ] Client Refactoring
+    -   [ ] Add `client-core`: Common types and interfaces, generate from Rust.
 -   [x] Add directory component: If entity path is a directory, it can contain records
 -   [x] Add recursion support to file system UI, ability to display child records
 -   [ ] Drag and drop support to move records into directories
@@ -109,7 +113,7 @@ The first stage of the project is to create a simple file browser like applicati
 ### `v0.0.0-dev13`
 
 -   [ ] Refactor Code
-    -   [ ] Create a client-side plugin abstraction, but no dynamic plugin loader yet.
+    -   [ ] Create a client-side plugin abstraction in `client-core`, but no dynamic plugin loader yet.
 -   [ ] Github CI
     -   [ ] cargo test
     -   [ ] cargo doc

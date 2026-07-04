@@ -103,13 +103,6 @@ impl Record {
     }
 }
 
-/// Lists all records in the given directory. This is used to populate the file tree
-/// in the workspace UI.
-#[tauri::command]
-pub fn list_records(directory: PathBuf) -> Result<Vec<Record>, String> {
-    Record::list(directory)
-}
-
 /// Renames a record in the given directory. This is used to rename a record in the workspace UI.
 #[tauri::command]
 pub fn rename_record(

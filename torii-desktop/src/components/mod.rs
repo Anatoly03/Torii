@@ -109,7 +109,7 @@ pub trait Component {
 
 /// Returns a boxed instance of a component based on its name. If the component name is not
 /// recognized, it returns None.
-pub fn get_component_by_name(name: &str) -> Option<Box<dyn Component>> {
+fn get_component_by_name(name: &str) -> Option<Box<dyn Component>> {
     match name {
         "article" => Some(Box::new(ArticleComponent)),
         "image" => Some(Box::new(ImageComponent::new("image", "png"))),

@@ -36,12 +36,12 @@ import { NIcon, NTree, NInput, NButton, NSpace, NDropdown } from 'naive-ui';
 import { Component, h, onMounted, ref, nextTick, watch, VNodeChild } from 'vue';
 import { invoke } from '@tauri-apps/api/core';
 import FileTreeCreateFile from './FileTreeCreateFile.vue';
-import { Key, TreeRenderProps } from 'naive-ui/es/tree/src/interface';
-
-export interface Record {
-    directory: string;
-    name: string;
-}
+import {
+    Key,
+    TreeOptionBase,
+    TreeRenderProps,
+} from 'naive-ui/es/tree/src/interface';
+import { Record } from 'types';
 
 const props = defineProps<{
     root: string;
@@ -254,7 +254,7 @@ async function loadNodes(directory: string) {
                 const components = await invoke<string[]>(
                     'list_record_components',
                     {
-                        directory: file.directory,
+                        directory: file.path,
                         name: file.name,
                     }
                 );
@@ -263,7 +263,7 @@ async function loadNodes(directory: string) {
 
                 return {
                     record: file,
-                    key: file.directory + '/' + file.name,
+                    key: file.path,
                     label: file.name,
                     isLeaf: !isFolder,
                     prefix: createIcon(FileTrayFullOutline),
@@ -343,12 +343,8 @@ function onSelectKey(value: Key[], options: Array<TreeOption | null>) {
     onSelectFile(option);
 }
 
-async function loadNode(node: TreeOption) {
-    const records = await loadNodes(
-        node.record.directory + '/' + node.record.name
-    );
-
-    node.children = records;
+async function loadNode(node: TreeOption & { record: Record }) {
+    node.children = await loadNodes(node.record.path);
 }
 
 function handleDrop(event: any) {

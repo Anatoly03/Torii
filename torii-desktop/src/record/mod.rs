@@ -1,9 +1,10 @@
 //! This module contains the [Record] struct.
 
+pub mod commands;
 mod serde;
 
 use crate::workspace::Workspace;
-use std::path::PathBuf;
+use std::{collections::HashSet, path::PathBuf};
 
 /// The record struct represents a Torii record.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -62,7 +63,7 @@ impl Record {
         &self.workspace
     }
 
-    /// Returns the file system path to the record.
+    /// Returns the full file system path to the record.
     ///
     /// # Example
     ///
@@ -154,5 +155,21 @@ impl Record {
             })
             .collect();
         Ok(paths)
+    }
+
+    /// Returns the list of records located in the given directory.
+    pub fn list(directory: PathBuf) -> Result<Vec<Self>, std::io::Error> {
+        let record_names = directory
+            .read_dir()?
+            .filter_map(|e| e.ok())
+            .map(|entry| entry.path())
+            .filter(|path| path.is_file() || path.is_dir())
+            .filter_map(|path| path.file_prefix().map(|f| f.to_string_lossy().into_owned()))
+            .collect::<HashSet<_>>();
+        let records = record_names
+            .into_iter()
+            .map(|name| Self::new(Workspace::new(directory.clone()), name))
+            .collect();
+        Ok(records)
     }
 }

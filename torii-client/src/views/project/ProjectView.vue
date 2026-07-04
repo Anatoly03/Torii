@@ -68,7 +68,7 @@
 import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { invoke } from '@tauri-apps/api/core';
-import FileTree, { Record } from '../../components/file/FileTree.vue';
+import FileTree from '../../components/file/FileTree.vue';
 import { Icon } from '@vicons/utils';
 import { SettingsOutline } from '@vicons/ionicons5';
 import { openSettingsWindow } from '../../composables/settings-window.ts';
@@ -77,12 +77,13 @@ import { useSettingsStore } from '@/stores/settings';
 // Components
 import MarkdownEditor from '../../components/article/MarkdownEditor.vue';
 import ImageEditor from '../../components/image/ImageEditor.vue';
+import { Record } from 'types';
 
 const route = useRoute();
 const router = useRouter();
 const settings = useSettingsStore();
 const projectPath = route.query.project as string;
-const currentFile = ref<{ directory: string; name: string } | null>(null);
+const currentFile = ref<Record | null>(null);
 const markdownDirectory = ref<string | null>(null);
 const markdownName = ref<string | null>(null);
 const recordComponents = ref<string[]>([]);
@@ -93,10 +94,7 @@ const wordCount = ref<number | undefined>(undefined);
 
 onMounted(async () => {
     const files =
-        (await fileTree.value?.loadFiles())?.map((k) => ({
-            directory: k.record.directory,
-            name: k.record.name,
-        })) ?? [];
+        (await fileTree.value?.loadFiles())?.map((k) => k.record) ?? [];
     const readme = files?.find((r) => r.name === 'README');
     records.value = files || [];
 
@@ -109,7 +107,7 @@ onMounted(async () => {
 
 watch(currentFile, (newFile) => {
     if (newFile) {
-        markdownDirectory.value = newFile.directory;
+        markdownDirectory.value = newFile.workspace.path;
         markdownName.value = newFile.name;
         loadComponents();
 
@@ -125,10 +123,9 @@ watch(currentFile, (newFile) => {
 async function loadComponents() {
     if (!currentFile.value) return;
 
-    const { directory, name } = currentFile.value;
     recordComponents.value = await invoke('list_record_components', {
-        directory,
-        name,
+        directory: currentFile.value.path,
+        name: currentFile.value.name,
     });
 
     console.log('Components listed:', recordComponents.value);
