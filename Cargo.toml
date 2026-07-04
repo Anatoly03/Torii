@@ -1,3 +1,3 @@
 [workspace]
 resolver="3"
-members = ["torii-desktop"]
+members = ["torii-desktop", "torii-desktop-macro"]

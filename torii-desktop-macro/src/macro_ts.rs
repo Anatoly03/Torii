@@ -7,9 +7,9 @@ use quote::ToTokens;
 use std::fs::File;
 use std::io::{Read, Seek, SeekFrom, Write};
 use std::path::PathBuf;
-use syn::GenericArgument;
 use syn::Meta::NameValue;
 use syn::{Attribute, ItemStruct, LitStr, PathArguments::AngleBracketed, Type, TypePath, parse};
+use syn::{Fields, FieldsNamed, FieldsUnnamed, GenericArgument};
 
 /// This is the header that will be written to the generated TypeScript declaration
 /// file.
@@ -51,7 +51,7 @@ const TS_FILE_HEADER: &str = "/**
 ///     field9: Option<Vec<Option<Vec<Vec<f64>>>>>,
 /// }
 /// ```
-pub(crate) fn bind_struct(strucc: ItemStruct) -> TokenStream {
+pub(crate) fn bind_struct(mut strucc: ItemStruct) -> TokenStream {
     let directory = caller_bindings_directory();
     let build_hash = get_build_hash();
 
@@ -179,6 +179,23 @@ pub(crate) fn bind_struct(strucc: ItemStruct) -> TokenStream {
             .expect("Failed to write interface footer to index.d.ts file.");
     }
 
+    // Remove all fields with the `#[ts_only]` attribute from the struct, so that they are
+    // not included in the Rust code.
+    let fields = strucc
+        .fields
+        .into_iter()
+        .filter(|field| {
+            !field
+                .attrs
+                .iter()
+                .any(|attr| attr.path().is_ident("ts_only"))
+        })
+        .collect::<Vec<_>>();
+    strucc.fields = Fields::Named(FieldsNamed {
+        brace_token: syn::token::Brace::default(),
+        named: fields.into_iter().collect(),
+    });
+
     strucc.to_token_stream()
 }
 
@@ -198,7 +215,8 @@ pub(crate) fn bind_struct(strucc: ItemStruct) -> TokenStream {
 fn caller_bindings_directory() -> PathBuf {
     let path = PathBuf::from(std::env::var("CARGO_MANIFEST_DIR").unwrap()).join("typescript");
     std::fs::create_dir_all(&path).expect("Failed to create typescript directory.");
-    std::fs::write(&path.join(".gitignore"), ".build-id\n.gitignore").expect("Failed to write .gitignore file.");
+    std::fs::write(&path.join(".gitignore"), ".build-id\n.gitignore")
+        .expect("Failed to write .gitignore file.");
     path
 }
 
@@ -303,7 +321,7 @@ fn rs_type_to_ts(ty: &Type) -> String {
                 "bool" => "boolean".to_string(),
                 "usize" | "isize" | "u8" | "u16" | "u32" | "u64" | "i8" | "i16" | "i32" | "i64"
                 | "f32" | "f64" => "number".to_string(),
-                "String" | "str" => "string".to_string(),
+                "String" | "str" | "PathBuf" => "string".to_string(),
                 "Vec" => {
                     let generics = match arguments {
                         AngleBracketed(angle_bracketed) => &angle_bracketed.args,
@@ -334,7 +352,7 @@ fn rs_type_to_ts(ty: &Type) -> String {
 
                     "{ [key: string | number]: any }".to_string()
                 }
-                _ => "any".to_string(),
+                _ => ident_str,
             }
         }
         _ => "any".to_string(),
