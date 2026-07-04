@@ -6,26 +6,57 @@
 
 /** The record struct represents a Torii record. */
 export interface Record {
-	/** The [Workspace] that the record belongs to. */
-	public workspace: Workspace;
+    /**
+     * The [Workspace] that the record belongs to.
+     * @example
+     *
+     * {
+     *     "path": "/home/user/projects/workspace",
+     *     "name": "workspace"
+     * }
+     */
+    workspace: Workspace;
 
-	/**
+    /**
      * The full file system path to the record, relative to the [Workspace] directory.
      * @example
-     * 
-     * "file:///home/user/projects/workspace/path/to/record"
+     *
+     * "/home/user/projects/workspace/path/to/record"
      */
-	public path: string;
+    path: string;
 
-	/** The name of the record, which is the last component of the relative path. */
-	public name: string;
+    /**
+     * The full file system path to the record, relative to the [Workspace] directory.
+     * @example
+     *
+     * "path/to/record"
+     */
+    relative_path: string;
+
+    /**
+     * The name of the record, which is the last component of the relative path.
+     * @example
+     *
+     * "record"
+     */
+    name: string;
 }
 
 /** The workspace struct represents a Torii workspace. */
 export interface Workspace {
-	/** The file system path to the workspace. */
-	public path: string;
+    /**
+     * The file system path to the workspace.
+     * @example
+     *
+     * "/home/user/projects/workspace"
+     */
+    path: string;
 
-	/** The name of the workspace, which is the last component of the workspace path. */
-	public name: string;
+    /**
+     * The name of the workspace, which is the last component of the workspace path.
+     * @example
+     *
+     * "workspace"
+     */
+    name: string;
 }

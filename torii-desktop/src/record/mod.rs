@@ -81,6 +81,25 @@ impl Record {
         self.workspace.path().join(&self.path)
     }
 
+    /// Returns the file system path to the record, relative to the [Workspace]
+    /// directory.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use std::path::PathBuf;
+    /// use app_lib::{Record, Workspace};
+    ///
+    /// let workspace = Workspace::new("/path/to/workspace");
+    /// let record = workspace.record("media/record1");
+    ///
+    /// assert_eq!(record.relative_path(), PathBuf::from("media/record1"));
+    /// ```
+    #[inline]
+    pub fn relative_path(&self) -> &PathBuf {
+        &self.path
+    }
+
     /// Returns the name of the record.
     ///
     /// # Example

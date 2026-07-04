@@ -141,10 +141,12 @@ function renderFileOptions(tree_props: TreeRenderProps): VNodeChild {
             showArrow: true,
             onSelect: async (_, option) => {
                 if (option.key === 'delete') {
-                    let record = tree_props.option.record as any;
+                    let record = tree_props.option.record as Record;
                     await invoke('remove_record', {
-                        directory: record.directory,
-                        name: record.name,
+                        record: {
+                            workspace: record.workspace.path,
+                            record: record.relative_path,
+                        },
                     });
                     await refreshFiles();
                 }

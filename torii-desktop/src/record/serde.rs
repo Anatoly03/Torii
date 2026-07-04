@@ -27,8 +27,9 @@ impl Serialize for Record {
     /// assert_eq!(json["workspace"]["name"], "workspace");
     /// ```
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        let mut state = serializer.serialize_struct("Record", 3)?;
+        let mut state = serializer.serialize_struct("Record", 4)?;
         state.serialize_field("path", &self.path())?;
+        state.serialize_field("relative_path", &self.relative_path())?;
         state.serialize_field("name", &self.name())?;
         state.serialize_field("workspace", &self.workspace())?;
         state.end()

@@ -113,21 +113,6 @@ pub fn rename_record(
     Err(format!("Renaming records is not implemented yet"))
 }
 
-/// Removes a given record.
-#[tauri::command]
-pub fn remove_record(directory: PathBuf, name: String) -> Result<(), String> {
-    let record = Record { directory, name };
-
-    record
-        .associated_files()?
-        .iter()
-        .map(|file| std::fs::remove_file(&file))
-        .collect::<Result<Vec<()>, std::io::Error>>()
-        .map_err(|e| format!("Failed to remove record files: {e}"))?;
-
-    Ok(())
-}
-
 /// Returns the components attached to a specific record.
 #[tauri::command]
 pub fn list_record_components(directory: PathBuf, name: String) -> Result<Vec<String>, String> {

@@ -6,9 +6,9 @@ pub mod recent;
 pub mod record;
 pub mod workspace;
 
+pub use components::Component;
 pub use record::Record;
 pub use workspace::Workspace;
-pub use components::Component;
 
 use std::error::Error;
 use tauri::App;
@@ -27,8 +27,8 @@ pub fn run() {
             recent::remove_recent_project,
             project::read_file,
             record::commands::list_records,
+            record::commands::remove_record,
             project::record::rename_record,
-            project::record::remove_record,
             project::record::list_record_components,
             project::record::get_record_component,
             project::record::save_record_component,
