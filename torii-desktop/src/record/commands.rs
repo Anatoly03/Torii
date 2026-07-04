@@ -36,3 +36,17 @@ pub fn remove_record(record: Record) -> Result<(), String> {
         .map_err(|e| format!("Failed to remove record files: {e}"))?;
     Ok(())
 }
+
+// TODO implement: rename_record
+
+/// Lists all components attached to a given record.
+///
+/// This is used in the project view to conditionally render only existing
+/// components, and is used in the file tree UI to enable special behaviour
+/// for folders.
+#[tauri::command]
+pub fn list_record_components(record: Record) -> Result<Vec<String>, String> {
+    record
+        .list_components()
+        .map_err(|e| format!("failed to list components: {e}"))
+}

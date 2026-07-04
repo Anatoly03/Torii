@@ -3,8 +3,8 @@
 pub mod commands;
 mod serde;
 
-use crate::workspace::Workspace;
-use std::{collections::HashSet, path::PathBuf};
+use crate::{Component, components::get_all_components, workspace::Workspace};
+use std::{collections::HashSet, io::ErrorKind, path::PathBuf};
 
 /// The record struct represents a Torii record.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -105,8 +105,7 @@ impl Record {
     /// # Example
     ///
     /// ```
-    /// use std::path::PathBuf;
-    /// use app_lib::{Record, Workspace};
+    /// use app_lib::Workspace;
     ///
     /// let workspace = Workspace::new("/path/to/workspace");
     /// let record = workspace.record("media/record1");
@@ -190,5 +189,43 @@ impl Record {
             .map(|name| Self::new(Workspace::new(directory.clone()), name))
             .collect();
         Ok(records)
+    }
+
+    /// Returns true if the record has the given component attached to it.
+    pub fn has_component(&self, component: &Box<dyn Component>) -> bool {
+        component.is_attached(&self.path())
+    }
+
+    /// Lists the components attached to a specific record.
+    ///
+    /// # Example
+    ///
+    /// ```rust,ignore,no_test,no_run
+    /// //! The following contents are included in folder "workspace":
+    /// //!
+    /// //! workspace/
+    /// //! ├── record1.md
+    /// //! └── record1.png
+    ///
+    /// use app_lib::{Record, Workspace};
+    ///
+    /// let workspace = Workspace::new("/path/to/workspace");
+    /// let record = workspace.record("record1");
+    /// let components record.list_components().unwrap_or(vec![]);
+    ///
+    /// assert!(components.contains(&"article".to_string()));
+    /// assert!(components.contains(&"image".to_string()));
+    /// assert!(!components.contains(&"banner".to_string()));
+    /// assert!(!components.contains(&"folder".to_string()));
+    /// ```
+    pub fn list_components(&self) -> Result<Vec<String>, std::io::Error> {
+        let components = get_all_components()
+            .iter()
+            .filter_map(|comp| match self.has_component(comp) {
+                true => Some(comp.component_name().to_string()),
+                false => None,
+            })
+            .collect();
+        Ok(components)
     }
 }

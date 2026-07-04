@@ -122,10 +122,10 @@ watch(currentFile, (newFile) => {
 
 async function loadComponents() {
     if (!currentFile.value) return;
+    console.log('Loading components for:', currentFile.value);
 
     recordComponents.value = await invoke('list_record_components', {
-        directory: currentFile.value.path,
-        name: currentFile.value.name,
+        record: currentFile.value,
     });
 
     console.log('Components listed:', recordComponents.value);

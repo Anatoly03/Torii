@@ -1,5 +1,7 @@
 //! This module implements serialization and deserialization logic for the [Workspace] instance.
 
+use std::path::PathBuf;
+
 use crate::Workspace;
 use serde::{
     Deserialize, Deserializer, Serialize, Serializer,
@@ -39,17 +41,41 @@ impl<'de> Visitor<'de> for WorkspaceVisitor {
 
     /// Format a message stating what data the workspace visitor expects to receive.
     fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
-        formatter.write_str("a string representing a workspace path")
+        formatter.write_str(
+            "a string representing a workspace path, or a map representing a workspace object",
+        )
     }
 
     /// The input contains a string.
     fn visit_str<E: Error>(self, value: &str) -> Result<Self::Value, E> {
         Ok(Workspace::new(value))
     }
+
+    /// The input contains a key-value map.
+    fn visit_map<A>(self, mut map: A) -> Result<Self::Value, A::Error>
+    where
+        A: serde::de::MapAccess<'de>,
+    {
+        while let Some(key) = map.next_key()? {
+            match key {
+                "path" => {
+                    let path = map.next_value::<PathBuf>()?;
+                    return Ok(Workspace::new(path));
+                }
+                _ => continue,
+            }
+        }
+
+        Err(A::Error::missing_field("path"))
+    }
 }
 
 impl<'de> Deserialize<'de> for Workspace {
     /// Deserialize this workspace from the given Serde deserializer.
+    ///
+    /// It will first try to deserialize from a string and if that fails, from a
+    /// workspace object. In case both fails, the string deserialization error is
+    /// returned.
     ///
     /// # Example
     ///
@@ -61,6 +87,6 @@ impl<'de> Deserialize<'de> for Workspace {
     /// assert_eq!(workspace.name(), "tiny-workspace");
     /// ```
     fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
-        deserializer.deserialize_str(WorkspaceVisitor)
+        deserializer.deserialize_any(WorkspaceVisitor)
     }
 }

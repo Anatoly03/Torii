@@ -253,14 +253,14 @@ async function loadNodes(directory: string) {
 
         const newData = await Promise.all(
             files.map(async (file) => {
+                console.log('Loading node components for:', file);
+
                 const components = await invoke<string[]>(
                     'list_record_components',
-                    {
-                        directory: file.path,
-                        name: file.name,
-                    }
+                    { record: file }
                 );
 
+                console.log('Components for', file.name, ':', components);
                 const isFolder = components.some((c) => c === 'folder');
 
                 return {
@@ -346,7 +346,9 @@ function onSelectKey(value: Key[], options: Array<TreeOption | null>) {
 }
 
 async function loadNode(node: TreeOption & { record: Record }) {
-    node.children = await loadNodes(node.record.path);
+    const children = await loadNodes(node.record.path);
+    console.log('Children:', children);
+    node.children = children;
 }
 
 function handleDrop(event: any) {

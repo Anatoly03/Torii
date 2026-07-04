@@ -54,7 +54,8 @@ impl<'de> Visitor<'de> for RecordVisitor {
         A: MapAccess<'de>,
     {
         let mut workspace = None;
-        let mut record = None;
+        let mut record_path = None;
+        let mut record_relative_path = None;
 
         while let Some(key) = map.next_key()? {
             match key {
@@ -64,27 +65,40 @@ impl<'de> Visitor<'de> for RecordVisitor {
                     }
                     workspace = Some(map.next_value::<Workspace>()?);
                 }
-                "record" => {
-                    if record.is_some() {
+                "path" => {
+                    if record_path.is_some() {
                         return Err(A::Error::duplicate_field("record"));
                     }
-                    record = Some(map.next_value::<PathBuf>()?);
+                    record_path = Some(map.next_value::<PathBuf>()?);
                 }
-                _ => {
-                    return Err(A::Error::unknown_field(key, &["workspace", "record"]));
+                "relative_path" => {
+                    if record_relative_path.is_some() {
+                        return Err(A::Error::duplicate_field("relative_path"));
+                    }
+                    record_relative_path = Some(map.next_value::<PathBuf>()?);
                 }
+                _ => continue,
             }
         }
 
         let workspace = workspace.ok_or_else(|| A::Error::missing_field("workspace"))?;
-        let record_path = record.ok_or_else(|| A::Error::missing_field("record"))?;
 
-        // (security) input sanitization
-        if record_path.is_absolute() {
-            return Err(A::Error::custom("record path must be relative"));
-        }
+        let record_relative_path = if let Some(relative_path) = record_relative_path {
+            // (security) input sanitization
+            if relative_path.is_absolute() {
+                return Err(A::Error::custom("`relative_path` must not be absolute"));
+            }
 
-        Ok(workspace.record(record_path))
+            relative_path
+        } else if let Some(path) = record_path {
+            path.strip_prefix(workspace.path())
+                .map_err(|_| A::Error::custom("record path is not relative to workspace"))?
+                .to_path_buf()
+        } else {
+            return Err(A::Error::missing_field("path"));
+        };
+
+        Ok(workspace.record(record_relative_path))
     }
 }
 

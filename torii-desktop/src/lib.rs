@@ -25,11 +25,12 @@ pub fn run() {
             recent::list_recent_projects,
             recent::add_recent_project,
             recent::remove_recent_project,
-            project::read_file,
+
             record::commands::list_records,
             record::commands::remove_record,
-            project::record::rename_record,
-            project::record::list_record_components,
+            record::commands::list_record_components,
+
+            project::read_file,
             project::record::get_record_component,
             project::record::save_record_component,
             project::record::save_record_component_from_local_file,
