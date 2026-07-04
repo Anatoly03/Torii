@@ -3,4 +3,4 @@
  * torii-desktop-macro crate.
  */
 
-export type { Record, Workspace } from "./bindings"
+export type * from './bindings';

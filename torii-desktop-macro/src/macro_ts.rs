@@ -1,6 +1,8 @@
 //! This module defines the procedural macro that generates typescript bindings for
 //! Rust items.
 
+// TODO see if https://github.com/tauri-apps/tauri-bindgen is better
+
 use fd_lock::{RwLock, RwLockWriteGuard};
 use proc_macro2::TokenStream;
 use quote::ToTokens;
@@ -128,11 +130,11 @@ pub(crate) fn bind_struct(mut strucc: ItemStruct) -> TokenStream {
 
     if strucc.fields.len() == 0 {
         bindings_guard
-            .write_all(format!("interface {} {{}}\n", strucc.ident.to_string()).as_bytes())
+            .write_all(format!("export interface {} {{}}\n", strucc.ident.to_string()).as_bytes())
             .expect("Failed to write interface to index.d.ts file.");
     } else {
         bindings_guard
-            .write_all(format!("interface {} {{\n", strucc.ident.to_string()).as_bytes())
+            .write_all(format!("export interface {} {{\n", strucc.ident.to_string()).as_bytes())
             .expect("Failed to write interface header to index.d.ts file.");
     }
 
