@@ -1,45 +1,45 @@
 <template>
-    <n-spin
+    <UIDropRegion
         class="file-editor-image"
-        :class="{ 'drag-over': isDragOver, 'has-image': imageBlob }"
-        @dragenter.prevent="isDragOver = true"
-        @dragleave.prevent="isDragOver = false"
-        @drop="onImageDrop"
+        @drop-url="loadImageFromURL"
+        @drop-local-path="loadImageFromFilePath"
+        @drop-files="loadImageFromFiles"
         @click="onImageClick"
-        :show="loading > 0"
     >
-        <div v-if="imageBlob" class="image-preview">
-            <img
-                class="file-image-preview"
-                :src="imageBlob"
-                alt="Image Preview"
-            />
-            <button
-                class="delete-btn"
-                @click="removeImage"
-                title="Delete image"
+        <n-spin :show="loading > 0">
+            <div v-if="imageBlob" class="image-preview">
+                <img
+                    class="file-image-preview"
+                    :src="imageBlob"
+                    alt="Image Preview"
+                />
+                <button
+                    class="delete-btn"
+                    @click="removeImage"
+                    title="Delete image"
+                >
+                    <NIcon size="16">
+                        <CloseOutline />
+                    </NIcon>
+                </button>
+            </div>
+            <div
+                v-else
+                class="image-placeholder"
+                :class="{
+                    ['image-placeholder-' + props.placeholderAnchor]:
+                        props.placeholderAnchor !== undefined,
+                }"
             >
-                <NIcon size="16">
-                    <CloseOutline />
+                <NIcon size="32">
+                    <ImageOutline />
                 </NIcon>
-            </button>
-        </div>
-        <div
-            v-else
-            class="image-placeholder"
-            :class="{
-                ['image-placeholder-' + props.placeholderAnchor]:
-                    props.placeholderAnchor !== undefined,
-            }"
-        >
-            <NIcon size="32">
-                <ImageOutline />
-            </NIcon>
-            <span v-if="props.placeholderText">{{
-                props.placeholderText
-            }}</span>
-        </div>
-    </n-spin>
+                <span v-if="props.placeholderText">{{
+                    props.placeholderText
+                }}</span>
+            </div>
+        </n-spin>
+    </UIDropRegion>
 </template>
 
 <script setup lang="ts">
@@ -49,6 +49,7 @@ import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
 import { NIcon, NSpin } from 'naive-ui';
 import { CloseOutline, ImageOutline } from '@vicons/ionicons5';
 import { Record } from 'types';
+import UIDropRegion from '../../ui/UIDropRegion.vue';
 
 const props = defineProps<{
     record: Record;
@@ -112,7 +113,10 @@ async function loadFile() {
 /**
  * Loads image from a "File" object.
  */
-async function loadImageFromFile(file: File) {
+async function loadImageFromFiles(files: File[]) {
+    if (!files || files.length === 0) return;
+    const file = files[0];
+
     // This is an expensive operation. Start loading after 100ms
     // if the image does not load immediately.
     setTimeout(() => (loading.value += 1), 100);
@@ -178,102 +182,33 @@ async function loadImageFromURL(url: string) {
         contentType: 'image/png',
     });
 
-    loading.value -= 1;
-}
-
-async function loadImageFromHTML(html: string) {
-    // This is an expensive operation. Start loading after 100ms
-    // if the image does not load immediately.
-    setTimeout(() => (loading.value += 1), 100);
-
-    try {
-        // Parse the HTML to see if the top-most element is an <img> tag,
-        // then extract the src attribute
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-
-        // Get the root element
-        const element = doc.body.firstElementChild;
-        const tag = element?.tagName.toLowerCase();
-
-        switch (tag) {
-            case 'img':
-                await loadImageFromURL((element as HTMLImageElement).src);
-                break;
-
-            case 'a':
-                if ((element as HTMLAnchorElement).href) {
-                    await loadImageFromURL((element as HTMLAnchorElement).href);
-                } else if (element?.innerHTML.startsWith('file://')) {
-                    // Remove 'file://' prefix and decode the URI component (converts percentage-
-                    // encoded Japanese locale to proper Japanese characters.)
-                    const source = decodeURIComponent(
-                        element.innerHTML.slice(7)
-                    );
-
-                    // Save the image data from a local file path. This is a special case for local files.
-                    await invoke('save_record_component_from_local_file', {
-                        record: props.record,
-                        component: props.component,
-                        source,
-                    });
-
-                    // Refresh the image data after saving
-                    await loadFile();
-                }
-                break;
-
-            default:
-                console.warn(
-                    'Unsupported HTML dropped. Only <img> tags are supported.'
-                );
-        }
-    } catch (e) {
-        console.error('Failed to load image from HTML:', e);
-    }
+    // Refresh the image data after saving
+    await loadFile();
 
     loading.value -= 1;
 }
 
-async function onImageDrop(event: DragEvent) {
-    event.preventDefault();
-    isDragOver.value = false;
+/**
+ *
+ * @param path Local file path
+ */
+async function loadImageFromFilePath(source: string) {
+    // Save the image data from a local file path. This is a special case for local files.
+    await invoke('save_record_component_from_local_file', {
+        record: props.record,
+        component: props.component,
+        source,
+    });
 
-    const dt = event.dataTransfer;
-    if (!dt) return;
-
-    // Check if files are dropped
-    if (dt.files && dt.files.length > 0) {
-        const file = dt.files[0];
-
-        if (file.type.startsWith('image/')) {
-            await loadImageFromFile(file);
-            return;
-        }
-    }
-
-    // Check if text is dropped
-    const text = dt.getData('text/plain');
-    if (text) {
-        console.log('Text dropped:', text);
-    }
-
-    // Handle HTML
-    const html = dt.getData('text/html');
-    if (html) {
-        console.log('HTML dropped:', html);
-        await loadImageFromHTML(html);
-        return;
-    }
+    // Refresh the image data after saving
+    await loadFile();
 }
 
 /**
  * If image was clicked and there is no image currently, open file
  * dialog and select image.
  */
-async function onImageClick(event: MouseEvent) {
-    if (imageBlob.value) return;
-
+async function onImageClick(_event: MouseEvent) {
     const path = await openFileDialog();
     if (!path) return;
 
