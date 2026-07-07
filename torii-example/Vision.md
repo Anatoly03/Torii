@@ -168,9 +168,11 @@ These special components would be useful:
 
 And no more, this should be a simple demo. Just a player in a simple level colliding with the world.
 
+### "Fun": Voicebanks
+
+Hypothetically an OpenUTAU compatible component could be implemented. The special files would be "`<entity>/character.txt`" and we could consider making a general "avatar" component.
 
 
-&nbsp;
 
 &nbsp;
 

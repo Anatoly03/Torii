@@ -1,6 +1,10 @@
 <template>
     <div class="view-project">
         <div class="view-project-sidebar">
+            <!-- <UIFileTree
+                @node-click="setCurrentFile"
+                generic="Record"
+            /> -->
             <FileTree
                 ref="fileTree"
                 :root="projectPath"
@@ -75,6 +79,7 @@ import { useSettingsStore } from '@/stores/settings';
 import MarkdownEditor from '../../components/article/MarkdownEditor.vue';
 import ImageEditor from '../../components/image/ImageEditor.vue';
 import { Record } from 'types';
+import UIFileTree from '@/ui/UIFileTree.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -92,6 +97,7 @@ const wordCount = ref<number | undefined>(undefined);
 onMounted(async () => {
     const files =
         (await fileTree.value?.loadFiles())?.map((k) => k.record) ?? [];
+        // [];
     const readme = files?.find((r) => r.name === 'README');
     records.value = files || [];
 
