@@ -1,6 +1,7 @@
 //! Desktop library for the Torii desktop application, built using Tauri.
 
 mod components;
+mod locales;
 mod project;
 mod recent;
 
