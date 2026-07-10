@@ -79,8 +79,8 @@ impl Component for FolderComponent {
     ///
     /// The "Article" component will interpret the resulting binary as a markdown
     /// string.
-    fn write(&self, _record: &Record, _content: &[u8]) -> Result<(), String> {
-        unimplemented!("The folder component does not support writing data.")
+    fn write(&self, record: &Record, _content: &[u8]) -> Result<(), String> {
+        std::fs::create_dir_all(record.path()).map_err(|e| format!("Failed to create folder: {e}"))
     }
 
     /// Gets a remove request to delete the folder for a record. The return type

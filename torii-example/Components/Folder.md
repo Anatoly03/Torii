@@ -1,6 +1,6 @@
 # "Folder" Component
 
-- View
+- View, Edit
 
 Every directory in the workspace is a "Folder". It is a container of multiple records which are called "folder contents".
 

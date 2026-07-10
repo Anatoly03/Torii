@@ -144,7 +144,7 @@ watch(
             component: 'article',
         });
         let content = new TextDecoder().decode(bytes as Uint8Array);
-        console.debug('load', content);
+        // console.debug('load', content);
 
         ignoreFirstSave.value = true;
         editor.commands.setContent(content, { contentType: 'markdown' });
@@ -156,9 +156,9 @@ async function loadFile() {
         record: props.record,
         component: 'article',
     });
-    console.log(bytes);
+    // console.log(bytes);
     let content = new TextDecoder().decode(bytes as Uint8Array);
-    console.debug('load', content);
+    // console.debug('load', content);
 
     ignoreFirstSave.value = true;
     editor.commands.setContent(content, { contentType: 'markdown' });
@@ -173,7 +173,7 @@ async function saveFile() {
 
     // Get markdown content from the editor
     const content = editor.getMarkdown();
-    console.debug('save', content);
+    // console.debug('save', content);
 
     // Save the file content whenever it changes
     await invoke('save_record_component', {

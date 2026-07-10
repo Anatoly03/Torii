@@ -79,11 +79,15 @@ Some worlds lead their own calendars. For authors who deeply care about proper t
 
 Fragment of a chapter, a scene is an article describing events occuring in a certain place (record), at a certain time in a time system (record) with certain characters present (records).
 
+The idea of descriptive scenes is to mark every sentence to "whome" it belongs. For example in a paragraph there could be a speech segment (who said it? thought it?) 
+
 ### "Folder" Component
 
 Every "Folder" in the workspace should also itself be a record, which can be expanded with articles and is therefore a page that can be viewed. The "Folder" component extends only in the file tree, allowing to list child records of the folder. For example you can create the record "Characters" and add "Characters/Sarah Vermillion" and "Characters/Naki Pagong", and in the parent record "Characters" you describe the concept of story characters and maybe list all characters?
 
 Other idea for such pages are "Artefacts", "Clans" or in-world "Flora and Fauna". The world builder using Torii should chose.
+
+Some programs organize the contents in a directory. For example OpenUTAU voicebanks. 
 
 ### "Citation" Component
 

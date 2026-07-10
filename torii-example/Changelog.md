@@ -4,7 +4,7 @@
 
 ### v0.0.0-dev7
 
-- Added technical support to for the "folder" component.
+- Add technical support to for the "folder" component.
 
 ---
 

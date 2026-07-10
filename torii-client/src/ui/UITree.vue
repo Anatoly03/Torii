@@ -38,7 +38,9 @@
                         "
                         :data="node.children"
                         v-model:selected-keys="selectedKeys"
+                        @find-node-by-key="s => (props.onFindNodeByKey?.(s) ?? null)"
                         @node-click="emit('node-click', $event)"
+                        @node-move="(s, t) => emit('node-move', s, t)"
                     />
                 </span>
             </li>
@@ -82,6 +84,14 @@ export type TreeNode<K> = {
 const props = defineProps<{
     data: TreeNode<NodeValue>[];
     onNodeExpand: (node: TreeNode<K>) => Promise<TreeNode<K>[]>;
+
+    /**
+     * @brief Callback function provided by the root node to find a node by its key.
+     * @details The reason this method is implemented by the caller is because drag
+     * and drop to the 
+     * @param key The key of the record.
+     */
+    onFindNodeByKey?: (key: string) => TreeNode<NodeValue> | null;
 }>();
 
 /**
@@ -89,6 +99,7 @@ const props = defineProps<{
  */
 const emit = defineEmits<{
     (e: 'node-click', node: TreeNode<NodeValue>): void;
+    (e: 'node-move', target: TreeNode<NodeValue>, source: TreeNode<NodeValue>): void;
     // (e: 'node-expand', node: TreeNode<NodeValue>): Promise<TreeNode<NodeValue>[]>;
 }>();
 
@@ -138,13 +149,17 @@ async function onToggleAnchor(node: TreeNode<NodeValue>) {
 }
 
 /**
- *
+ * // TODO DOCUMENT
  * @param node
  * @param recordPath
  */
-function onMoveNode(node: TreeNode<NodeValue>, recordPath: string) {
-    console.log(`Moving record \`${recordPath}\` to node \`${node.label}\``);
-    // TODO
+function onMoveNode(target: TreeNode<NodeValue>, sourceRecordPath: string) {
+    if (!props.onFindNodeByKey) return;
+
+    const source = props.onFindNodeByKey?.(sourceRecordPath) ?? null;
+    if (!source) return; // if the path is externally dragged, ignore
+
+    emit('node-move', target, source);
 }
 
 defineOptions({ name: 'UITree' });

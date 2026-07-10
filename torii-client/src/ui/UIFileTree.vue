@@ -1,11 +1,14 @@
 <template>
     <UITree
+        ref="uiTreeEl"
         class="ui-file-tree"
         v-model:selected-keys="selectedKeys"
         :key="JSON.stringify(files)"
         :data="files"
+        @find-node-by-key="findNodeByKey"
         @node-click="(e) => setCurrentFile(e)"
         @node-expand="(e) => loadNodes(e.value.path)"
+        @node-move="moveRecord"
         generic="Record"
     />
 </template>
@@ -24,11 +27,16 @@ const props = defineProps<{
 }>();
 
 /**
- * 
+ *
  */
 const emit = defineEmits<{
     (e: 'update:current-file', value: Record | null): void;
 }>();
+
+/**
+ * The reference to the UITree component instance.
+ */
+const uiTreeEl = ref<InstanceType<typeof UITree> | null>(null);
 
 /**
  * @brief Model for the selected keys in the tree. Propagated from the UITree
@@ -101,6 +109,32 @@ function setCurrentFile(node: TreeNode<Record>) {
     emit('update:current-file', record);
 }
 
+async function moveRecord(
+    parentNode: TreeNode<Record>,
+    node: TreeNode<Record>
+) {
+    const parent = parentNode.value;
+    const record = node.value;
+    if (!parent || !record) return;
+
+    // Create folder component for parent record if it doesn't exist.
+    await invoke('save_record_component', {
+        record: parent,
+        component: 'folder',
+        content: '',
+        contentType: 'text/markdown',
+    });
+
+    // Move the record to the new parent path.
+    await invoke<string[]>('rename_record', {
+        record,
+        newPath: `${parent.relative_path}/${record.name}`,
+    });
+
+    // Refresh the file tree after moving the record.
+    files.value = await loadNodes(props.directory);
+}
+
 /**
  * @brief Recursively finds a node by its key in the tree.
  * @param key The key of the node to find.
@@ -111,6 +145,8 @@ function findNodeByKey(
     key: string,
     nodes = files.value
 ): TreeNode<Record> | null {
+    // console.log('Searching for node with key:', key);
+
     for (const node of nodes) {
         if (node.key === key) return node;
         if (node.children) {

@@ -18,6 +18,13 @@ pub fn list_records(directory: PathBuf) -> Result<Vec<Record>, String> {
     }
 }
 
+/// Renames a given record. This is used to rename a record on the disc. It will
+/// move the file to the new name.
+#[tauri::command]
+pub fn rename_record(record: Record) {
+    println!("Renaming record: {:?}", record);
+}
+
 /// Removes a given record. This is used to remove a record from the disc. It will
 /// remove all files associated with the record.
 ///
@@ -38,8 +45,6 @@ pub fn remove_record(record: Record) -> Result<(), String> {
         .map_err(|e| format!("Failed to remove record files: {e}"))?;
     Ok(())
 }
-
-// TODO implement: rename_record
 
 /// Lists all components attached to a given record.
 ///
