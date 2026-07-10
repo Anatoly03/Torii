@@ -1,15 +1,12 @@
 <template>
     <div class="view-project">
         <div class="view-project-sidebar">
-            <!-- <UIFileTree
-                @node-click="setCurrentFile"
-                generic="Record"
-            /> -->
-            <FileTree
+            <UIFileTree :directory="projectPath" ref="fileTree" @update:current-file="setCurrentFile" />
+            <!-- <FileTree
                 ref="fileTree"
                 :root="projectPath"
                 @update:current-file="setCurrentFile"
-            />
+            /> -->
             <div class="view-project-quick-settings">
                 <button
                     class="view-project-return-to-menu"
@@ -69,7 +66,6 @@
 import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { invoke } from '@tauri-apps/api/core';
-import FileTree from '../../components/file/FileTree.vue';
 import { Icon } from '@vicons/utils';
 import { SettingsOutline } from '@vicons/ionicons5';
 import { openSettingsWindow } from '../../composables/settings-window.ts';
@@ -89,15 +85,14 @@ const currentFile = ref<Record | null>(null);
 const markdownDirectory = ref<string | null>(null);
 const markdownName = ref<string | null>(null);
 const recordComponents = ref<string[]>([]);
-const fileTree = ref<InstanceType<typeof FileTree> | null>(null);
+const fileTree = ref<InstanceType<typeof UIFileTree> | null>(null);
 const markdownEditor = ref<InstanceType<typeof MarkdownEditor> | null>(null);
 const records = ref<Record[]>([]);
 const wordCount = ref<number | undefined>(undefined);
 
 onMounted(async () => {
-    const files =
-        (await fileTree.value?.loadFiles())?.map((k) => k.record) ?? [];
-        // [];
+    const nodes = await fileTree.value?.getFiles();
+    const files: Record[] = nodes.map((k) => k.value) ?? [];
     const readme = files?.find((r) => r.name === 'README');
     records.value = files || [];
 
@@ -110,13 +105,12 @@ onMounted(async () => {
 
 watch(currentFile, (newFile) => {
     if (newFile) {
+        console.log(newFile);
         markdownDirectory.value = newFile.workspace.path;
         markdownName.value = newFile.name;
         loadComponents();
 
-        if (fileTree.value) {
-            fileTree.value.setCurrentFile(newFile);
-        }
+        fileTree.value?.selectKeys([newFile.path]);
     } else {
         markdownDirectory.value = null;
         markdownName.value = null;

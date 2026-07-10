@@ -1,155 +1,158 @@
 <template>
-    <div class="ui-file-tree">
-        <ul v-if="data && data.length" class="ui-file-tree-list">
-            <li v-for="node of data" :key="node.key">
-                <NIcon
-                    class="ui-file-tree-list-anchor"
-                    @click="node.opened = !node.opened"
-                >
-                    <ChevronDown v-if="!node.isLeaf && node.opened" />
-                    <ChevronForward v-else-if="!node.isLeaf" />
-                </NIcon>
-                <span class="ui-file-tree-list-content">
-                    <UIDropRegion>
-                        <span
-                            class="ui-file-tree-list-label"
-                            :class="{
-                                'is-selected': selectedKeys.includes(node.key),
-                            }"
-                            @click="selectNode(node)"
-                        >
-                            {{ node.label }}
-                        </span>
-                    </UIDropRegion>
-                    <UIFileTree
-                        v-if="
-                            node.opened && node.children && node.children.length
-                        "
-                        :data="node.children"
-                        v-model:selected-keys="selectedKeys"
-                        @node-click="emit('node-click', $event)"
-                    />
-                </span>
-            </li>
-        </ul>
-    </div>
+    <UITree
+        class="ui-file-tree"
+        v-model:selected-keys="selectedKeys"
+        :key="JSON.stringify(files)"
+        :data="files"
+        @node-click="(e) => setCurrentFile(e)"
+        @node-expand="(e) => loadNodes(e.value.path)"
+        generic="Record"
+    />
 </template>
 
-<script setup lang="ts" generic="NodeValue">
-import { Ref, ref } from 'vue';
-import { ChevronDown, ChevronForward } from '@vicons/ionicons5';
-import { NIcon } from 'naive-ui';
-import UIDropRegion from './UIDropRegion.vue';
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue';
+import { Record } from '../types.d.ts';
+import UITree, { TreeNode } from './UITree.vue';
+import { invoke } from '@tauri-apps/api/core';
 
-type TreeNode = {
-    key: string;
-    label: string;
-    value: NodeValue;
-    isLeaf?: boolean;
-    opened?: boolean;
-    children?: TreeNode[];
-};
-
+/**
+ *
+ */
 const props = defineProps<{
-    data?: TreeNode[];
+    directory: string;
 }>();
 
+/**
+ * 
+ */
 const emit = defineEmits<{
-    (e: 'node-click', value: string[]): void;
+    (e: 'update:current-file', value: Record | null): void;
 }>();
 
+/**
+ * @brief Model for the selected keys in the tree. Propagated from the UITree
+ * component to the parent and backwards.
+ */
 const selectedKeys = defineModel<string[]>('selectedKeys', {
     default: () => [] as string[],
 });
 
-const data = ref(
-    props.data ?? [
-        { key: 'node1', label: 'Node 1', opened: false, isLeaf: true },
-        { key: 'node2', label: 'Node 2', opened: false, isLeaf: true },
-        {
-            key: 'node3',
-            label: 'Node 3',
-            opened: false,
-            children: [
-                {
-                    key: 'node3-1',
-                    label: 'Node 3.1',
-                    opened: false,
-                    isLeaf: true,
-                },
-                {
-                    key: 'node3-2',
-                    label: 'Node 3.2',
-                    opened: false,
-                    isLeaf: true,
-                },
-            ],
-        },
-    ]
-);
+/**
+ * Compute the current record.
+ */
+const currentRecord = computed(() => {
+    const selectedKey = selectedKeys.value[0];
+    if (!selectedKey) return null;
+    return findNodeByKey(files.value, selectedKey)?.value ?? null;
+});
 
-function selectNode(node: TreeNode) {
-    selectedKeys.value = [node.key];
-    emit('node-click', selectedKeys.value);
+/**
+ * @brief The loaded file hierarchy, represented as an tree of `TreeNode` objects.
+ */
+const files = ref<TreeNode<Record>[]>([]);
+
+/**
+ * @brief Loads the file nodes from the backend.
+ */
+async function loadNodes(directory: string): Promise<TreeNode<Record>[]> {
+    /**
+     * @brief Converts a record object into a treenode object.
+     * @param record The record to convert.
+     * @returns A `TreeNode` object representing the record.
+     */
+    async function mapRecord(record: Record): Promise<TreeNode<Record>> {
+        const components = await invoke<string[]>('list_record_components', {
+            record,
+        });
+
+        console.debug(`Components for \`${record.name}\`:`, components);
+        const isFolder = components.some((c) => c === 'folder');
+
+        return {
+            value: record,
+            key: record.path,
+            label: record.name,
+            isLeaf: !isFolder,
+        };
+    }
+
+    /**
+     * @brief Sorts the tree nodes by their record label in ascending order.
+     */
+    function sortNodes(records: TreeNode<Record>[]): TreeNode<Record>[] {
+        return records.sort((a, b) => a.label.localeCompare(b.label));
+    }
+
+    try {
+        const files = await invoke<Record[]>('list_records', { directory });
+        const retrieved = await Promise.all(files.map(mapRecord));
+        console.debug(`Retrieved file nodes for \`${directory}\`:`, retrieved);
+        return sortNodes(retrieved);
+    } catch (e) {
+        console.error('Error loading nodes:', e);
+    }
+    return [];
 }
 
-defineOptions({ name: 'UIFileTree' });
+function setCurrentFile(node: TreeNode<Record>) {
+    const record = node.value;
+    if (!record) return;
+    emit('update:current-file', record);
+}
+
+/**
+ * @brief Recursively finds a node by its key in the tree.
+ * @param key The key of the node to find.
+ * @param nodes The nodes to search in. Defaults to the root nodes.
+ * @returns The found node or null if not found.
+ */
+function findNodeByKey(
+    key: string,
+    nodes = files.value
+): TreeNode<Record> | null {
+    for (const node of nodes) {
+        if (node.key === key) return node;
+        if (node.children) {
+            const found = findNodeByKey(key, node.children);
+            if (found) return found;
+        }
+    }
+    return null;
+}
+
+/**
+ * Wrapper, exposed to the parent, for setting the current file by its record.
+ * @param record The record to set as the current file.
+ */
+function getFiles() {
+    return loadNodes(props.directory);
+}
+
+/**
+ * @brief Wrapper, exposed to the parent, for selecting keys in the tree.
+ * @param keys The keys to select.
+ */
+function selectKeys(keys: string[]) {
+    selectedKeys.value = keys;
+}
+
+onMounted(async () => {
+    files.value = await loadNodes(props.directory);
+    console.log('Loaded file nodes:', files.value);
+});
+
+defineExpose({
+    currentRecord,
+    getFiles,
+    selectKeys,
+});
 </script>
 
 <style lang="scss" scoped>
 .ui-file-tree {
-    ul.ui-file-tree-list {
-        display: flex;
-        flex-direction: column;
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-        gap: 4px;
-
-        li {
-            display: flex;
-            flex-direction: row;
-            gap: 4px;
-            cursor: pointer;
-
-            font-size: 14px;
-            color: #666;
-
-            .ui-file-tree-list-anchor {
-                aspect-ratio: 1;
-                font-size: 1em;
-                margin-top: 5px;
-                color: #888;
-            }
-
-            .ui-file-tree-list-content {
-                flex: 1;
-                flex-direction: column;
-                justify-content: flex-start;
-                text-align: left;
-                width: 100%;
-            }
-
-            .ui-file-tree-list-label {
-                display: flex;
-                width: 100%;
-                padding: 4px;
-                border-radius: 4px;
-                align-items: center;
-
-                &.is-selected {
-                    background-color: #e0e0e0;
-
-                    &:hover {
-                        background-color: #d0d0d0;
-                    }
-                }
-
-                &:hover {
-                    background-color: #f0f0f0;
-                }
-            }
-        }
-    }
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 </style>
