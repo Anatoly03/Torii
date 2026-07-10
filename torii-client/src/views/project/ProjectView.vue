@@ -2,6 +2,7 @@
     <div class="view-project">
         <div class="view-project-sidebar">
             <UIFileTree :directory="projectPath" ref="fileTree" @update:current-file="setCurrentFile" />
+            <UICreateFile />
             <!-- <FileTree
                 ref="fileTree"
                 :root="projectPath"
@@ -76,6 +77,7 @@ import MarkdownEditor from '../../components/article/MarkdownEditor.vue';
 import ImageEditor from '../../components/image/ImageEditor.vue';
 import { Record } from 'types';
 import UIFileTree from '@/ui/UIFileTree.vue';
+import UICreateFile from '@/ui/UICreateFile.vue';
 
 const route = useRoute();
 const router = useRouter();
