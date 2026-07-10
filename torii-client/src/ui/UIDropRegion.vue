@@ -9,7 +9,7 @@
             // 'drag-over-invalid': isUnimplementedDragover,
         }"
         :draggable="props.draggable"
-        @dragstart.prevent="onDrag"
+        @dragstart="onDrag"
         @dragenter.prevent="isDragOver = true"
         @dragleave.prevent="isDragOver = false"
         @drop="onDrop"
@@ -21,6 +21,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+// const dropRegionEl = ref<HTMLElement | null>(null);
 const isDragOver = ref(false);
 // TODO implement ondragenter check if the file type would be handled
 // const isUnimplementedDragover = ref(false);
@@ -41,6 +42,22 @@ const props = defineProps<{
      * ```
      */
     draggable?: boolean;
+
+    /**
+     * Data types for dragging. This is an array of tuples, consisting of a MIME type and the corresponding
+     * data.
+     *
+     * # Example
+     *
+     * ```vue
+     * <template>
+     *   <ui-drop-region draggable :drag-data="[ ['text/plain', 'Hello World!'] ]">
+     *     Hello World!
+     *   </ui-drop-region>
+     * </template>
+     * ```
+     */
+    dragData?: [string, string][];
 
     /**
      * Handles the drag event. Requires {@link draggable} to be set to true.
@@ -134,6 +151,26 @@ const props = defineProps<{
      */
     onDropHtml?: (html: Element) => void;
 
+    /**
+     * Handles the drop event for "application/x-record-path" data dropped. This
+     * function contains a record path.
+     *
+     * This function is invoked after `@drop-url` and `@drop-local-path`
+     * handlers are invoked. If the above events are defined and the HTML
+     * looks like a "dropped path", this handler will not be invoked.
+     *
+     * # Example
+     *
+     * ```vue
+     * <template>
+     *   <ui-drop-region @drop-application-record-path="path => loadRecord('./README')">
+     *     README
+     *   </ui-drop-region>
+     * </template>
+     * ```
+     */
+    onDropApplicationRecordPath?: (path: string) => void;
+
     // dropFiles?: (files: File[]) => void;
     // dropText?: (text: string) => void;
 }>();
@@ -144,6 +181,25 @@ const props = defineProps<{
 function onDrag(event: DragEvent) {
     if (props.onDrag) {
         props.onDrag(event);
+    }
+
+    // If the user has defined drag data, set it on the event's dataTransfer object.
+    setDragData(event);
+}
+
+/**
+ *
+ * @param event
+ */
+function setDragData(event: DragEvent) {
+    if (!event.dataTransfer) return;
+    if (!props.dragData) {
+        event.dataTransfer.setData('text/html', event.target?.outerHTML ?? '');
+        return;
+    }
+
+    for (const [type, data] of props.dragData) {
+        event.dataTransfer!.setData(type, data);
     }
 }
 
@@ -175,6 +231,14 @@ function onDrop(event: DragEvent) {
     }
 
     // TODO handle text/plain
+
+    if (dt.types.includes('application/x-record-path')) {
+        const recordPath = dt.getData('application/x-record-path');
+        if (props.onDropApplicationRecordPath) {
+            props.onDropApplicationRecordPath(recordPath);
+            return;
+        }
+    }
 
     // Invoke general drop handler if no other handlers were invoked
     if (props.onDrop) {

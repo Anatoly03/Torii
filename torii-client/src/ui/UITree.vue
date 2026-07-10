@@ -17,7 +17,11 @@
                     <ChevronForward v-else-if="!node.isLeaf" />
                 </NIcon>
                 <span class="ui-tree-list-content">
-                    <UIDropRegion>
+                    <UIDropRegion
+                        draggable
+                        :drag-data="[['application/x-record-path', node.key]]"
+                        @drop-application-record-path="onMoveNode(node, $event)"
+                    >
                         <span
                             class="ui-tree-list-label"
                             :class="{
@@ -133,6 +137,16 @@ async function onToggleAnchor(node: TreeNode<NodeValue>) {
     console.log(node);
 }
 
+/**
+ *
+ * @param node
+ * @param recordPath
+ */
+function onMoveNode(node: TreeNode<NodeValue>, recordPath: string) {
+    console.log(`Moving record \`${recordPath}\` to node \`${node.label}\``);
+    // TODO
+}
+
 defineOptions({ name: 'UITree' });
 </script>
 
@@ -192,12 +206,14 @@ defineOptions({ name: 'UITree' });
             .ui-tree-list-label {
                 display: flex;
                 width: 100%;
+                box-sizing: border-box;
                 padding: 4px;
                 border-radius: 4px;
                 align-items: center;
                 white-space: nowrap; // keep label on one line
                 overflow: hidden; // hide overflow
                 text-overflow: ellipsis; // show … when truncated
+                user-select: none; // prevent accidental text selection
 
                 &.is-selected {
                     background-color: #e0e0e0;

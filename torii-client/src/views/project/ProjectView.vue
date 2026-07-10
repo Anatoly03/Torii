@@ -1,7 +1,7 @@
 <template>
     <div class="view-project">
         <div class="view-project-sidebar">
-            <UIFileTree :directory="projectPath" ref="fileTree" @update:current-file="setCurrentFile" />
+            <UIFileTree class="view-project-sidebar-file-tree" :directory="projectPath" ref="fileTree" @update:current-file="setCurrentFile" />
             <UICreateFile />
             <!-- <FileTree
                 ref="fileTree"
@@ -176,6 +176,11 @@ if (!projectPath) {
         padding: 16px;
         gap: 8px;
         border-right: 1px solid #ccc;
+
+        .view-project-sidebar-file-tree {
+            flex: 1;
+            overflow-y: auto;
+        }
 
         .view-project-quick-settings {
             display: flex;

@@ -1,20 +1,25 @@
 <template>
-    <button v-if="!creatingNewFile" @click="creatingNewFile = true" class="new-file-btn">
-        <NIcon><AddOutline /></NIcon>
-        {{ $t('app.project.newFile') }}
-    </button>
-    <n-input
-        v-if="creatingNewFile"
-        :bordered="false"
-        class="file-tree-create-file"
-        placeholder="New File"
-        size="small"
-        :clearable="true"
-        v-model:value="newFileName"
-        @blur="creatingNewFile = false"
-        @click.stop
-        @keydown="handleKeydown"
-    />
+    <div class="file-tree-create-file">
+        <button
+            v-if="!creatingNewFile"
+            @click="creatingNewFile = true"
+            class="new-file-btn"
+        >
+            <NIcon><AddOutline /></NIcon>
+            {{ $t('app.project.newFile') }}
+        </button>
+        <n-input
+            v-if="creatingNewFile"
+            :bordered="false"
+            placeholder="New File"
+            size="small"
+            :clearable="true"
+            v-model:value="newFileName"
+            @blur="creatingNewFile = false"
+            @click.stop
+            @keydown="handleKeydown"
+        />
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -43,9 +48,14 @@ function handleKeydown(e: KeyboardEvent) {
 
 <style lang="scss" scoped>
 .file-tree-create-file {
+    display: flex;
+    flex-direction: column;
+
     width: 100%;
+    height: 32px;
     text-align: left;
-    margin: 0 22px;
+    padding-left: 22px;
+    box-sizing: border-box;
     background-color: transparent !important;
 
     :deep(.n-input-wrapper) {
@@ -64,4 +74,26 @@ function handleKeydown(e: KeyboardEvent) {
         background-color: transparent !important;
     }
 }
+
+.new-file-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: 1px dashed #ccc;
+    border-radius: 4px;
+    background: transparent;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-sizing: border-box;
+    width: 100%;
+
+    &:hover {
+        border-color: #42b983;
+        color: #42b983;
+        background: #f0faf5;
+    }
+}
+
 </style>
