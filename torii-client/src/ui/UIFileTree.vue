@@ -152,7 +152,8 @@ defineExpose({
 <style lang="scss" scoped>
 .ui-file-tree {
     box-sizing: border-box;
-    overflow-x: hidden;
+    // overflow-x: hidden;
     overflow-y: auto;
+    padding-right: 8px;
 }
 </style>

@@ -124,7 +124,10 @@ async function onToggleAnchor(node: TreeNode<NodeValue>) {
         node.isLoadingChildren = true;
         node.children = await props.onNodeExpand(node);
         node.isLoadingChildren = false;
-        console.debug(`Loaded children for node \`${node.label}\`:`, node.children);
+        console.debug(
+            `Loaded children for node \`${node.label}\`:`,
+            node.children
+        );
     }
 
     console.log(node);
@@ -139,9 +142,12 @@ defineOptions({ name: 'UITree' });
         sans-serif;
     font-size: 14px;
     color: #333;
+    width: 100%;
+    box-sizing: border-box;
     // user-select: none; // prevent accidental text selection
 
     ul.ui-tree-list {
+        width: 100%;
         display: flex;
         box-sizing: border-box;
         flex-direction: column;
@@ -154,14 +160,19 @@ defineOptions({ name: 'UITree' });
             display: flex;
             flex-direction: row;
             gap: 4px;
+            max-width: 100%; // full width
+            max-width: 100%; // prevent overflow
+            box-sizing: border-box;
             cursor: pointer;
 
             .ui-tree-anchor-spinner {
                 font-size: 0.2em;
+                flex-shrink: 0;
             }
 
             .ui-tree-list-anchor {
                 aspect-ratio: 1;
+                flex-shrink: 0;
                 font-size: 1em;
                 margin-top: 5px;
                 color: #888;
@@ -169,6 +180,9 @@ defineOptions({ name: 'UITree' });
 
             .ui-tree-list-content {
                 flex: 1;
+                min-width: 0;
+                width: 100%;
+                display: flex;
                 flex-direction: column;
                 justify-content: flex-start;
                 text-align: left;
@@ -181,6 +195,9 @@ defineOptions({ name: 'UITree' });
                 padding: 4px;
                 border-radius: 4px;
                 align-items: center;
+                white-space: nowrap; // keep label on one line
+                overflow: hidden; // hide overflow
+                text-overflow: ellipsis; // show … when truncated
 
                 &.is-selected {
                     background-color: #e0e0e0;
@@ -193,6 +210,10 @@ defineOptions({ name: 'UITree' });
                 &:hover {
                     background-color: #f0f0f0;
                 }
+            }
+
+            :v-deep(.ui-tree) {
+                width: 100%;
             }
         }
     }
