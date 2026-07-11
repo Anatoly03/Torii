@@ -145,8 +145,6 @@ async function onToggleAnchor(node: TreeNode<NodeValue>) {
             node.children
         );
     }
-
-    console.log(node);
 }
 
 /**

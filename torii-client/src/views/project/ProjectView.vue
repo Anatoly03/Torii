@@ -1,7 +1,12 @@
 <template>
     <div class="view-project">
         <div class="view-project-sidebar">
-            <UIFileTree class="view-project-sidebar-file-tree" :directory="projectPath" ref="fileTree" @update:current-file="setCurrentFile" />
+            <UIFileTree
+                class="view-project-sidebar-file-tree"
+                :directory="projectPath"
+                ref="fileTree"
+                @update:current-file="setCurrentFile"
+            />
             <UICreateFile />
             <!-- <FileTree
                 ref="fileTree"
@@ -78,6 +83,7 @@ import ImageEditor from '../../components/image/ImageEditor.vue';
 import { Record } from 'types';
 import UIFileTree from '@/ui/UIFileTree.vue';
 import UICreateFile from '@/ui/UICreateFile.vue';
+import { TreeNode } from 'ui/UITree.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -131,12 +137,25 @@ async function loadComponents() {
 }
 
 async function autocompleteMarkdown(name: string): Promise<any> {
-    return records.value
+    const tree = await fileTree.value?.getFiles();
+
+    function recurseTree(tree: TreeNode<Record>[]): Record[] {
+        let records: Record[] = [];
+        for (const node of tree) {
+            records.push(node.value);
+            if (node.children) {
+                records = records.concat(recurseTree(node.children));
+            }
+        }
+        return records;
+    }
+
+    return recurseTree(tree)
         .filter((record) => {
             return record.name?.startsWith(name);
         })
         .map((record) => ({
-            label: record.name,
+            label: record.relative_path,
             value: record.name,
         }));
 }

@@ -164,7 +164,8 @@ function findNodeByKey(
  * @param record The record to set as the current file.
  */
 function getFiles() {
-    return loadNodes(props.directory);
+    // TODO reload the file tree from the backend before returning
+    return files.value;
 }
 
 /**
@@ -177,7 +178,6 @@ function selectKeys(keys: string[]) {
 
 onMounted(async () => {
     files.value = await loadNodes(props.directory);
-    console.log('Loaded file nodes:', files.value);
 });
 
 defineExpose({
