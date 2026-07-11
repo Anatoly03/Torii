@@ -151,6 +151,25 @@ We should discuss if we go for YAML or JSON.
 }
 ```
 
+### Resources
+
+The following should be the structure of the resources directory:
+
+```
+├── locales
+│   ├── en.json
+│   ├── jp.json
+│   └── ... 
+├── themes
+│   ├── light.css
+│   └── dark.css
+├── workspace-demo
+│   ├── Changelog.md
+│   └── Vision.md
+└── plugins
+    └── ... 
+```
+
 ### Version Controlling &amp; File System
 
 The Torii ecosystem is specifically designed to be compatible with GIT and the local filesystem.. All components are individual files that can be committed and tracked, but also individually removed and managed. 
@@ -176,8 +195,3 @@ And no more, this should be a simple demo. Just a player in a simple level colli
 
 Hypothetically an OpenUTAU compatible component could be implemented. The special files would be "`<entity>/character.txt`" and we could consider making a general "avatar" component.
 
-
-
-&nbsp;
-
-&nbsp;

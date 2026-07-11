@@ -72,6 +72,7 @@ The first stage of the project is to create a simple file browser like applicati
 -   [ ] Cache all records on start for autocomplete (or scan recursive)
 -   [ ] Re-add ability to name new or rename existing files.
 -   [ ] Test Drag & Drop inbetween nested folders
+-   [ ] Add new workspace which gets saved to resources: Changelog, Quick Guide
 
 ### `v0.0.0-dev8`
 

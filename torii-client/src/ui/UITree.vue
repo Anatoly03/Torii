@@ -229,7 +229,7 @@ defineOptions({ name: 'UITree' });
         list-style-type: none;
         padding: 0;
         margin: 0;
-        gap: 4px;
+        gap: 2px;
 
         li {
             display: flex;
@@ -262,13 +262,14 @@ defineOptions({ name: 'UITree' });
                 justify-content: flex-start;
                 text-align: left;
                 width: 100%;
+                gap: 2px;
             }
 
             .ui-tree-list-label {
                 display: flex;
                 width: 100%;
                 box-sizing: border-box;
-                padding: 4px;
+                padding: 2px    4px;
                 border-radius: 4px;
                 align-items: center;
                 white-space: nowrap; // keep label on one line
