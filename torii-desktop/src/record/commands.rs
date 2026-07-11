@@ -10,8 +10,19 @@ use tauri::ipc::Response;
 ///
 /// If the directory does not exist, an empty list is returned.
 #[tauri::command]
-pub fn list_records(directory: PathBuf) -> Result<Vec<Record>, String> {
-    match Record::list(directory) {
+pub fn list_records(directory: PathBuf, recursive: Option<bool>) -> Result<Vec<Record>, String> {
+    let recursive = recursive.unwrap_or(false);
+
+    // Chose the appropriate listing method based on the `recursive` flag.
+    let result = if recursive {
+        Record::list_recursive(&directory)
+    } else {
+        Record::list(&directory)
+    };
+    
+    // Handle the result of the listing operation. If the directory does not
+    // exist, return an empty list.
+    match result {
         Ok(records) => Ok(records),
         Err(e) if e.kind() == NotFound => Ok(vec![]),
         Err(e) => Err(format!("Failed to list records: {e}")),

@@ -183,7 +183,7 @@ impl Record {
     }
 
     /// Returns the list of records located in the given directory.
-    pub fn list(directory: PathBuf) -> Result<Vec<Self>, std::io::Error> {
+    pub fn list(directory: &PathBuf) -> Result<Vec<Self>, std::io::Error> {
         let record_names = directory
             .read_dir()?
             .filter_map(|e| e.ok())
@@ -206,6 +206,25 @@ impl Record {
             .into_iter()
             .map(|name| Self::new(Workspace::new(directory.clone()), name))
             .collect();
+        Ok(records)
+    }
+
+    /// Returns the list of records in the given directory and all its subdirectories
+    /// recursively.
+    pub fn list_recursive(directory: &PathBuf) -> Result<Vec<Self>, std::io::Error> {
+        // First retrieve all records in the current directory.
+        let mut records = Self::list(directory)?;
+
+        // Then retrieve all subdirectories and list their records recursively.
+        for entry in directory.read_dir()? {
+            let entry = entry?;
+            let path = entry.path();
+
+            if path.is_dir() {
+                records.extend(Self::list_recursive(&path)?);
+            }
+        }
+
         Ok(records)
     }
 
