@@ -6,7 +6,7 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::{fs::File, io::ErrorKind, path::PathBuf};
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Manager, path::BaseDirectory};
 
 /// The path to the file where recent projects are stored. This is a JSON file
 /// that contains an array of `RecentProjectMetadata` objects. The parent is
@@ -82,16 +82,36 @@ impl RecentProjectMetadata {
         if cfg!(dev) {
             // If we are in development mode, link the `torii-example` demo workspace. This
             // Torii project is version tracked in this repository and shared with collaborators.
-            let workspace_dir = std::env::var("CARGO_MANIFEST_DIR")
-                .map(|dir| PathBuf::from(dir).join("../torii-example"));
+            let manifest_dir = std::env::var("CARGO_MANIFEST_DIR").unwrap();
 
-            // Link demo project for development purposes.
-            if let Ok(dir) = workspace_dir
-                && dir.is_dir()
+            // The paths to some demo workspaces.
+            let dev_dir = PathBuf::from(&manifest_dir).join("../torii-workspace-dev");
+            let welcome_dir = PathBuf::from(&manifest_dir).join("../torii-workspace-welcome");
+
+            // Link demo workspaces for development purposes.
+            projects.push(RecentProjectMetadata {
+                name: "Torii Dev Tests".to_string(),
+                path: dev_dir,
+                is_system: true,
+                last_opened: 0,
+            });
+            projects.push(RecentProjectMetadata {
+                name: "Torii Welcome".to_string(),
+                path: welcome_dir,
+                is_system: true,
+                last_opened: 0,
+            });
+        } else {
+            // If we are in production mode, we want to link only the "Torii Welcome" workspace,
+            // by adding it to the list of recent projects. The welcome workspace is stored in
+            // resources.
+            if let Ok(welcome_dir) = app
+                .path()
+                .resolve("workspace-welcome", BaseDirectory::Resource)
             {
                 projects.push(RecentProjectMetadata {
-                    name: "Torii Dev".to_string(),
-                    path: dir,
+                    name: "Torii Welcome".to_string(),
+                    path: welcome_dir,
                     is_system: true,
                     last_opened: 0,
                 });

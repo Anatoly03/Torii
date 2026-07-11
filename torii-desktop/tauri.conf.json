@@ -37,6 +37,9 @@
     ],
     "android": {
       "debugApplicationIdSuffix": ".debug"
+    },
+    "resources": {
+        "../torii-workspace-welcome/": "workspace-welcome/"
     }
   }
 }
