@@ -66,23 +66,25 @@ The first stage of the project is to create a simple file browser like applicati
 
 ### `v0.0.0-dev7`[CURRENT]
 
--   [ ] Rust Refactoring
-    -   [ ] Component methods should be e.g. `remove() -> Option<Fn -> Result>`: None if no action is defined, and it should return a lazy callback.
--   [ ] Client Refactoring
-    -   [ ] Add `client-core`: Common types and interfaces, generate from Rust.
 -   [x] Add directory component: If entity path is a directory, it can contain records
 -   [x] Add recursion support to file system UI, ability to display child records
--   [ ] Drag and drop support to move records into directories
--   [ ] Make autocompletion scan for records recursive
+-   [x] Drag and drop support to move records into directories
+-   [ ] Cache all records on start for autocomplete (or scan recursive)
+-   [ ] Re-add ability to name new or rename existing files.
+-   [ ] Test Drag & Drop inbetween nested folders
 
 ### `v0.0.0-dev8`
 
+-   [ ] Rust Refactoring
+    -   [ ] Component methods should be e.g. `remove() -> Option<Fn -> Result>`: None if no action is defined, and it should return a lazy callback.
 -   [ ] Breadcrumb Header
--   [ ] Expand Footer
-    -   [ ] Edit/ View mode (hides placeholder grids vs. allows to edit article & enables drag and drop)
+-   [ ] Client Refactoring (Types, Documentation Github CI)
+    -   [ ] Remove Naive UI dependency and implement custom vue components
 
 ### `v0.0.0-dev9`
 
+-   [ ] Expand Footer
+    -   [ ] Edit/ View mode (hides placeholder grids vs. allows to edit article & enables drag and drop)
 -   [ ] Fix bug where opening new record sometimes scrolls to an offset.
 -   [ ] Opt-In Setting: Citation Tracking Component (Store URLs for uploaded Images and inserted content.)
 
