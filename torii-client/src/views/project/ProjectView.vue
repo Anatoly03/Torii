@@ -7,6 +7,11 @@
                         <CreateOutline />
                     </Icon>
                 </button>
+                <button @click="fileTree?.refresh()">
+                    <Icon>
+                        <RefreshOutline />
+                    </Icon>
+                </button>
             </div>
             <UIFileTree
                 class="view-project-sidebar-file-tree"
@@ -79,7 +84,11 @@ import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { invoke } from '@tauri-apps/api/core';
 import { Icon } from '@vicons/utils';
-import { SettingsOutline, CreateOutline } from '@vicons/ionicons5';
+import {
+    SettingsOutline,
+    CreateOutline,
+    RefreshOutline,
+} from '@vicons/ionicons5';
 import { openSettingsWindow } from '../../composables/settings-window.ts';
 import { useSettingsStore } from '@/stores/settings';
 
@@ -247,11 +256,16 @@ if (!projectPath) {
         border-right: 1px solid #ccc;
 
         .view-project-quick-actions {
+            width: 100%;
             display: flex;
             flex-direction: row;
             align-items: center;
             gap: 8px;
             min-height: 2em;
+
+            button {
+                flex: 1;
+            }
         }
 
         .view-project-sidebar-file-tree {
