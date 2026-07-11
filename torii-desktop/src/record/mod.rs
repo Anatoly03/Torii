@@ -323,9 +323,14 @@ impl Record {
             //            preserved.
             let new_file_path = new_record_path.with_added_extension(&old_path_suffix);
 
-            // println!("Renaming record `{}`\n\tFrom: {}\n\tTo:   {}", self.name(), old_path.display(), new_file_path.display());
-
             std::fs::rename(&old_path, &new_file_path)?;
+
+            // If the old path was a directory, we need to clean up (remove) the old
+            // directory because [std::fs::rename] only moves its' contents, keeping
+            // the old directory intact.
+            if old_path.is_dir() {
+                std::fs::remove_dir(&old_path)?;
+            }
         }
 
         // println!(
