@@ -135,7 +135,7 @@ function selectNode(node: TreeNode<NodeValue>) {
 async function onToggleAnchor(node: TreeNode<NodeValue>) {
     const state = (node.opened = !node.opened);
 
-    if (state && !node.isLeaf && !node.children) {
+    if (state && !node.isLeaf && !node.children && props.onNodeExpand) {
         node.isLoadingChildren = true;
         node.children = await props.onNodeExpand(node);
         node.isLoadingChildren = false;

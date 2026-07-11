@@ -4,7 +4,10 @@ pub mod commands;
 mod serde;
 
 use crate::{Component, components::get_all_components, workspace::Workspace};
-use std::{collections::HashSet, path::PathBuf};
+use std::{
+    collections::HashSet,
+    path::{Path, PathBuf},
+};
 
 /// The record struct represents a Torii record.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -39,7 +42,11 @@ impl Record {
         let path = path.into();
 
         #[cfg(debug_assertions)]
-        assert!(!path.is_absolute(), "record path must be relative");
+        assert!(
+            !path.is_absolute(),
+            "record path must be relative: {}",
+            path.display()
+        );
 
         Self {
             workspace: workspace.into(),
@@ -165,7 +172,7 @@ impl Record {
             .read_dir()?
             .filter_map(|e| e.ok())
             .map(|entry| entry.path())
-            .filter(|p| p.is_file())
+            // .filter(|p| p.is_file())
             .filter(|path| {
                 path.file_prefix()
                     .and_then(|s| s.to_str())
@@ -183,7 +190,9 @@ impl Record {
             .map(|entry| entry.path())
             .filter(|path| path.is_file() || path.is_dir())
             .filter_map(|path| {
-                let name = path.file_prefix().map(|f| f.to_string_lossy().into_owned())?;
+                let name = path
+                    .file_prefix()
+                    .map(|f| f.to_string_lossy().into_owned())?;
 
                 // (security) skip config files. make sure the magic dot character is not
                 // present in the record name
@@ -220,7 +229,7 @@ impl Record {
     ///
     /// let workspace = Workspace::new("/path/to/workspace");
     /// let record = workspace.record("record1");
-    /// let components record.list_components().unwrap_or(vec![]);
+    /// let components = record.list_components().unwrap_or(vec![]);
     ///
     /// assert!(components.contains(&"article".to_string()));
     /// assert!(components.contains(&"image".to_string()));
@@ -235,5 +244,95 @@ impl Record {
                 false => None,
             })
             .collect()
+    }
+
+    /// Moves the record to a new path. The `new_path` argument is the new file path
+    /// relative to the workspace root.
+    ///
+    /// # Example
+    ///
+    /// ```rust,ignore,no_test,no_run
+    /// //! The following is a logical example.
+    /// //!
+    /// //! workspace/
+    /// //! ├── characters/
+    /// //! │   ├── Sarah Vermillion.md
+    /// //! │   ├── Edmund Bienenwolf.md
+    /// //! │   └── New Location.md
+    /// //! ├── locations/
+    /// //! │   ├── The Akademiya.md
+    /// //! │   └── Thethys Sea.md
+    /// //! ├── New Character.md
+    /// //! └── New Character.banner.png
+    ///
+    /// use std::path::PathBuf;
+    /// use app_lib::{Record, Workspace};
+    ///
+    /// let workspace = Workspace::new("/path/to/workspace");
+    /// let new_location = workspace.record("characters/New Location");
+    /// let new_character = workspace.record("New Character");
+    ///
+    /// assert_eq(new_location.relative_path(), PathBuf::from("characters/New Location"));
+    /// assert_eq(new_character.relative_path(), PathBuf::from("New Character"));
+    ///
+    /// let renewed_location = new_location.rename(PathBuf::from("locations/New Location")).unwrap();
+    /// let renewed_character = new_character.rename(PathBuf::from("characters/New Character")).unwrap();
+    ///
+    /// assert_eq(renewed_location.relative_path(), PathBuf::from("locations/New Location"));
+    /// assert_eq(renewed_character.relative_path(), PathBuf::from("characters/New Character"));
+    /// ```
+    pub fn rename(&self, new_path: PathBuf) -> Result<Self, std::io::Error> {
+        let workspace_path = self.workspace.path();
+        let paths = self.associated_paths()?;
+
+        // Move all record-associated paths to the new location.
+        for old_path in paths {
+            // `old_path` - old absolute file path
+            // `new_path` - new file path relative to the workspace root
+            // `new_record_path` - new absolute file path, without proper
+            //            extensions, only the name preserved.
+            let new_record_path = workspace_path.join(&new_path);
+            // `old_path_suffix` - the suffix of the old file path, including
+            //            the dot. The suffix is: if the file starts with a dot,
+            //            everything after the second dot, otherwise everything
+            //            after the first dot. For example:
+            //
+            // New Record.md
+            //           ^^^ suffix
+            // New Record.banner.png
+            //           ^^^^^^^^^^^ suffix
+            let old_path_suffix = {
+                let old_file = old_path.file_name().ok_or_else(|| {
+                    std::io::Error::new(std::io::ErrorKind::Other, "old path has no file name")
+                })?;
+
+                if old_file.to_string_lossy().starts_with('.') {
+                    unimplemented!(
+                        "rename: old path starts with a dot (magic file), not supported yet"
+                    )
+                }
+
+                let old_file_str = old_file.to_string_lossy();
+                let suffix_start = old_file_str.find('.').ok_or_else(|| {
+                    std::io::Error::new(std::io::ErrorKind::Other, "old path has no suffix")
+                })?;
+
+                old_file_str[(suffix_start + 1)..].to_string()
+            };
+            // `new_file_path` - new absolute file path, with proper extension
+            //            preserved.
+            let new_file_path = new_record_path.with_added_extension(&old_path_suffix);
+
+            // println!("Renaming record `{}`\n\tFrom: {}\n\tTo:   {}", self.name(), old_path.display(), new_file_path.display());
+
+            std::fs::rename(&old_path, &new_file_path)?;
+        }
+
+        // println!(
+        //     "Renamed record from {} to {}",
+        //     self.path().display(),
+        //     new_path.display()
+        // );
+        Ok(Self::new(self.workspace.clone(), new_path))
     }
 }

@@ -19,10 +19,13 @@ pub fn list_records(directory: PathBuf) -> Result<Vec<Record>, String> {
 }
 
 /// Renames a given record. This is used to rename a record on the disc. It will
-/// move the file to the new name.
+/// move the file to the new name. The `new_name` argument is the new file path
+/// relative to the workspace root.
 #[tauri::command]
-pub fn rename_record(record: Record) {
-    println!("Renaming record: {:?}", record);
+pub fn rename_record(record: Record, new_name: PathBuf) -> Result<Record, String> {
+    record
+        .rename(new_name)
+        .map_err(|e| format!("Failed to rename record: {e}"))
 }
 
 /// Removes a given record. This is used to remove a record from the disc. It will

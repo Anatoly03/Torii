@@ -126,10 +126,12 @@ async function moveRecord(
     });
 
     // Move the record to the new parent path.
-    await invoke<string[]>('rename_record', {
+    const newRecord = await invoke<Record>('rename_record', {
         record,
-        newPath: `${parent.relative_path}/${record.name}`,
+        newName: `${parent.relative_path}/${record.name}`,
     });
+
+    console.log(`Moved record \`${record.name}\` to new parent \`${parent.name}\`:`, newRecord);
 
     // Refresh the file tree after moving the record.
     files.value = await loadNodes(props.directory);
