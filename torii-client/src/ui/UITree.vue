@@ -40,6 +40,7 @@
                         v-model:selected-keys="selectedKeys"
                         @find-node-by-key="s => (props.onFindNodeByKey?.(s) ?? null)"
                         @node-click="emit('node-click', $event)"
+                        @node-expand="node => props.onNodeExpand(node)"
                         @node-move="(s, t) => emit('node-move', s, t)"
                     />
                 </span>
