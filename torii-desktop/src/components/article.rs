@@ -2,16 +2,16 @@
 //!
 //! It provides functionality to read article files and handle article-related operations.
 
+use crate::Record;
+
+use super::Component;
 use std::{io::ErrorKind, path::PathBuf};
-
 use tauri::ipc::Response;
-
-use super::ToriiComponent;
 
 /// Represents an article component in a Torii project.
 pub struct ArticleComponent;
 
-impl ToriiComponent for ArticleComponent {
+impl Component for ArticleComponent {
     /// Retrieves the name of the component, which is "article".
     ///
     /// # Example
@@ -53,14 +53,14 @@ impl ToriiComponent for ArticleComponent {
     ///
     /// For example if the record is "Diana Loewe", we scan for "Diana Loewe.md" in the record's
     /// directory. If this file exists, then the record implements the article component.
-    fn is_attached(&self, path: &PathBuf) -> bool {
-        path.with_extension("md").exists()
+    fn is_attached(&self, record: &Record) -> bool {
+        record.path().with_extension("md").exists()
     }
 
     /// Gets a read request to view the "Article" component data for a record. This returns a
     /// [Response][ipc::Response] containing the markdown string of the article.
-    fn read(&self, record: &PathBuf) -> Result<Response, String> {
-        let path = record.with_extension("md");
+    fn read(&self, record: &Record) -> Result<Response, String> {
+        let path = record.path().with_extension("md");
 
         let file = match std::fs::read(path) {
             Ok(file) => file,
@@ -76,8 +76,8 @@ impl ToriiComponent for ArticleComponent {
     ///
     /// The "Article" component will interpret the resulting binary as a markdown
     /// string.
-    fn write(&self, record: &PathBuf, content: &[u8]) -> Result<(), String> {
-        let path = record.with_extension("md");
+    fn write(&self, record: &Record, content: &[u8]) -> Result<(), String> {
+        let path = record.path().with_extension("md");
         std::fs::write(path, content).map_err(|e| format!("Failed to write markdown file: {e}"))
     }
 
@@ -92,7 +92,7 @@ impl ToriiComponent for ArticleComponent {
     /// that are solely associated with this component.
     ///
     /// The "Article" component will remove the file "<entity>.md"
-    fn remove(&self, _: &PathBuf) -> Option<Result<(), String>> {
+    fn remove(&self, _: &Record) -> Option<Result<(), String>> {
         Some(Err(
             "The article component can not be removed from a record.".to_string(),
         ))

@@ -1,8 +1,14 @@
 //! Desktop library for the Torii desktop application, built using Tauri.
 
-mod components;
-mod project;
-mod recent;
+pub mod components;
+pub mod project;
+pub mod recent;
+pub mod record;
+pub mod workspace;
+
+pub use components::Component;
+pub use record::Record;
+pub use workspace::Workspace;
 
 use std::error::Error;
 use tauri::App;
@@ -19,15 +25,15 @@ pub fn run() {
             recent::list_recent_projects,
             recent::add_recent_project,
             recent::remove_recent_project,
+            record::commands::list_records,
+            record::commands::rename_record,    
+            record::commands::remove_record,
+            record::commands::list_record_components,
+            record::commands::get_record_component,
+            record::commands::save_record_component,
+            record::commands::save_record_component_from_local_file,
+            record::commands::remove_record_component,
             project::read_file,
-            project::record::list_records,
-            project::record::rename_record,
-            project::record::remove_record,
-            project::record::list_record_components,
-            project::record::get_record_component,
-            project::record::save_record_component,
-            project::record::save_record_component_from_local_file,
-            project::record::remove_record_component,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

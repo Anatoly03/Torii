@@ -1,9 +1,4 @@
-//! The project API for the Torii project.
-//!
-//! This module exposes the interface to manage a Torii project.
-
-pub mod record;
-// TODO components
+//! Legacy code, needs to be rewritten
 
 use std::path::PathBuf;
 use tauri::ipc::Response;

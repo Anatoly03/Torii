@@ -1,11 +1,24 @@
 <template>
     <div class="view-project">
         <div class="view-project-sidebar">
-            <FileTree
+            <div class="view-project-quick-actions">
+                <button @click="createNewFile()">
+                    <Icon>
+                        <CreateOutline />
+                    </Icon>
+                </button>
+            </div>
+            <UIFileTree
+                class="view-project-sidebar-file-tree"
+                :directory="projectPath"
+                ref="fileTree"
+                @update:current-file="setCurrentFile"
+            />
+            <!-- <FileTree
                 ref="fileTree"
                 :root="projectPath"
                 @update:current-file="setCurrentFile"
-            />
+            /> -->
             <div class="view-project-quick-settings">
                 <button
                     class="view-project-return-to-menu"
@@ -25,8 +38,7 @@
             <div class="view-project-content" @scroll="onScrollProjectContent">
                 <ImageEditor
                     :key="currentFile.directory + '/' + currentFile.name"
-                    :directory="markdownDirectory"
-                    :name="markdownName"
+                    :record="currentFile"
                     component="banner"
                     :placeholder-text="$t('app.project.bannerPlaceholder')"
                     placeholder-anchor="left"
@@ -36,8 +48,7 @@
                 />
                 <ImageEditor
                     :key="currentFile.directory + '/' + currentFile.name"
-                    :directory="markdownDirectory"
-                    :name="markdownName"
+                    :record="currentFile"
                     component="image"
                     placeholder-anchor="center"
                     class="view-project-image"
@@ -47,8 +58,7 @@
                 <MarkdownEditor
                     ref="markdownEditor"
                     v-model:word-count="wordCount"
-                    :directory="markdownDirectory"
-                    :name="markdownName"
+                    :record="currentFile"
                     :autocomplete-suggestion="(v) => autocompleteMarkdown(v)"
                     :placeholder="!recordComponents.includes('article')"
                     @open-file="openFile"
@@ -68,31 +78,34 @@
 import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { invoke } from '@tauri-apps/api/core';
-import FileTree, { Record } from '../../components/file/FileTree.vue';
 import { Icon } from '@vicons/utils';
-import { SettingsOutline } from '@vicons/ionicons5';
+import { SettingsOutline, CreateOutline } from '@vicons/ionicons5';
 import { openSettingsWindow } from '../../composables/settings-window.ts';
 import { useSettingsStore } from '@/stores/settings';
 
 // Components
 import MarkdownEditor from '../../components/article/MarkdownEditor.vue';
 import ImageEditor from '../../components/image/ImageEditor.vue';
+import { Record } from 'types';
+import UIFileTree from '@/ui/UIFileTree.vue';
+import { TreeNode } from 'ui/UITree.vue';
 
 const route = useRoute();
 const router = useRouter();
 const settings = useSettingsStore();
 const projectPath = route.query.project as string;
-const currentFile = ref<{ directory: string; name: string } | null>(null);
+const currentFile = ref<Record | null>(null);
 const markdownDirectory = ref<string | null>(null);
 const markdownName = ref<string | null>(null);
 const recordComponents = ref<string[]>([]);
-const fileTree = ref<InstanceType<typeof FileTree> | null>(null);
+const fileTree = ref<InstanceType<typeof UIFileTree> | null>(null);
 const markdownEditor = ref<InstanceType<typeof MarkdownEditor> | null>(null);
 const records = ref<Record[]>([]);
 const wordCount = ref<number | undefined>(undefined);
 
 onMounted(async () => {
-    const files = await fileTree.value?.loadFiles();
+    const nodes = await fileTree.value?.getFiles();
+    const files: Record[] = nodes.map((k) => k.value) ?? [];
     const readme = files?.find((r) => r.name === 'README');
     records.value = files || [];
 
@@ -105,13 +118,12 @@ onMounted(async () => {
 
 watch(currentFile, (newFile) => {
     if (newFile) {
-        markdownDirectory.value = newFile.directory;
+        console.log(newFile);
+        markdownDirectory.value = newFile.workspace.path;
         markdownName.value = newFile.name;
         loadComponents();
 
-        if (fileTree.value) {
-            fileTree.value.setCurrentFile(newFile);
-        }
+        fileTree.value?.selectKeys([newFile.path]);
     } else {
         markdownDirectory.value = null;
         markdownName.value = null;
@@ -120,21 +132,80 @@ watch(currentFile, (newFile) => {
 
 async function loadComponents() {
     if (!currentFile.value) return;
+    console.log('Loading components for:', currentFile.value);
 
-    const { directory, name } = currentFile.value;
     recordComponents.value = await invoke('list_record_components', {
-        directory,
-        name,
+        record: currentFile.value,
     });
 
     console.log('Components listed:', recordComponents.value);
 }
 
+async function createNewFile() {
+    if (!fileTree.value) return;
+
+    const files: TreeNode<Record>[] = await fileTree.value.getFiles();
+
+    // If there are no files, we create "README" as the first file.
+    if (files.length === 0) {
+        const projectName = projectPath.split('/').pop() ?? 'My Project';
+
+        await invoke<string>('save_record_component', {
+            record: {
+                workspace: projectPath,
+                relative_path: 'README',
+            },
+            component: 'article',
+            content: `# ${projectName}\n\nWelcome to your new project! This is the README file, which you can edit into the first record.`,
+            contentType: 'text/markdown',
+        });
+
+        fileTree.value.refresh();
+        return;
+    }
+
+    // If we're not in a fresh start, we create a new file with a unique name.
+    let newFileName = 'New File';
+    let counter = 1;
+
+    while (files.some((file) => file.value.name === newFileName)) {
+        newFileName = `New File ${counter}`;
+        counter++;
+    }
+
+    await invoke<string>('save_record_component', {
+        record: {
+            workspace: projectPath,
+            relative_path: newFileName,
+        },
+        component: 'article',
+        content: `# ${newFileName}\n\n`,
+        contentType: 'text/markdown',
+    });
+
+    fileTree.value.refresh();
+}
+
 async function autocompleteMarkdown(name: string): Promise<any> {
-    return records.value
-        .filter((record) => record.name.startsWith(name))
+    const tree = await fileTree.value?.getFiles();
+
+    function recurseTree(tree: TreeNode<Record>[]): Record[] {
+        let records: Record[] = [];
+        for (const node of tree) {
+            records.push(node.value);
+            if (node.children) {
+                records = records.concat(recurseTree(node.children));
+            }
+        }
+        return records;
+    }
+
+    return recurseTree(tree)
+        .filter((record) => {
+            return record.name?.startsWith(name);
+        })
         .map((record) => ({
-            label: record.name,
+            label: record.relative_path,
             value: record.name,
         }));
 }
@@ -174,6 +245,19 @@ if (!projectPath) {
         padding: 16px;
         gap: 8px;
         border-right: 1px solid #ccc;
+
+        .view-project-quick-actions {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 8px;
+            min-height: 2em;
+        }
+
+        .view-project-sidebar-file-tree {
+            flex: 1;
+            overflow-y: auto;
+        }
 
         .view-project-quick-settings {
             display: flex;

@@ -1,4 +1,4 @@
-//! The recent documents API for the Torii project.
+//! The module contains the Recent Documents API.
 //!
 //! This module exposes the inteface to list, add and remove recent documents
 //! from the desktop application.
