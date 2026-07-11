@@ -1,13 +1,19 @@
 <template>
     <div class="view-project">
         <div class="view-project-sidebar">
+            <div class="view-project-quick-actions">
+                <button @click="createNewFile()">
+                    <Icon>
+                        <CreateOutline />
+                    </Icon>
+                </button>
+            </div>
             <UIFileTree
                 class="view-project-sidebar-file-tree"
                 :directory="projectPath"
                 ref="fileTree"
                 @update:current-file="setCurrentFile"
             />
-            <UICreateFile />
             <!-- <FileTree
                 ref="fileTree"
                 :root="projectPath"
@@ -73,7 +79,7 @@ import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { invoke } from '@tauri-apps/api/core';
 import { Icon } from '@vicons/utils';
-import { SettingsOutline } from '@vicons/ionicons5';
+import { SettingsOutline, CreateOutline } from '@vicons/ionicons5';
 import { openSettingsWindow } from '../../composables/settings-window.ts';
 import { useSettingsStore } from '@/stores/settings';
 
@@ -82,7 +88,6 @@ import MarkdownEditor from '../../components/article/MarkdownEditor.vue';
 import ImageEditor from '../../components/image/ImageEditor.vue';
 import { Record } from 'types';
 import UIFileTree from '@/ui/UIFileTree.vue';
-import UICreateFile from '@/ui/UICreateFile.vue';
 import { TreeNode } from 'ui/UITree.vue';
 
 const route = useRoute();
@@ -134,6 +139,51 @@ async function loadComponents() {
     });
 
     console.log('Components listed:', recordComponents.value);
+}
+
+async function createNewFile() {
+    if (!fileTree.value) return;
+
+    const files: TreeNode<Record>[] = await fileTree.value.getFiles();
+
+    // If there are no files, we create "README" as the first file.
+    if (files.length === 0) {
+        const projectName = projectPath.split('/').pop() ?? 'My Project';
+
+        await invoke<string>('save_record_component', {
+            record: {
+                workspace: projectPath,
+                relative_path: 'README',
+            },
+            component: 'article',
+            content: `# ${projectName}\n\nWelcome to your new project! This is the README file, which you can edit into the first record.`,
+            contentType: 'text/markdown',
+        });
+
+        fileTree.value.refresh();
+        return;
+    }
+
+    // If we're not in a fresh start, we create a new file with a unique name.
+    let newFileName = 'New File';
+    let counter = 1;
+
+    while (files.some((file) => file.value.name === newFileName)) {
+        newFileName = `New File ${counter}`;
+        counter++;
+    }
+
+    await invoke<string>('save_record_component', {
+        record: {
+            workspace: projectPath,
+            relative_path: newFileName,
+        },
+        component: 'article',
+        content: `# ${newFileName}\n\n`,
+        contentType: 'text/markdown',
+    });
+
+    fileTree.value.refresh();
 }
 
 async function autocompleteMarkdown(name: string): Promise<any> {
@@ -195,6 +245,14 @@ if (!projectPath) {
         padding: 16px;
         gap: 8px;
         border-right: 1px solid #ccc;
+
+        .view-project-quick-actions {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 8px;
+            min-height: 2em;
+        }
 
         .view-project-sidebar-file-tree {
             flex: 1;

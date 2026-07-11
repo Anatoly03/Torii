@@ -137,15 +137,19 @@ async function moveRecord(
         newRecord
     );
 
-    // Refresh the file tree after moving the record.
-    files.value = await loadNodes(props.directory);
+    await refresh();
 }
 
 async function removeRecord(node: TreeNode<Record>) {
     const record = node.value;
     await invoke('remove_record', { record });
+    await refresh();
+}
 
-    // Refresh the file tree after moving the record.
+/**
+ * Refresh the file tree after moving the record.
+ */
+async function refresh() {
     files.value = await loadNodes(props.directory);
 }
 
@@ -189,12 +193,13 @@ function selectKeys(keys: string[]) {
 }
 
 onMounted(async () => {
-    files.value = await loadNodes(props.directory);
+    await refresh();
 });
 
 defineExpose({
     currentRecord,
     getFiles,
+    refresh,
     selectKeys,
 });
 </script>
