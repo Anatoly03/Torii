@@ -1,4 +1,4 @@
-# "Article" Component
+# "Article" Component 
 
 - Create, View, Edit
 

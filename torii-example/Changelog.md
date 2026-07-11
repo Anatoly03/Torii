@@ -4,7 +4,7 @@
 
 ### v0.0.0-dev7
 
-- Add technical support to for the "folder" component.
+- Add support to for the "folder" component.
 - Rewire the autocomplete feature to see cached files. (You need to open the folder in the file tree for it to be visible by autocompletion)
 - A lot of client-side refactoring, rewrite the project sidebar with custom tree implementation.
 

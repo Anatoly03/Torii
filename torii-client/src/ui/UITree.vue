@@ -18,6 +18,7 @@
                 </NIcon>
                 <span class="ui-tree-list-content">
                     <UIDropRegion
+                        class="ui-tree-list-item"
                         draggable
                         :drag-data="[['application/x-record-path', node.key]]"
                         @drop-application-record-path="onMoveNode(node, $event)"
@@ -29,7 +30,22 @@
                             }"
                             @click="selectNode(node)"
                         >
-                            {{ node.label }}
+                            <span class="ui-tree-list-label-text">
+                                {{ node.label }}
+                            </span>
+                            <NDropdown
+                                class="ui-tree-list-actions"
+                                v-if="props.actions"
+                                trigger="hover"
+                                placement="right"
+                                show-arrow
+                                @select="props.actions.find((a) => a.key === $event)?.action(node)"
+                                :options="props.actions"
+                            >
+                                <NIcon style="color: #ff4d4f">
+                                    <EllipsisVertical />
+                                </NIcon>
+                            </NDropdown>
                         </span>
                     </UIDropRegion>
                     <UITree
@@ -37,10 +53,13 @@
                             node.opened && node.children && node.children.length
                         "
                         :data="node.children"
+                        :actions="props.actions"
                         v-model:selected-keys="selectedKeys"
-                        @find-node-by-key="s => (props.onFindNodeByKey?.(s) ?? null)"
+                        @find-node-by-key="
+                            (s) => props.onFindNodeByKey?.(s) ?? null
+                        "
                         @node-click="emit('node-click', $event)"
-                        @node-expand="node => props.onNodeExpand(node)"
+                        @node-expand="(node) => props.onNodeExpand(node)"
                         @node-move="(s, t) => emit('node-move', s, t)"
                     />
                 </span>
@@ -51,8 +70,12 @@
 
 <script setup lang="ts" generic="NodeValue">
 import { Ref, ref } from 'vue';
-import { ChevronDown, ChevronForward } from '@vicons/ionicons5';
-import { NIcon, NSpin } from 'naive-ui';
+import {
+    ChevronDown,
+    ChevronForward,
+    EllipsisVertical,
+} from '@vicons/ionicons5';
+import { NDropdown, NIcon, NSpin } from 'naive-ui';
 import UIDropRegion from './UIDropRegion.vue';
 
 /**
@@ -78,18 +101,38 @@ export type TreeNode<K> = {
 };
 
 /**
+ *
+ */
+export type TreeDropdownOption<K> = {
+    label: string;
+    key: string;
+    action: (node: TreeNode<K>) => void;
+};
+
+/**
  * @brief Properties of the UITree component.
  * @details The `data` property is an array of `TreeNode` objects that represent
  * the data displayed in the tree root.
  */
 const props = defineProps<{
     data: TreeNode<NodeValue>[];
+
+    /**
+     * @brief Actions (suffix) for the tree nodes. If provided, these actions will
+     * be displayed in a dropdown menu when the user right-clicks on a node.
+     * @param node
+     */
+    actions?: TreeDropdownOption<NodeValue>[];
+
+    /**
+     * // TODO document
+     */
     onNodeExpand: (node: TreeNode<K>) => Promise<TreeNode<K>[]>;
 
     /**
      * @brief Callback function provided by the root node to find a node by its key.
      * @details The reason this method is implemented by the caller is because drag
-     * and drop to the 
+     * and drop to the
      * @param key The key of the record.
      */
     onFindNodeByKey?: (key: string) => TreeNode<NodeValue> | null;
@@ -100,7 +143,11 @@ const props = defineProps<{
  */
 const emit = defineEmits<{
     (e: 'node-click', node: TreeNode<NodeValue>): void;
-    (e: 'node-move', target: TreeNode<NodeValue>, source: TreeNode<NodeValue>): void;
+    (
+        e: 'node-move',
+        target: TreeNode<NodeValue>,
+        source: TreeNode<NodeValue>
+    ): void;
     // (e: 'node-expand', node: TreeNode<NodeValue>): Promise<TreeNode<NodeValue>[]>;
 }>();
 
@@ -239,6 +286,18 @@ defineOptions({ name: 'UITree' });
 
                 &:hover {
                     background-color: #f0f0f0;
+                }
+
+                .ui-tree-list-label-text {
+                    flex: 1;
+                    min-width: 0;
+                    overflow: hidden; // hide overflow
+                    text-overflow: ellipsis; // show … when truncated
+                }
+
+                .ui-tree-list-actions {
+                    display: flex;
+                    flex-direction: row;
                 }
             }
 

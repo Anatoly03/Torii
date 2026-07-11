@@ -5,6 +5,7 @@
         v-model:selected-keys="selectedKeys"
         :key="JSON.stringify(files)"
         :data="files"
+        :actions="[{ label: 'Remove', key: 'remove', action: removeRecord }]"
         @find-node-by-key="findNodeByKey"
         @node-click="(e) => setCurrentFile(e)"
         @node-expand="(e) => loadNodes(e.value.path)"
@@ -131,7 +132,18 @@ async function moveRecord(
         newName: `${parent.relative_path}/${record.name}`,
     });
 
-    console.log(`Moved record \`${record.name}\` to new parent \`${parent.name}\`:`, newRecord);
+    console.log(
+        `Moved record \`${record.name}\` to new parent \`${parent.name}\`:`,
+        newRecord
+    );
+
+    // Refresh the file tree after moving the record.
+    files.value = await loadNodes(props.directory);
+}
+
+async function removeRecord(node: TreeNode<Record>) {
+    const record = node.value;
+    await invoke('remove_record', { record });
 
     // Refresh the file tree after moving the record.
     files.value = await loadNodes(props.directory);
