@@ -6,7 +6,7 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::{fs::File, io::ErrorKind, path::PathBuf};
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Manager, path::BaseDirectory};
 
 /// The path to the file where recent projects are stored. This is a JSON file
 /// that contains an array of `RecentProjectMetadata` objects. The parent is
@@ -101,6 +101,21 @@ impl RecentProjectMetadata {
                 is_system: true,
                 last_opened: 0,
             });
+        } else {
+            // If we are in production mode, we want to link only the "Torii Welcome" workspace,
+            // by adding it to the list of recent projects. The welcome workspace is stored in
+            // resources.
+            if let Ok(welcome_dir) = app
+                .path()
+                .resolve("workspace-welcome", BaseDirectory::Resource)
+            {
+                projects.push(RecentProjectMetadata {
+                    name: "Torii Welcome".to_string(),
+                    path: welcome_dir,
+                    is_system: true,
+                    last_opened: 0,
+                });
+            }
         }
 
         Ok(projects)

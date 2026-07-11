@@ -8,6 +8,7 @@
 - Add project sidebar quick menu: New File, Refresh Files
 - Rewire the autocomplete feature to see cached files. (You need to open the folder in the file tree for it to be visible by autocompletion)
 - A lot of client-side refactoring, rewrite the project sidebar with custom tree implementation.
+- Add a "welcome workspace" to the production build. (If you read this you're in the welcome workspace right now!)
 
 ---
 
