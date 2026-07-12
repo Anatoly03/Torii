@@ -69,7 +69,6 @@ The first stage of the project is to create a simple file browser like applicati
 -   [x] Add directory component: If entity path is a directory, it can contain records
 -   [x] Add recursion support to file system UI, ability to display child records
 -   [x] Drag and drop support to move records into directories
--   [ ] Cache all records on start for autocomplete (or scan recursive)
 -   [ ] Re-add ability to name new or rename existing files.
 -   [ ] Re-add: Open "README" on project opening.
 -   [ ] Test Drag & Drop inbetween nested folders
@@ -77,18 +76,18 @@ The first stage of the project is to create a simple file browser like applicati
 
 ### `v0.0.0-dev8`
 
+-   [ ] Cache all records on start for autocomplete (or scan recursive)
 -   [ ] Rust Refactoring
     -   [ ] Component methods should be e.g. `remove() -> Option<Fn -> Result>`: None if no action is defined, and it should return a lazy callback.
 -   [ ] Breadcrumb Header
--   [ ] Client Refactoring (Types, Documentation Github CI)
-    -   [ ] Remove Naive UI dependency and implement custom vue components
 
 ### `v0.0.0-dev9`
 
+-   [ ] Client Refactoring (Types, Documentation Github CI)
+    -   [ ] Remove Naive UI dependency and implement custom vue components
 -   [ ] Expand Footer
     -   [ ] Edit/ View mode (hides placeholder grids vs. allows to edit article & enables drag and drop)
 -   [ ] Fix bug where opening new record sometimes scrolls to an offset.
--   [ ] Opt-In Setting: Citation Tracking Component (Store URLs for uploaded Images and inserted content.)
 
 ### `v0.0.0-dev10`
 
@@ -97,6 +96,7 @@ The first stage of the project is to create a simple file browser like applicati
     -   [ ] Light Mode
     -   [ ] Dark Mode
 -   [ ] Add Record search (filter records by search pattern)
+-   [ ] Opt-In Setting: Citation Tracking Component (Store URLs for uploaded Images and inserted content.)
 
 ### `v0.0.0-dev11`
 
