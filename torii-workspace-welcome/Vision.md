@@ -42,31 +42,6 @@ The file pattern is `<entity>.png` for PNG files, but this component also manage
 
 At first images are static, but in the long run we should add powerful in-built editors for rastor and vector images. Manga/ comics authors would benefit from this.
 
-### "Language" Component
-
-The language component is used to document languages used in the world. These can either be constructed languages, or language dialects.
-
-A language in theory defines an alphabet (= script), vocabulary, grammar. To create new symbols, you would create new records (e.g. "Letter A") and link them in the language. Grammar could be documented in the article.
-
-An implementation question is how the language could be reused in the article component, but that's a technical question for later. We should create an LLM-powered translator on the API server: Users (who volunteer) will be able to translate English to their conlang and reverse.
-
-The file pattern is `<entity>.language.yaml`.
-
-### "Map" Component
-
-The map component is a geopolitical slice of the map.
-
-The file pattern is `<entity>.map.yaml`.
-
-The following layers should be considered, discussion is needed on which of these can be abstracted to be their own components/ records:
-
-- Surface: Heightmap (land vs water)
-- Surface: Biomes (forest, desert, etc.)
-- Meta: Scale. (Since a map can be reused into another map, make sure the scale is consistent.)
-- Marker "Location": Reference to another record as a "position".
-- Marker "Area": Reference to another record as an "areal" zone, such as political borders and cultural landscapes.
-- Marker "Path": Reference to another record, such as rivers or highways.
-
 ### "Time System" Component
 
 Some worlds lead their own calendars. For authors who deeply care about proper time management, it is important to allow defining their own time system formats, following simple rules:
@@ -98,6 +73,10 @@ When exporting you can also opt in to add a references section.
 ```
 {
   "banner": { "url": "image.png", "accessed": 11299584, ... },
+  "image": { ... },
+  "article": {
+    "footnotes: { "1": { ... }, "2": { ... } }
+  }
 }
 ```
 
@@ -110,16 +89,6 @@ Below are minor component ideas which are too small for their own subtitle.
 - Split "Identity" and "Character": Some villains live two-lifes.
 - Chapter: Collection of Scenes.
 - Port “Azgaars’ Fantasy Map” if possible to a map component.
-
-### Infoboxes &amp; Templates
-
-There should be a way to "create" new components within a workspace, through templates or cloning existing components. For encyclopedia articles the idea is that we split "Article" into different sections (intuitively every time you add a new subtitle, make that section an entire component instead). "Fandom"-style infoboxes could be used as templates to create new components.
-
-Imagine the component "Character Metadata" which is an infobox to the right having fields like "Titles", "Affiliations" or "Gender". By having these universal fields, every record which implements "Character Metadata" will have these fields ready to be defined.
-
-
-
-When a plugin called `<plugin>` defines a component, we should consider the component file extension to be `<entity>.<plugin>.<component>.<extension>` to avoid ambiguity between components (e.g. “map” and “azgaar.map” and other map-like implementations)
 
 ### Queries &amp; Data Handling
 
@@ -134,7 +103,7 @@ Let's say you want to know the average age of all characters in your world. Sinc
 - Generate family trees and dynasty relations.
 - Generate the timeline of all events occuring in the story.
 
-The idea of queries is to use structured data and get an understanding of their relations. You can also split the book into smaller "Chapters" and then simply collect it all into one file. **With Torii we want to provide world builders with powerful tools, not tell you how to use them!**
+The idea of queries is to use structured data and get an understanding of their relations. You can also split the book into smaller "Chapters" and x simply collect it all into one file. **With Torii we want to provide world builders with powerful tools, not tell you how to use them!**
 
 ### The JSON File
 

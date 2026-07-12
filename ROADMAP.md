@@ -71,6 +71,7 @@ The first stage of the project is to create a simple file browser like applicati
 -   [x] Drag and drop support to move records into directories
 -   [ ] Cache all records on start for autocomplete (or scan recursive)
 -   [ ] Re-add ability to name new or rename existing files.
+-   [ ] Re-add: Open "README" on project opening.
 -   [ ] Test Drag & Drop inbetween nested folders
 -   [x] Add new workspace which gets saved to resources: Changelog, Quick Guide
 
