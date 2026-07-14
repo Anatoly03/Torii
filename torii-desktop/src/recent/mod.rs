@@ -84,20 +84,22 @@ impl RecentProjectMetadata {
             // Torii project is version tracked in this repository and shared with collaborators.
             let manifest_dir = std::env::var("CARGO_MANIFEST_DIR").unwrap();
 
-            // The paths to some demo workspaces.
-            let dev_dir = PathBuf::from(&manifest_dir).join("../torii-workspace-dev");
-            let welcome_dir = PathBuf::from(&manifest_dir).join("../torii-workspace-welcome");
-
             // Link demo workspaces for development purposes.
             projects.push(RecentProjectMetadata {
-                name: "Torii Dev Tests".to_string(),
-                path: dev_dir,
+                name: "Torii Welcome".to_string(),
+                path: PathBuf::from(&manifest_dir).join("../torii-workspace-welcome"),
                 is_system: true,
                 last_opened: 0,
             });
             projects.push(RecentProjectMetadata {
-                name: "Torii Welcome".to_string(),
-                path: welcome_dir,
+                name: "Torii Contributors".to_string(),
+                path: PathBuf::from(&manifest_dir).join("../torii-workspace-contrib"),
+                is_system: true,
+                last_opened: 0,
+            });
+            projects.push(RecentProjectMetadata {
+                name: "Torii Dev Tests".to_string(),
+                path: PathBuf::from(&manifest_dir).join("../torii-workspace-dev"),
                 is_system: true,
                 last_opened: 0,
             });
@@ -105,17 +107,17 @@ impl RecentProjectMetadata {
             // If we are in production mode, we want to link only the "Torii Welcome" workspace,
             // by adding it to the list of recent projects. The welcome workspace is stored in
             // resources.
-            if let Ok(welcome_dir) = app
-                .path()
+            app.path()
                 .resolve("workspace-welcome", BaseDirectory::Resource)
-            {
-                projects.push(RecentProjectMetadata {
-                    name: "Torii Welcome".to_string(),
-                    path: welcome_dir,
-                    is_system: true,
-                    last_opened: 0,
-                });
-            }
+                .map(|welcome_dir| {
+                    projects.push(RecentProjectMetadata {
+                        name: "Torii Welcome".to_string(),
+                        path: welcome_dir,
+                        is_system: true,
+                        last_opened: 0,
+                    });
+                })
+                .unwrap_or(());
         }
 
         Ok(projects)
