@@ -199,6 +199,10 @@ function selectKeys(keys: string[]) {
 
 onMounted(async () => {
     await refresh();
+
+    // Try to find "Readme.md" in the root directory and select it if found.
+    const readmeNode = files.value.find((node) => node.value.name.toLocaleUpperCase() === 'README');
+    if (readmeNode) setCurrentFile(readmeNode);
 });
 
 defineExpose({

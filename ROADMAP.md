@@ -70,7 +70,7 @@ The first stage of the project is to create a simple file browser like applicati
 -   [x] Add recursion support to file system UI, ability to display child records
 -   [x] Drag and drop support to move records into directories
 -   [ ] Re-add ability to name new or rename existing files.
--   [ ] Re-add: Open "README" on project opening.
+-   [x] Re-add: Open "README" on project opening.
 -   [x] Fix Drag & Drop inbetween nested folders
 -   [x] Fix command `list_records` providing wrong workspace path.
 -   [x] Add new workspace which gets saved to resources: Changelog, Quick Guide
