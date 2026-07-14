@@ -64,7 +64,7 @@ The first stage of the project is to create a simple file browser like applicati
     -   [x] Synchronize setting changes between Tauri windows
     -   [x] Store settings persisted on the file system
 
-### `v0.0.0-dev7`[CURRENT]
+### `v0.0.0-dev7` [COMPLETED]
 
 -   [x] Add directory component: If entity path is a directory, it can contain records
 -   [x] Add recursion support to file system UI, ability to display child records
@@ -76,7 +76,7 @@ The first stage of the project is to create a simple file browser like applicati
 -   [x] Fix command `list_records` providing wrong workspace path.
 -   [x] Add new workspace which gets saved to resources: Changelog, Quick Guide
 
-### `v0.0.0-dev8`
+### `v0.0.0-dev8` [CURRENT]
 
 -   [ ] Cache all records on start for autocomplete (or scan recursive)
 -   [ ] Rust Refactoring

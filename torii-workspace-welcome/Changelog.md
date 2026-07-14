@@ -2,7 +2,13 @@
 
 ---
 
-### v0.0.0-dev7
+### v0.0.0-dev8
+
+- TBA
+
+---
+
+### [v0.0.0-dev7](https://github.com/Anatoly03/Torii/releases/tag/app-v0.0.0-dev7)
 
 - Add support to for the "folder" component.
 - Add ability to rename records by double clicking their file entry.
