@@ -58,7 +58,8 @@ impl Component for ImageComponent {
     /// The "Image" component oversees the file "Hello World.png" and will reject the file "Hello
     /// World.md".
     fn is_associated(&self, path: &PathBuf) -> bool {
-        path.file_name().is_some_and(|name| name.to_string_lossy().ends_with(&self.file_suffix))
+        path.file_name()
+            .is_some_and(|name| name.to_string_lossy().ends_with(&self.file_suffix))
     }
 
     /// Reads the record file path and yields whether the record implements the image component.
@@ -106,7 +107,7 @@ impl Component for ImageComponent {
             Err(e) => Some(Err(format!("Failed to copy image file: {e}"))),
         }
     }
-    
+
     /// Gets a remove request to delete the image data for a record. The return type
     /// is to be understood as follows:
     ///
@@ -115,8 +116,8 @@ impl Component for ImageComponent {
     ///
     /// Since a component can be associated with multiple files, and multiple components
     /// can be associated with the same file, this method is expected to remove all files
-    /// that are solely associated with this component. 
-    /// 
+    /// that are solely associated with this component.
+    ///
     /// The "Article" component will remove the file "<entity>.md"
     fn remove(&self, record: &Record) -> Option<Result<(), String>> {
         let path = record.path().with_extension(&self.file_suffix);
@@ -138,7 +139,7 @@ mod tests {
         // assert!(!image_component.is_associated(&PathBuf::from("Hello World.banner.png")));
         assert!(image_component.is_associated(&PathBuf::from("Hello World.png")));
         assert!(!image_component.is_associated(&PathBuf::from("Hello World.md")));
-        
+
         let banner_component = ImageComponent::new("banner", "banner.png");
         assert!(banner_component.is_associated(&PathBuf::from("Hello World.banner.png")));
         assert!(!banner_component.is_associated(&PathBuf::from("Hello World.png")));

@@ -314,8 +314,6 @@ impl Record {
         let workspace_path = self.workspace.path();
         let paths = self.associated_paths()?;
 
-        println!("Workspace: {}", workspace_path.display());
-
         // Move all record-associated paths to the new location.
         for old_path in paths {
             let old_relative_path = old_path.strip_prefix(&workspace_path).map_err(|_| {
@@ -324,9 +322,6 @@ impl Record {
                     "failed to strip workspace path prefix from old path",
                 )
             })?;
-
-            println!("Old path: {}", old_path.display());
-            println!("Old relative path: {}", old_relative_path.display());
 
             // `old_path` - old absolute file path
             // `new_path` - new file path relative to the workspace root
@@ -364,29 +359,16 @@ impl Record {
             //            preserved.
             let new_file_path = new_record_path.with_added_extension(&old_path_suffix);
 
-            println!(
-                "Renaming record file\nFrom: {}\nTo:   {}",
-                old_path.display(),
-                new_file_path.display()
-            );
             std::fs::rename(&old_path, &new_file_path)?;
-            println!("Done!");
 
             // If the old path was a directory, we need to clean up (remove) the old
             // directory because [std::fs::rename] only moves its' contents, keeping
             // the old directory intact.
             if old_path.is_dir() {
-                println!("Removing old directory!");
                 std::fs::remove_dir(&old_path)?;
-                println!("Removing old directory! Done!");
             }
         }
 
-        println!(
-            "Renamed record from {} to {}",
-            self.path().display(),
-            new_path.display()
-        );
         Ok(Self::new(self.workspace.clone(), new_path))
     }
 }

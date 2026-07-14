@@ -66,8 +66,8 @@ function onSubmit(event: Event) {
     border-radius: 2px;
 
     &.is-editing {
-        outline: 2px solid #42b983;   // or whichever colour
-        z-index: 100;                 // bring above others
+        outline: 2px solid #42b983; // or whichever colour
+        z-index: 100; // bring above others
     }
 }
 </style>

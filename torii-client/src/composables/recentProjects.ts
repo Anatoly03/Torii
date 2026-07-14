@@ -31,7 +31,7 @@ const recentProjects = ref<RecentProject[]>([]);
 /**
  * Communicates with the main process to get the list of recently opened
  * projects.
- * 
+ *
  * Returns a reactive reference to the list of projects, which will be
  * updated whenever the main process sends an update to the list of recent
  * projects.

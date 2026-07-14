@@ -50,7 +50,10 @@ export const useSettingsStore = defineStore('settings', () => {
 
         // Listen for changes from the backend and update the setting.
         listen(`update:setting:${name}`, (event: any) => {
-            console.log(`Received update for setting ${name} from backend:`, event.payload);
+            console.log(
+                `Received update for setting ${name} from backend:`,
+                event.payload
+            );
 
             const source: string = event.payload.source;
             const value: T = event.payload.value;
@@ -67,7 +70,14 @@ export const useSettingsStore = defineStore('settings', () => {
 
         // Watch for changes in the setting and emit an event to the backend.
         watch(setting, (newValue) => {
-            console.log(`Setting ${name} changed to:`, newValue, 'with skip emits:', skipEmits, 'and store:', store);
+            console.log(
+                `Setting ${name} changed to:`,
+                newValue,
+                'with skip emits:',
+                skipEmits,
+                'and store:',
+                store
+            );
 
             // Prevent emitting an update back to the backend when we update the setting
             // from an external source.

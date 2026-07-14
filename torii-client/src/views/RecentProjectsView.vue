@@ -6,7 +6,7 @@
         <div v-else class="project-list">
             <span
                 :tabindex="index"
-                @keydown.space.enter ="openProject(project.path)"
+                @keydown.space.enter="openProject(project.path)"
                 class="project-entry"
                 v-for="(project, index) in recentProjects"
                 :key="project.path"
