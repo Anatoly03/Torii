@@ -5,7 +5,7 @@
 ### v0.0.0-dev7
 
 - Add support to for the "folder" component.
-- Add project sidebar quick menu: New File, Refresh Files
+- Add project sidebar quick menu: New File, Refresh Files. Refresh Files will preserve opened folder structure.
 - Rewire the autocomplete feature to see cached files. (You need to open the folder in the file tree for it to be visible by autocompletion)
 - A lot of client-side refactoring, rewrite the project sidebar with custom tree implementation.
 - Add a "welcome workspace" to the production build. (If you read this you're in the welcome workspace right now!)

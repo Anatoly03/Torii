@@ -94,7 +94,7 @@ async function loadNodes(directory: string): Promise<TreeNode<Record>[]> {
     }
 
     try {
-        const files = await invoke<Record[]>('list_records', { 
+        const files = await invoke<Record[]>('list_records', {
             workspace: props.workspace,
             directory,
             recursive: false,
@@ -155,7 +155,41 @@ async function removeRecord(node: TreeNode<Record>) {
  * Refresh the file tree after moving the record.
  */
 async function refresh() {
-    files.value = await loadNodes('');
+    const newNodes = await loadNodes('');
+
+    /**
+     * Recurse over all nodes, updating "data" while preserving
+     * "UI state" (expanded/collapsed, selected, etc.).
+     */
+    async function refreshRecursive(
+        newNodes: TreeNode<Record>[],
+        oldNodes: TreeNode<Record>[]
+    ): Promise<TreeNode<Record>[]> {
+        const nodes: TreeNode<Record>[] = [];
+
+        for (const node of newNodes) {
+            const oldNode = oldNodes.find((n) => n.key === node.key);
+            if (!oldNode) {
+                nodes.push(node);
+                continue;
+            }
+
+            // Synchronize the "opened" state from the old node to the new node and
+            // reload the children.
+            if (oldNode.opened && oldNode.children) {
+                const newNodes = await loadNodes(node.value.relative_path);
+                const oldNodes = oldNode.children ?? [];
+                node.children = await refreshRecursive(newNodes, oldNodes);
+                node.opened = true;
+            }
+
+            nodes.push(node);
+        }
+
+        return nodes;
+    }
+
+    files.value = await refreshRecursive(newNodes, files.value);
 }
 
 /**
@@ -201,7 +235,9 @@ onMounted(async () => {
     await refresh();
 
     // Try to find "Readme.md" in the root directory and select it if found.
-    const readmeNode = files.value.find((node) => node.value.name.toLocaleUpperCase() === 'README');
+    const readmeNode = files.value.find(
+        (node) => node.value.name.toLocaleUpperCase() === 'README'
+    );
     if (readmeNode) setCurrentFile(readmeNode);
 });
 
