@@ -15,7 +15,7 @@
             </div>
             <UIFileTree
                 class="view-project-sidebar-file-tree"
-                :directory="projectPath"
+                :workspace="projectPath"
                 ref="fileTree"
                 @update:current-file="setCurrentFile"
             />

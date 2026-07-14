@@ -8,7 +8,7 @@
         :actions="[{ label: 'Remove', key: 'remove', action: removeRecord }]"
         @find-node-by-key="findNodeByKey"
         @node-click="(e) => setCurrentFile(e)"
-        @node-expand="(e) => loadNodes(e.value.path)"
+        @node-expand="(e) => loadNodes(e.value.relative_path)"
         @node-move="moveRecord"
         generic="Record"
     />
@@ -24,7 +24,7 @@ import { invoke } from '@tauri-apps/api/core';
  *
  */
 const props = defineProps<{
-    directory: string;
+    workspace: string;
 }>();
 
 /**
@@ -94,9 +94,12 @@ async function loadNodes(directory: string): Promise<TreeNode<Record>[]> {
     }
 
     try {
-        const files = await invoke<Record[]>('list_records', { directory });
+        const files = await invoke<Record[]>('list_records', { 
+            workspace: props.workspace,
+            directory,
+            recursive: false,
+        });
         const retrieved = await Promise.all(files.map(mapRecord));
-        console.debug(`Retrieved file nodes for \`${directory}\`:`, retrieved);
         return sortNodes(retrieved);
     } catch (e) {
         console.error('Error loading nodes:', e);
@@ -126,6 +129,8 @@ async function moveRecord(
         contentType: 'text/markdown',
     });
 
+    console.log(record);
+
     // Move the record to the new parent path.
     const newRecord = await invoke<Record>('rename_record', {
         record,
@@ -150,7 +155,7 @@ async function removeRecord(node: TreeNode<Record>) {
  * Refresh the file tree after moving the record.
  */
 async function refresh() {
-    files.value = await loadNodes(props.directory);
+    files.value = await loadNodes('');
 }
 
 /**

@@ -183,8 +183,12 @@ impl Record {
     }
 
     /// Returns the list of records located in the given directory.
-    pub fn list(directory: &PathBuf) -> Result<Vec<Self>, std::io::Error> {
-        let record_names = directory
+    ///
+    /// The argument `workspace` is an absolute path to the workspace root, and `directory`
+    /// is a relative path to the directory in the workspace where the records are located.
+    pub fn list(workspace: &PathBuf, directory: &PathBuf) -> Result<Vec<Self>, std::io::Error> {
+        let record_names = workspace
+            .join(directory)
             .read_dir()?
             .filter_map(|e| e.ok())
             .map(|entry| entry.path())
@@ -204,24 +208,30 @@ impl Record {
             .collect::<HashSet<_>>();
         let records = record_names
             .into_iter()
-            .map(|name| Self::new(Workspace::new(directory.clone()), name))
+            .map(|name| Workspace::new(workspace).record(directory.join(name)))
             .collect();
         Ok(records)
     }
 
     /// Returns the list of records in the given directory and all its subdirectories
     /// recursively.
-    pub fn list_recursive(directory: &PathBuf) -> Result<Vec<Self>, std::io::Error> {
+    ///
+    /// The argument `workspace` is an absolute path to the workspace root, and `directory`
+    /// is a relative path to the directory in the workspace where the records are located.
+    pub fn list_recursive(
+        workspace: &PathBuf,
+        directory: &PathBuf,
+    ) -> Result<Vec<Self>, std::io::Error> {
         // First retrieve all records in the current directory.
-        let mut records = Self::list(directory)?;
+        let mut records = Self::list(workspace, directory)?;
 
         // Then retrieve all subdirectories and list their records recursively.
-        for entry in directory.read_dir()? {
+        for entry in workspace.join(directory).read_dir()? {
             let entry = entry?;
             let path = entry.path();
 
             if path.is_dir() {
-                records.extend(Self::list_recursive(&path)?);
+                records.extend(Self::list_recursive(workspace, &path)?);
             }
         }
 
@@ -304,8 +314,20 @@ impl Record {
         let workspace_path = self.workspace.path();
         let paths = self.associated_paths()?;
 
+        println!("Workspace: {}", workspace_path.display());
+
         // Move all record-associated paths to the new location.
         for old_path in paths {
+            let old_relative_path = old_path.strip_prefix(&workspace_path).map_err(|_| {
+                std::io::Error::new(
+                    std::io::ErrorKind::Other,
+                    "failed to strip workspace path prefix from old path",
+                )
+            })?;
+
+            println!("Old path: {}", old_path.display());
+            println!("Old relative path: {}", old_relative_path.display());
+
             // `old_path` - old absolute file path
             // `new_path` - new file path relative to the workspace root
             // `new_record_path` - new absolute file path, without proper
@@ -342,21 +364,29 @@ impl Record {
             //            preserved.
             let new_file_path = new_record_path.with_added_extension(&old_path_suffix);
 
+            println!(
+                "Renaming record file\nFrom: {}\nTo:   {}",
+                old_path.display(),
+                new_file_path.display()
+            );
             std::fs::rename(&old_path, &new_file_path)?;
+            println!("Done!");
 
             // If the old path was a directory, we need to clean up (remove) the old
             // directory because [std::fs::rename] only moves its' contents, keeping
             // the old directory intact.
             if old_path.is_dir() {
+                println!("Removing old directory!");
                 std::fs::remove_dir(&old_path)?;
+                println!("Removing old directory! Done!");
             }
         }
 
-        // println!(
-        //     "Renamed record from {} to {}",
-        //     self.path().display(),
-        //     new_path.display()
-        // );
+        println!(
+            "Renamed record from {} to {}",
+            self.path().display(),
+            new_path.display()
+        );
         Ok(Self::new(self.workspace.clone(), new_path))
     }
 }
