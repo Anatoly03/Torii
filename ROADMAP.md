@@ -78,7 +78,8 @@ The first stage of the project is to create a simple file browser like applicati
 
 ### `v0.0.0-dev8` [CURRENT]
 
--   [x] Implement control + click for remote URLs
+-   [x] Implement click for remote URLs
+    - [ ] Fix: Should only work when holding Control
 -   [ ] Fix: Control + click for local file links not working
 -   [ ] Cache all records on start for autocomplete (or scan recursive)
 -   [ ] Rust Refactoring
