@@ -196,6 +196,8 @@ async function createNewFile() {
 }
 
 async function autocompleteMarkdown(name: string): Promise<any> {
+    if (!currentFile.value) return [];
+
     const tree = await fileTree.value?.getFiles();
 
     function recurseTree(tree: TreeNode<Record>[]): Record[] {
@@ -213,10 +215,23 @@ async function autocompleteMarkdown(name: string): Promise<any> {
         .filter((record) => {
             return record.name?.startsWith(name);
         })
-        .map((record) => ({
-            label: record.relative_path,
-            value: record.name,
-        }));
+        .map((record) => {
+            // In order to generate a "proper" relative link for value, we nee to first find
+            // which file we're in and navigate to the workspace root, relative to the current
+            // file.
+            const workspaceRelative =
+                currentFile.value?.relative_path
+                    .split('/')
+                    .map((_, index) => (index == 0 ? '.' : '..'))
+                    .join('/') ?? '.';
+            // Then we append the record's relative path to the workspace root.
+            const relativePath = `${workspaceRelative}/${record.relative_path}`;
+
+            return {
+                label: record.name,
+                value: relativePath,
+            };
+        });
 }
 
 async function openFile(name: string) {

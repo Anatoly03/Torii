@@ -13,6 +13,11 @@ export type SuggestionItem = {
      * The label for the suggestion (name of the record).
      */
     label: string;
+
+    /**
+     * The value for the suggestion (relative path of the record).
+     */
+    value: string;
 };
 
 export type AutocompleteOptions = {
@@ -96,6 +101,8 @@ function triggerAutocomplete(
             // Delete the token before the cursor.
             commands.deleteRange({ from: rangeFrom, to: rangeTo });
 
+            console.debug('[autocomplete] Autocompleting', `Replace \`${token}\` with \`[${item.label}](${item.value})\``);
+
             // Insert the selected suggestion into the editor.
             commands.insertContent([
                 {
@@ -104,7 +111,8 @@ function triggerAutocomplete(
                         {
                             type: 'link',
                             attrs: {
-                                href: `./${encodeURIComponent(item.label)}.md`,
+                                href: item.value,
+                                // href: `./${encodeURIComponent(item.value)}.md`,
                             },
                         },
                     ],

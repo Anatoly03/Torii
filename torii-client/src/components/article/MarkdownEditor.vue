@@ -73,7 +73,7 @@ const editor = new Editor({
                     {
                         type: 'link',
                         attrs: {
-                            href: `./${encodeURIComponent(item.label)}.md`,
+                            href: `./${encodeURIComponent(item.value)}.md`,
                         },
                     },
                 ],
