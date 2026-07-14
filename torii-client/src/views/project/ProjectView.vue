@@ -234,10 +234,7 @@ async function autocompleteMarkdown(name: string): Promise<any> {
         });
 }
 
-async function openFile(name: string) {
-    const record = records.value.find((r) => r.name === name);
-    if (!record) return;
-
+async function openFile(record: Record) {
     currentFile.value = record;
 }
 

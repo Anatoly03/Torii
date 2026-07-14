@@ -78,6 +78,7 @@ The first stage of the project is to create a simple file browser like applicati
 
 ### `v0.0.0-dev8` [CURRENT]
 
+-   [x] Implement control + click for remote URLs
 -   [ ] Cache all records on start for autocomplete (or scan recursive)
 -   [ ] Rust Refactoring
     -   [ ] Component methods should be e.g. `remove() -> Option<Fn -> Result>`: None if no action is defined, and it should return a lazy callback.

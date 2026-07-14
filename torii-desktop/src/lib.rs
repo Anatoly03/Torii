@@ -20,6 +20,7 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_cors_fetch::init())
         .plugin(tauri_plugin_store::Builder::default().build())
+        .plugin(tauri_plugin_opener::init())
         .setup(enable_logging)
         .invoke_handler(tauri::generate_handler![
             recent::list_recent_projects,
