@@ -28,6 +28,7 @@ import { Markdown } from '@tiptap/markdown';
 import { TaskList, TaskItem } from '@tiptap/extension-list';
 import { NIcon } from 'naive-ui';
 import { CloseOutline, TextOutline } from '@vicons/ionicons5';
+import { openUrl } from '@tauri-apps/plugin-opener';
 
 // tiptap extensions
 import StarterKit from '@tiptap/starter-kit';
@@ -45,7 +46,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    (e: 'open-file', path: string): void;
+    (e: 'open-file', record: Record): void;
     (e: 'update:wordCount', value: number): void;
 }>();
 
@@ -73,7 +74,7 @@ const editor = new Editor({
                     {
                         type: 'link',
                         attrs: {
-                            href: `./${encodeURIComponent(item.label)}.md`,
+                            href: `./${encodeURIComponent(item.value)}.md`,
                         },
                     },
                 ],
@@ -101,17 +102,36 @@ const editor = new Editor({
  */
 function onLinkClick(event: MouseEvent) {
     if (!event.ctrlKey && !event.metaKey) return;
+
     const link = (event.target as HTMLElement).closest('a');
     if (!link) return;
+
     event.preventDefault();
     event.stopPropagation();
+
     const href = link.getAttribute('href');
     if (!href) return;
-    const match = href.match(/^\.\/(.+)\.md$/);
-    if (match) {
-        const fileName = decodeURIComponent(match[1]);
-        emit('open-file', fileName);
+
+    // If href starts with "./", it's a path relative to the current file. We need
+    // to resolve it to an absolute path.
+    if (href.startsWith('./')) {
+        const currentFilePath = props.record?.relative_path;
+        if (!currentFilePath) return;
+
+        console.warn(`Command + Click on relative path '${href}' is temporarily disabled due to client refactor.`);
+        return;
     }
+
+    // If href is a remote URL (starts with http:// or https://), open it in the default browser.
+    if (href.startsWith('http://') || href.startsWith('https://')) {
+        openUrl(href);
+        return;
+    }
+
+    console.error(`Command + Click on link '${href}' is not currently supported.`);
+
+    // const fileName = decodeURIComponent(match[1]);
+    // emit('open-file', fileName);
 }
 
 onMounted(async () => {

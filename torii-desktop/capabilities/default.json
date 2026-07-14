@@ -15,6 +15,8 @@
         "core:window:allow-set-focus",
         "dialog:allow-open",
         "cors-fetch:default",
-        "store:default"
+        "store:default",
+        "opener:allow-default-urls",
+        "opener:allow-open-url"
     ]
 }
