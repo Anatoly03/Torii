@@ -10,6 +10,7 @@
         @node-click="(e) => setCurrentFile(e)"
         @node-expand="(e) => loadNodes(e.value.relative_path)"
         @node-move="moveRecord"
+        @node-rename="renameRecord"
         generic="Record"
     />
 </template>
@@ -151,6 +152,25 @@ async function removeRecord(node: TreeNode<Record>) {
     await refresh();
 }
 
+async function renameRecord(node: TreeNode<Record>, newLabel: string) {
+    const record = node.value;
+    if (!record) return;
+
+    const newRelativePathSlice = record.relative_path.split('/');
+    /* const _oldName = */ newRelativePathSlice.pop();
+    newRelativePathSlice.push(newLabel);
+    const newRelativePath = newRelativePathSlice.join('/');
+
+    // Move the record to the new parent path.
+    const newRecord = await invoke<Record>('rename_record', {
+        record,
+        newName: newRelativePath,
+    });
+
+    console.log(`Renamed record \`${record.name}\` to \`${newRecord.name}\``);
+    await refresh();
+}
+
 /**
  * Refresh the file tree after moving the record.
  */
@@ -174,13 +194,13 @@ async function refresh() {
                 continue;
             }
 
-            // Synchronize the "opened" state from the old node to the new node and
+            // Synchronize the "isOpened" state from the old node to the new node and
             // reload the children.
-            if (oldNode.opened && oldNode.children) {
+            if (oldNode.isOpened && oldNode.children) {
                 const newNodes = await loadNodes(node.value.relative_path);
                 const oldNodes = oldNode.children ?? [];
                 node.children = await refreshRecursive(newNodes, oldNodes);
-                node.opened = true;
+                node.isOpened = true;
             }
 
             nodes.push(node);

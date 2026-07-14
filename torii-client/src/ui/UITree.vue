@@ -13,7 +13,7 @@
                     class="ui-tree-list-anchor"
                     @click="onToggleAnchor(node)"
                 >
-                    <ChevronDown v-if="!node.isLeaf && node.opened" />
+                    <ChevronDown v-if="!node.isLeaf && node.isOpened" />
                     <ChevronForward v-else-if="!node.isLeaf" />
                 </NIcon>
                 <span class="ui-tree-list-content">
@@ -30,16 +30,22 @@
                             }"
                             @click="selectNode(node)"
                         >
-                            <span class="ui-tree-list-label-text">
-                                {{ node.label }}
-                            </span>
+                            <UISpanInput
+                                class="ui-tree-list-label-text"
+                                v-model="node.label"
+                                @submit="onNodeLabelSubmit(node, $event)"
+                            />
                             <NDropdown
                                 class="ui-tree-list-actions"
                                 v-if="props.actions"
                                 trigger="hover"
                                 placement="right"
                                 show-arrow
-                                @select="props.actions.find((a) => a.key === $event)?.action(node)"
+                                @select="
+                                    props.actions
+                                        .find((a) => a.key === $event)
+                                        ?.action(node)
+                                "
                                 :options="props.actions"
                             >
                                 <NIcon style="color: #ff4d4f">
@@ -50,7 +56,9 @@
                     </UIDropRegion>
                     <UITree
                         v-if="
-                            node.opened && node.children && node.children.length
+                            node.isOpened &&
+                            node.children &&
+                            node.children.length
                         "
                         :data="node.children"
                         :actions="props.actions"
@@ -77,6 +85,7 @@ import {
 } from '@vicons/ionicons5';
 import { NDropdown, NIcon, NSpin } from 'naive-ui';
 import UIDropRegion from './UIDropRegion.vue';
+import UISpanInput from './UISpanInput.vue';
 
 /**
  * @brief A generic tree node type that can be used to represent hierarchical
@@ -86,9 +95,10 @@ import UIDropRegion from './UIDropRegion.vue';
  * in callbacks.
  *
  * Optionally, `isLeaf` can be set to true to indicate that the node is a leaf
- * node and cannot contain children. `opened` is set by the tree to indicate
+ * node and cannot contain children. `isOpened` is set by the tree to indicate
  * collapsed nodes. `children` is an array of child nodes, which can be empty
- * or undefined for leaf nodes.
+ * or undefined for leaf nodes. `isEditing` is set by the tree to indicate that
+ * the node label is being edited.
  */
 export type TreeNode<K> = {
     key: string;
@@ -96,7 +106,8 @@ export type TreeNode<K> = {
     value: K;
     isLeaf?: boolean;
     isLoadingChildren?: boolean;
-    opened?: boolean;
+    isOpened?: boolean;
+    isEditing?: boolean;
     children?: TreeNode<K>[];
 };
 
@@ -148,6 +159,7 @@ const emit = defineEmits<{
         target: TreeNode<NodeValue>,
         source: TreeNode<NodeValue>
     ): void;
+    (e: 'node-rename', node: TreeNode<NodeValue>, newLabel: string): void;
     // (e: 'node-expand', node: TreeNode<NodeValue>): Promise<TreeNode<NodeValue>[]>;
 }>();
 
@@ -181,7 +193,7 @@ function selectNode(node: TreeNode<NodeValue>) {
  * Toggles the anchor state and loads child nodes if necessary.
  */
 async function onToggleAnchor(node: TreeNode<NodeValue>) {
-    const state = (node.opened = !node.opened);
+    const state = (node.isOpened = !node.isOpened);
 
     if (state && !node.isLeaf && !node.children && props.onNodeExpand) {
         node.isLoadingChildren = true;
@@ -206,6 +218,17 @@ function onMoveNode(target: TreeNode<NodeValue>, sourceRecordPath: string) {
     if (!source) return; // if the path is externally dragged, ignore
 
     emit('node-move', target, source);
+}
+
+/**
+ * A node was renamed, update the label and emit a `node-label-submit` event.
+ * @param node
+ * @param newLabel
+ */
+function onNodeLabelSubmit(node: TreeNode<NodeValue>, newLabel: string) {
+    node.label = newLabel;
+    node.isEditing = false;
+    emit('node-rename', node, newLabel);
 }
 
 defineOptions({ name: 'UITree' });
@@ -269,7 +292,7 @@ defineOptions({ name: 'UITree' });
                 display: flex;
                 width: 100%;
                 box-sizing: border-box;
-                padding: 2px    4px;
+                padding: 2px 4px;
                 border-radius: 4px;
                 align-items: center;
                 white-space: nowrap; // keep label on one line
