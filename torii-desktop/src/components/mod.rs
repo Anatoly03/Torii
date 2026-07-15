@@ -1,11 +1,13 @@
 //! This module contains the [Component] trait.
 
+mod action;
 mod article;
 mod folder;
 mod image;
 mod serde;
 
 use crate::Record;
+pub use action::ComponentAction;
 pub use article::ArticleComponent;
 pub use folder::FolderComponent;
 pub use image::ImageComponent;
@@ -62,7 +64,7 @@ pub trait Component {
     ///
     /// For example, the "Article" component will return a markdown string, while the "Image"
     /// component will return a raw byte array of the image data.
-    fn read(&self, record: &Record) -> Result<Response, String>;
+    fn read(&self, record: &Record) -> ComponentAction<Response>;
 
     /// Gets a write request to save the component data for a record. This takes a
     /// base64 encoded string representing the binary data to be saved.

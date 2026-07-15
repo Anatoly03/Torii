@@ -2,9 +2,8 @@
 //!
 //! It provides functionality to read article files and handle article-related operations.
 
+use super::{Component, ComponentAction};
 use crate::Record;
-
-use super::Component;
 use std::{io::ErrorKind, path::PathBuf};
 use tauri::ipc::Response;
 
@@ -59,16 +58,20 @@ impl Component for ArticleComponent {
 
     /// Gets a read request to view the "Article" component data for a record. This returns a
     /// [Response][ipc::Response] containing the markdown string of the article.
-    fn read(&self, record: &Record) -> Result<Response, String> {
+    fn read(&self, record: &Record) -> ComponentAction<Response> {
         let path = record.path().with_extension("md");
 
-        let file = match std::fs::read(path) {
-            Ok(file) => file,
-            Err(e) if e.kind() == ErrorKind::NotFound => vec![],
-            Err(e) => return Err(format!("Failed to read markdown file: {e}")),
-        };
+        ComponentAction::Action {
+            action: Box::new(move || {
+                let file = match std::fs::read(path) {
+                    Ok(file) => file,
+                    Err(e) if e.kind() == ErrorKind::NotFound => vec![],
+                    Err(e) => return Err(format!("Failed to read markdown file: {e}").into()),
+                };
 
-        Ok(Response::new(file))
+                Ok(Response::new(file))
+            }),
+        }
     }
 
     /// Gets a write request to save the component data for a record. This takes a

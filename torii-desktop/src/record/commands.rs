@@ -1,6 +1,6 @@
 //! This module defines [tauri] commands associated with the [Record] instance.
 
-use crate::{Component, Record};
+use crate::{Component, Record, components::ComponentAction};
 use base64::{Engine as _, engine::general_purpose};
 use std::{io::ErrorKind::NotFound, path::PathBuf};
 use tauri::ipc::Response;
@@ -84,7 +84,7 @@ pub fn get_record_component(
     record: Record,
     component: Box<dyn Component>,
 ) -> Result<Response, String> {
-    component.read(&record)
+    component.read(&record).invoke().map_err(|e| e.to_string())
 }
 
 /// Saves (or creates) a specific component for a given record to the disc

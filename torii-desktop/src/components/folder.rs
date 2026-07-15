@@ -2,9 +2,8 @@
 //!
 //! It provides functionality to read directory contents and handle folder-related operations.
 
+use super::{Component, ComponentAction};
 use crate::Record;
-
-use super::Component;
 use serde_json::json;
 use std::{io::ErrorKind, path::PathBuf};
 use tauri::ipc::Response;
@@ -60,18 +59,24 @@ impl Component for FolderComponent {
 
     /// Gets a read request to view the "Folder" component data for a record. This returns a
     /// [Response][ipc::Response] containing the list of files and directories within the folder.
-    fn read(&self, record: &Record) -> Result<Response, String> {
-        let files = match std::fs::read_dir(record.path()) {
-            Ok(entries) => entries
-                .filter_map(|entry| entry.ok())
-                .map(|entry| entry.path().to_string_lossy().to_string())
-                .collect::<Vec<String>>(),
-            Err(e) if e.kind() == ErrorKind::NotFound => vec![],
-            Err(e) => return Err(format!("Failed to read folder: {e}")),
-        };
+    fn read(&self, record: &Record) -> ComponentAction<Response> {
+        let path: PathBuf = record.path();
 
-        let value = json!({ "files": files });
-        Ok(Response::new(value.to_string()))
+        ComponentAction::Action {
+            action: Box::new(|| {
+                let files = match std::fs::read_dir(path) {
+                    Ok(entries) => entries
+                        .filter_map(|entry| entry.ok())
+                        .map(|entry| entry.path().to_string_lossy().to_string())
+                        .collect::<Vec<String>>(),
+                    Err(e) if e.kind() == ErrorKind::NotFound => vec![],
+                    Err(e) => return Err(format!("Failed to read folder: {e}").into()),
+                };
+
+                let value = json!({ "files": files });
+                Ok(Response::new(value.to_string()))
+            }),
+        }
     }
 
     /// Gets a write request to save the component data for a record. This takes a

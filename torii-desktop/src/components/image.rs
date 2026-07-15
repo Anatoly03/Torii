@@ -2,9 +2,8 @@
 //!
 //! It provides functionality to read image files and handle image-related operations.
 
+use super::{Component, ComponentAction};
 use crate::Record;
-
-use super::Component;
 use std::{io::ErrorKind, path::PathBuf};
 use tauri::ipc::Response;
 
@@ -72,16 +71,20 @@ impl Component for ImageComponent {
 
     /// Gets a read request to view the "Image" component data for a record. This returns a
     /// [Response][ipc::Response] containing the image data.
-    fn read(&self, record: &Record) -> Result<Response, String> {
+    fn read(&self, record: &Record) -> ComponentAction<Response> {
         let path = record.path().with_extension(&self.file_suffix);
 
-        let file = match std::fs::read(path) {
-            Ok(file) => file,
-            Err(e) if e.kind() == ErrorKind::NotFound => vec![],
-            Err(e) => return Err(format!("Failed to read image file: {e}")),
-        };
+        ComponentAction::Action {
+            action: Box::new(|| {
+                let file = match std::fs::read(path) {
+                    Ok(file) => file,
+                    Err(e) if e.kind() == ErrorKind::NotFound => vec![],
+                    Err(e) => return Err(format!("Failed to read image file: {e}").into()),
+                };
 
-        Ok(Response::new(file))
+                Ok(Response::new(file))
+            }),
+        }
     }
 
     /// Gets a write request to save the component data for a record. This takes a
