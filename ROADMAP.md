@@ -82,7 +82,7 @@ The first stage of the project is to create a simple file browser like applicati
     -   [ ] Fix: Should only work when holding Control
 -   [ ] Fix: Control + click for local file links not working
 -   [ ] Cache all records on start for autocomplete (or scan recursive)
--   [ ] Fix Rust Tests
+-   [x] Fix Rust Tests
 -   [ ] Rust Refactoring
     -   [ ] Component methods should be e.g. `remove() -> Option<Fn -> Result>`: None if no action is defined, and it should return a lazy callback.
 -   [ ] Breadcrumb Header
