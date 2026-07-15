@@ -79,32 +79,55 @@ The first stage of the project is to create a simple file browser like applicati
 ### `v0.0.0-dev8` [CURRENT]
 
 -   [x] Implement click for remote URLs
-    -   [ ] Fix: Should only work when holding Control
 -   [ ] Fix: Control + click for local file links not working
 -   [ ] Cache all records on start for autocomplete (or scan recursive)
--   [x] Fix Rust Tests
+-   [x] Github CI: `cargo test`
 -   [ ] Rust Refactoring
     -   [ ] Component methods should be e.g. `remove() -> Option<Fn -> Result>`: None if no action is defined, and it should return a lazy callback.
 -   [ ] Breadcrumb Header
 
 ### `v0.0.0-dev9`
 
--   [ ] Client Refactoring (Types, Documentation Github CI)
-    -   [ ] Remove Naive UI dependency and implement custom vue components
--   [ ] Expand Footer
-    -   [ ] Edit/ View mode (hides placeholder grids vs. allows to edit article & enables drag and drop)
--   [ ] Fix bug where opening new record sometimes scrolls to an offset.
+-   [ ] Expand Footer with Edit and View mode.
+    -   [ ] Edit Mode: WYSIWYG if provided, allows to edit article, drag and drop
+    -   [ ] Edit Mode: Remove: Open URL on link click
+    -   [ ] View Mode: Hides placeholder grids and no interaction
+    -   [ ] View Mode: Fix: Link should be clickable
 
 ### `v0.0.0-dev10`
 
+-   [ ] Client Refactoring (Types, Documentation Github CI)
+    -   [ ] Remove Naive UI dependency and implement custom vue components
+-   [ ] Expand Footer with Source mode.
+    -   [ ] Source Mode: Raw source of the file, only when MIME type is not a binary.
+    -   [ ] Source Mode: Use [codemirror](https://codemirror.net)
+
+### `v0.0.0-dev11`
+
+-   [ ] Add `entity.config.json` API
+-   [ ] Add component manager collapsable sidebar
+    -   [ ] View Attached Components (+ meta)
+    -   [ ] Add Component from Selection
+    -   [ ] Remove Component
+    -   [ ] Edit Component Config
+-   [ ] Add Banner component config: Offset Y, Offset X, Zoom
+-   [ ] Render Banner image with offset
+
+### `v0.0.0-dev12`
+
 -   [ ] Define CSS variables, modularize CSS
+-   [ ] Add Record search (filter records by search pattern)
+-   [ ] Add UX to move banner offset in edit mode. (scroll, zoom)
+
+### `v0.0.0-dev13`
+
 -   [ ] Refactor to Theme Support
     -   [ ] Light Mode
     -   [ ] Dark Mode
--   [ ] Add Record search (filter records by search pattern)
 -   [ ] Opt-In Setting: Citation Tracking Component (Store URLs for uploaded Images and inserted content.)
+-   [ ] Fix bug where opening new record sometimes scrolls to an offset.
 
-### `v0.0.0-dev11`
+### `v0.0.0-dev14`
 
 -   [ ] Extend Markdown
     -   [ ] Image embed support (new images are stored as a child-record in this records' directory)
@@ -112,23 +135,28 @@ The first stage of the project is to create a simple file browser like applicati
 -   [ ] Add ability to rename files with fixes in backlinks
     -   [ ] Add component trait method `rename_link`: Invoked on records with backlinks, rename link within component.
 
-### `v0.0.0-dev12`
+### `v0.0.0-dev15`
 
--   [ ] Export one record or entire workspace
+-   [ ] Export one record
     -   [ ] PDF
     -   [ ] HTML
     -   [ ] LaTeX
 
-### `v0.0.0-dev13`
+### `v0.0.0-dev16`
 
+-   [ ] Export one record
+    -   [ ] LaTeX
+-   [ ] Export entire workspace
+    -   [ ] PDF
+    -   [ ] HTML
 -   [ ] Refactor Code
     -   [ ] Create a client-side plugin abstraction in `client-core`, but no dynamic plugin loader yet.
 -   [ ] Github CI
-    -   [ ] cargo test
+    -   [x] cargo test
     -   [ ] cargo doc
     -   [ ] typescript docs
 
-### `v0.0.0-dev14`
+### `v0.0.0-dev17`
 
 -   [ ] Refactor to an embeddable localization system.
     -   [ ] In dev builds, they are linked with the repository.
@@ -137,12 +165,12 @@ The first stage of the project is to create a simple file browser like applicati
     -   [ ] All localization key-values should be editable.
     -   [ ] User Interface for vertical line: Singular, plural, with bracket placeholders.
 
-### `v0.0.0-dev15`
+### `v0.0.0-dev18`
 
 -   [ ] Refactor to an embeddable client-plugin system. (Currently, statically link all plugins, no dynamic loading)
 -   [ ] General Keybinds and keybinds to overwrite [TipTap Keybinds](https://tiptap.dev/docs/editor/core-concepts/keyboard-shortcuts)
 
-### `v0.0.0-dev16`
+### `v0.0.0-dev19`
 
 -   [ ] Add project icon
 -   [ ] FULLY COVERED CODE REVIEW BEFORE FIRST RELEASE
