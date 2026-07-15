@@ -79,6 +79,7 @@ The first stage of the project is to create a simple file browser like applicati
 ### `v0.0.0-dev8` [CURRENT]
 
 -   [x] Implement click for remote URLs
+-   [ ] Fix: Editing renamed file saves to outdated file path.
 -   [ ] Fix: Control + click for local file links not working
 -   [ ] Cache all records on start for autocomplete (or scan recursive)
 -   [x] Github CI: `cargo test`
