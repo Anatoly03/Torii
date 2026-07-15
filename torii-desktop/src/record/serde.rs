@@ -49,6 +49,18 @@ impl<'de> Visitor<'de> for RecordVisitor {
     }
 
     /// The input contains a key-value map.
+    /// 
+    /// # Example
+    ///
+    /// ```
+    /// use std::path::PathBuf;
+    /// use app_lib::Record;
+    ///
+    /// let json = r#"{"workspace":"/path/to/parent-workspace", "path":"/path/to/parent-workspace/path/to/recordion"}"#;
+    /// let record: Record = serde_json::from_str(json).unwrap();
+    /// assert_eq!(record.path(), PathBuf::from("/path/to/parent-workspace/path/to/recordion"));
+    /// assert_eq!(record.relative_path(), &PathBuf::from("path/to/recordion"));
+    /// ```
     fn visit_map<A>(self, mut map: A) -> Result<Self::Value, A::Error>
     where
         A: MapAccess<'de>,
@@ -77,28 +89,26 @@ impl<'de> Visitor<'de> for RecordVisitor {
                     }
                     record_relative_path = Some(map.next_value::<PathBuf>()?);
                 }
-                _ => continue,
+                _ => {
+                    let _: serde_json::Value = map.next_value()?;
+                }
             }
         }
 
         let workspace = workspace.ok_or_else(|| A::Error::missing_field("workspace"))?;
+        let relative_path = record_relative_path
+            .map(|rpath| match rpath.is_absolute() {
+                true => Err(A::Error::custom("`relative_path` must not be absolute")),
+                false => Ok(rpath),
+            })
+            .or(record_path.map(|path| {
+                path.strip_prefix(workspace.path())
+                    .map_err(|_| A::Error::custom("record path is not relative to workspace"))
+                    .map(|p| p.to_path_buf())
+            }))
+            .unwrap_or_else(|| Err(A::Error::missing_field("relative_path")))?;
 
-        let record_relative_path = if let Some(relative_path) = record_relative_path {
-            // (security) input sanitization
-            if relative_path.is_absolute() {
-                return Err(A::Error::custom("`relative_path` must not be absolute"));
-            }
-
-            relative_path
-        } else if let Some(path) = record_path {
-            path.strip_prefix(workspace.path())
-                .map_err(|_| A::Error::custom("record path is not relative to workspace"))?
-                .to_path_buf()
-        } else {
-            return Err(A::Error::missing_field("path"));
-        };
-
-        Ok(workspace.record(record_relative_path))
+        Ok(workspace.record(relative_path))
     }
 }
 
@@ -111,7 +121,7 @@ impl<'de> Deserialize<'de> for Record {
     /// use std::path::PathBuf;
     /// use app_lib::Record;
     ///
-    /// let json = r#"{"workspace":"/path/to/parent-workspace", "record":"path/to/recordion"}"#;
+    /// let json = r#"{"workspace":"/path/to/parent-workspace", "relative_path":"path/to/recordion"}"#;
     /// let record: Record = serde_json::from_str(json).unwrap();
     ///
     /// assert_eq!(record.workspace().name(), "parent-workspace");

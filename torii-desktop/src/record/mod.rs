@@ -100,7 +100,7 @@ impl Record {
     /// let workspace = Workspace::new("/path/to/workspace");
     /// let record = workspace.record("media/record1");
     ///
-    /// assert_eq!(record.relative_path(), PathBuf::from("media/record1"));
+    /// assert_eq!(record.relative_path(), &PathBuf::from("media/record1"));
     /// ```
     #[inline]
     pub fn relative_path(&self) -> &PathBuf {
