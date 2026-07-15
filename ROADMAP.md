@@ -156,6 +156,7 @@ The first stage of the project is to create a simple file browser like applicati
     -   [x] cargo test
     -   [ ] cargo doc
     -   [ ] typescript docs
+    -   [ ] Github [Labeler](https://github.com/actions/labeler)
 
 ### `v0.0.0-dev17`
 
