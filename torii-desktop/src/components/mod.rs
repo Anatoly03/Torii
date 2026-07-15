@@ -72,7 +72,7 @@ pub trait Component {
     /// For example, the "Article" component will interpret the resulting binary as a
     /// markdown string, while the "Image" component will interpret content as raw byte
     /// data.
-    fn write(&self, record: &Record, content: &[u8]) -> Result<(), String>;
+    fn write(&self, record: &Record, content: Vec<u8>) -> ComponentAction<()>;
 
     /// Gets a write request to save the component data for a record, taking a local
     /// file path as the copy source. This method is optional and the return type is to
@@ -86,9 +86,7 @@ pub trait Component {
     /// For example, the "Article" component will reject the request to write from a file,
     /// while the "Image" component will accept a file path and copy the file to the record's
     /// directory.
-    fn write_from_file(&self, _record: &Record, _source: &PathBuf) -> Option<Result<(), String>> {
-        None
-    }
+    fn write_from_file(&self, _record: &Record, _source: &PathBuf) -> ComponentAction<()>;
 
     /// Gets a remove request to delete the component data for a record. This method is
     /// optional and the return type is to be understood as follows:
@@ -107,7 +105,7 @@ pub trait Component {
     /// the default behaviour of removing all (!) markdown files, as well will the "Image"
     /// component only check for the exact file "Diana Loewe.png" and remove it, but keep
     /// the "Banner" component's file "Diana Loewe.banner.png" intact.
-    fn remove(&self, record: &Record) -> Option<Result<(), String>>;
+    fn remove(&self, record: &Record) -> ComponentAction<()>;
 }
 
 /// Returns a boxed instance of a component based on its name. If the component name is not

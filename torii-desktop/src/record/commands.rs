@@ -111,7 +111,10 @@ pub fn save_record_component(
         _ => return Err(format!("Unsupported content type: {content_type}")),
     };
 
-    component.write(&record, &bytes)
+    component
+        .write(&record, bytes)
+        .invoke()
+        .map_err(|e| e.to_string())
 }
 
 /// Saves (or creates) a specific component for a given record to the disc,
@@ -124,12 +127,8 @@ pub fn save_record_component_from_local_file(
 ) -> Result<(), String> {
     component
         .write_from_file(&record, &source)
-        .unwrap_or_else(|| {
-            Err(format!(
-                "Component {} does not support writing from a file.",
-                component.component_name()
-            ))
-        })
+        .invoke()
+        .map_err(|e| e.to_string())
 }
 
 /// Removes a specific component for a given record from the disc.
@@ -140,11 +139,19 @@ pub fn remove_record_component(
     record: Record,
     component: Box<dyn Component>,
 ) -> Result<(), String> {
+    component
+        .remove(&record)
+        .invoke()
+        .map_err(|e| e.to_string())
+
+    /*
     // If the component implements a custom remove method, use it. Otherwise, fall back to the default
     // implementation.
     match component.remove(&record) {
-        Some(result) => return result,
-        None => (),
+        ComponentAction::Unimplemented { .. } => (),
+        ComponentAction::Action { action } => {
+            return action().map_err(|e| e.to_string());
+        }
     };
 
     // Here begins the default component destructor.
@@ -164,4 +171,5 @@ pub fn remove_record_component(
         .collect::<Result<Vec<()>, String>>()?;
 
     Ok(())
+    */
 }

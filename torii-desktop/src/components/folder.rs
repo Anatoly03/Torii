@@ -84,8 +84,18 @@ impl Component for FolderComponent {
     ///
     /// The "Article" component will interpret the resulting binary as a markdown
     /// string.
-    fn write(&self, record: &Record, _content: &[u8]) -> Result<(), String> {
-        std::fs::create_dir_all(record.path()).map_err(|e| format!("Failed to create folder: {e}"))
+    fn write(&self, record: &Record, _content: Vec<u8>) -> ComponentAction<()> {
+        let path = record.path();
+
+        ComponentAction::Action {
+            action: Box::new(move || std::fs::create_dir_all(path).map_err(|e| e.into())),
+        }
+    }
+
+    /// Gets a write request to save the component for a record, taking a local file path as
+    /// the copy source. This method returns the following.
+    fn write_from_file(&self, _record: &Record, _source: &PathBuf) -> ComponentAction<()> {
+        ComponentAction::unimplemented("The `Folder` component cannot be copied from a file.")
     }
 
     /// Gets a remove request to delete the folder for a record. The return type
@@ -99,7 +109,7 @@ impl Component for FolderComponent {
     /// that are solely associated with this component.
     ///
     /// The "Folder" component will remove the file "<entity>.md"
-    fn remove(&self, _: &Record) -> Option<Result<(), String>> {
-        None
+    fn remove(&self, _record: &Record) -> ComponentAction<()> {
+        ComponentAction::unimplemented("The `Folder` component cannot be removed from a record.")
     }
 }

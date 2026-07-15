@@ -79,9 +79,18 @@ impl Component for ArticleComponent {
     ///
     /// The "Article" component will interpret the resulting binary as a markdown
     /// string.
-    fn write(&self, record: &Record, content: &[u8]) -> Result<(), String> {
+    fn write(&self, record: &Record, content: Vec<u8>) -> ComponentAction<()> {
         let path = record.path().with_extension("md");
-        std::fs::write(path, content).map_err(|e| format!("Failed to write markdown file: {e}"))
+
+        ComponentAction::Action {
+            action: Box::new(move || std::fs::write(path, content).map_err(|e| e.into())),
+        }
+    }
+
+    /// Gets a write request to save the component for a record, taking a local file path as
+    /// the copy source. This method returns the following.
+    fn write_from_file(&self, _record: &Record, _source: &PathBuf) -> ComponentAction<()> {
+        ComponentAction::unimplemented("The `Article` component cannot be copied from a file.")
     }
 
     /// Gets a remove request to delete the article for a record. The return type
@@ -95,9 +104,7 @@ impl Component for ArticleComponent {
     /// that are solely associated with this component.
     ///
     /// The "Article" component will remove the file "<entity>.md"
-    fn remove(&self, _: &Record) -> Option<Result<(), String>> {
-        Some(Err(
-            "The article component can not be removed from a record.".to_string(),
-        ))
+    fn remove(&self, _: &Record) -> ComponentAction<()> {
+        ComponentAction::unimplemented("The `Article` component cannot be removed from a record.")
     }
 }

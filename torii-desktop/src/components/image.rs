@@ -91,9 +91,12 @@ impl Component for ImageComponent {
     /// base64 encoded string representing the binary data to be saved.
     ///
     /// The "Image" component will interpret content as raw byte data.
-    fn write(&self, record: &Record, content: &[u8]) -> Result<(), String> {
+    fn write(&self, record: &Record, content: Vec<u8>) -> ComponentAction<()> {
         let path = record.path().with_extension(&self.file_suffix);
-        std::fs::write(path, content).map_err(|e| format!("Failed to write image file: {e}"))
+
+        ComponentAction::Action {
+            action: Box::new(move || std::fs::write(path, content).map_err(|e| e.into())),
+        }
     }
 
     /// Gets a write request to save the "Image" component for a record, taking a local
@@ -103,11 +106,16 @@ impl Component for ImageComponent {
     /// - [Some(Err)][Some]: The component failed to copy the file to the record's directory.
     ///
     /// The "Image" component will accept a file path and copy the file to the record's directory.
-    fn write_from_file(&self, record: &Record, source: &PathBuf) -> Option<Result<(), String>> {
+    fn write_from_file(&self, record: &Record, source: &PathBuf) -> ComponentAction<()> {
+        let source = source.to_owned();
         let destination = record.path().with_extension(&self.file_suffix);
-        match std::fs::copy(source, &destination) {
-            Ok(_) => Some(Ok(())),
-            Err(e) => Some(Err(format!("Failed to copy image file: {e}"))),
+
+        ComponentAction::Action {
+            action: Box::new(move || {
+                std::fs::copy(source, destination)
+                    .map(|_| ())
+                    .map_err(|e| e.into())
+            }),
         }
     }
 
@@ -122,12 +130,10 @@ impl Component for ImageComponent {
     /// that are solely associated with this component.
     ///
     /// The "Article" component will remove the file "<entity>.md"
-    fn remove(&self, record: &Record) -> Option<Result<(), String>> {
+    fn remove(&self, record: &Record) -> ComponentAction<()> {
         let path = record.path().with_extension(&self.file_suffix);
-        match std::fs::remove_file(&path) {
-            Ok(_) => Some(Ok(())),
-            Err(e) if e.kind() == ErrorKind::NotFound => Some(Ok(())),
-            Err(e) => Some(Err(format!("Failed to remove image file: {e}"))),
+        ComponentAction::Action {
+            action: Box::new(move || std::fs::remove_file(&path).map_err(|e| e.into())),
         }
     }
 }
