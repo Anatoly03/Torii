@@ -157,6 +157,8 @@ The first stage of the project is to create a simple file browser like applicati
     -   [ ] cargo doc
     -   [ ] typescript docs
     -   [ ] Github [Labeler](https://github.com/actions/labeler)
+    -   [ ] Security: `cargo deny`
+    -   [ ] Security: `cargo audit`, `npm audit`
 
 ### `v0.0.0-dev17`
 
