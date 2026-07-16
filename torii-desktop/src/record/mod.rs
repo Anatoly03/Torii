@@ -4,6 +4,7 @@ pub mod commands;
 mod serde;
 
 use crate::{Component, components::get_all_components, workspace::Workspace};
+use path_normalizer::PathNormalizeExt;
 use std::{
     collections::HashSet,
     path::{Path, PathBuf},
@@ -37,21 +38,54 @@ impl Record {
     /// assert_eq!(record1.path(), PathBuf::from("/path/to/workspace/record1"));
     /// assert_eq!(record2.path(), PathBuf::from("/path/to/workspace/media/record2"));
     /// ```
+    ///
+    /// # Example (Absolute Record Path)
+    ///
+    /// ```
+    /// use std::path::PathBuf;
+    /// use app_lib::{Record, Workspace};
+    ///
+    /// let workspace = Workspace::new("/path/to/workspace");
+    /// let record1 = Record::new(&workspace, "/path/to/workspace/record1");
+    /// let record2 = Record::new(&workspace, "/path/to/workspace/media/record2");
+    /// let record3 = Record::new(&workspace, "/path/to/wrong/../workspace/complicated/../record3");
+    ///
+    /// assert_eq!(record1.name(), "record1");
+    /// assert_eq!(record2.name(), "record2");
+    /// assert_eq!(record3.name(), "record3");
+    /// assert_eq!(record1.path(), PathBuf::from("/path/to/workspace/record1"));
+    /// assert_eq!(record2.path(), PathBuf::from("/path/to/workspace/media/record2"));
+    ///
+    /// // Normalization Tests
+    /// assert_eq!(record3.relative_path(), &PathBuf::from("record3"));
+    /// assert_eq!(record3.path(), PathBuf::from("/path/to/workspace/record3"));
     #[inline]
     pub fn new<R: Into<Workspace>, T: Into<PathBuf>>(workspace: R, path: T) -> Self {
-        let path = path.into();
+        let mut path = path.into();
 
-        #[cfg(debug_assertions)]
-        assert!(
-            !path.is_absolute(),
-            "record path must be relative: {}",
-            path.display()
-        );
+        // Normalize workspace path to ensure it is absolute and canonical.
+        let workspace = {
+            let input_workspace = workspace.into();
+            let workspace_path = input_workspace
+                .path()
+                .normalize_path()
+                .unwrap_or_else(|e| todo!("workspace not normalized: {e:?}"));
+            Workspace::new(&workspace_path)
+        };
 
-        Self {
-            workspace: workspace.into(),
-            path: path,
+        // Trim the workspace path prefix from the record path if it is present.
+        if path.is_absolute() {
+            let record_path = path
+                .normalize_path()
+                .unwrap_or_else(|e| todo!("record path not normalized: {e:?}"));
+            let relative_path = record_path
+                .strip_prefix(workspace.path())
+                .unwrap_or_else(|e| todo!("record path not a subpath of workspace path: {e:?}"));
+
+            path = relative_path.into();
         }
+
+        Self { workspace, path }
     }
 
     /// Returns the [Workspace] that the record belongs to.
