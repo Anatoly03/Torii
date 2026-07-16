@@ -7,6 +7,11 @@
                         <CreateOutline />
                     </Icon>
                 </button>
+                <input
+                    type="text"
+                    placeholder="Search..."
+                    v-model="searchQuery"
+                />
                 <button @click="fileTree?.refresh()">
                     <Icon>
                         <RefreshOutline />
@@ -102,6 +107,7 @@ import { TreeNode } from 'ui/UITree.vue';
 const route = useRoute();
 const router = useRouter();
 const settings = useSettingsStore();
+const searchQuery = ref<string>('');
 const projectPath = route.query.project as string;
 const currentFile = ref<Record | null>(null);
 const markdownDirectory = ref<string | null>(null);
@@ -139,14 +145,22 @@ watch(currentFile, (newFile) => {
     }
 });
 
+watch (searchQuery, (query) => {
+    if (!fileTree.value) return;
+    fileTree.value.setFilter(query.length ? query : undefined);
+})
+
 async function loadComponents() {
     if (!currentFile.value) return;
     console.log('Loading components for:', currentFile.value);
 
-    const recordComponentsResult = await invoke<any[]>('list_record_components', {
-        record: currentFile.value,
-    });
-    recordComponents.value = recordComponentsResult.map(c => c.name);
+    const recordComponentsResult = await invoke<any[]>(
+        'list_record_components',
+        {
+            record: currentFile.value,
+        }
+    );
+    recordComponents.value = recordComponentsResult.map((c) => c.name);
 
     console.log('Components listed:', recordComponents.value);
 }
@@ -269,15 +283,18 @@ if (!projectPath) {
         border-right: 1px solid #ccc;
 
         .view-project-quick-actions {
-            width: 100%;
             display: flex;
             flex-direction: row;
-            align-items: center;
+        
+            // width: 100%;
+            box-sizing: border-box;
+            // align-items: center;
             gap: 8px;
             min-height: 2em;
 
-            button {
+            input {
                 flex: 1;
+                min-width: 0;
             }
         }
 

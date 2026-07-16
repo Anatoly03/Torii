@@ -4,6 +4,7 @@
 
 ### [v0.0.0-dev8](https://github.com/Anatoly03/Torii/releases/tag/app-v0.0.0-dev8)
 
+- Add search bar in the file tree.
 - Add feature to open browser links when clicked.
 - (For Developers:) Added new workspace "Torii Contributors" for maintaining programmer resources in-app.
 

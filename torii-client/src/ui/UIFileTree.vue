@@ -39,6 +39,7 @@ const emit = defineEmits<{
  * The reference to the UITree component instance.
  */
 const uiTreeEl = ref<InstanceType<typeof UITree> | null>(null);
+const filter = ref<string | undefined>(undefined);
 
 /**
  * @brief Model for the selected keys in the tree. Propagated from the UITree
@@ -64,8 +65,14 @@ const files = ref<TreeNode<Record>[]>([]);
 
 /**
  * @brief Loads the file nodes from the backend.
+ * @param directory The directory to load the nodes from.
+ * @param recursive Whether to load the nodes recursively. This will return a flattened
+ * list of records. The tree structure will not be preserved. Defaults to `false`.
  */
-async function loadNodes(directory: string): Promise<TreeNode<Record>[]> {
+async function loadNodes(
+    directory: string,
+    recursive: boolean = false
+): Promise<TreeNode<Record>[]> {
     /**
      * @brief Converts a record object into a treenode object.
      * @param record The record to convert.
@@ -98,7 +105,7 @@ async function loadNodes(directory: string): Promise<TreeNode<Record>[]> {
         const files = await invoke<Record[]>('list_records', {
             workspace: props.workspace,
             directory,
-            recursive: false,
+            recursive,
         });
         const retrieved = await Promise.all(files.map(mapRecord));
         return sortNodes(retrieved);
@@ -209,7 +216,14 @@ async function refresh() {
         return nodes;
     }
 
-    files.value = await refreshRecursive(newNodes, files.value);
+    if (!filter.value) {
+        files.value = await refreshRecursive(newNodes, files.value);
+    } else {
+        const allRecords = await loadNodes(props.workspace, true);
+        files.value = allRecords.filter((node) =>
+            node.value.name.toLowerCase().includes(filter.value!.toLowerCase())
+        );
+    }
 }
 
 /**
@@ -244,6 +258,16 @@ function getFiles() {
 }
 
 /**
+ * Sets the filter for the file tree. If a filter is set, only nodes that match
+ * the filter will be displayed.
+ * @param newFilter A string to filter the file tree by. If undefined, the filter is cleared.
+ */
+function setFilter(newFilter: string | undefined) {
+    filter.value = newFilter;
+    refresh();
+}
+
+/**
  * @brief Wrapper, exposed to the parent, for selecting keys in the tree.
  * @param keys The keys to select.
  */
@@ -266,6 +290,7 @@ defineExpose({
     getFiles,
     refresh,
     selectKeys,
+    setFilter,
 });
 </script>
 

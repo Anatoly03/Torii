@@ -86,7 +86,7 @@ The first stage of the project is to create a simple file browser like applicati
     -   [x] Component methods should be e.g. `remove() -> Option<Fn -> Result>`: None if no action is defined, and it should return a lazy callback.
     -   [x] Refactor `list_record_components` event to yield component permissions
 -   [ ] Breadcrumb Header
--   [ ] Add Record search (filter records by search pattern)
+-   [x] Add Record search (filter records by search pattern)
 
 ### `v0.0.0-dev9`
 
