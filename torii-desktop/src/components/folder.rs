@@ -2,14 +2,14 @@
 //!
 //! It provides functionality to read directory contents and handle folder-related operations.
 
+use super::{Component, ComponentAction};
 use crate::Record;
-
-use super::Component;
 use serde_json::json;
 use std::{io::ErrorKind, path::PathBuf};
 use tauri::ipc::Response;
 
 /// Represents a folder component in a Torii project.
+#[derive(Clone, Debug)]
 pub struct FolderComponent;
 
 impl Component for FolderComponent {
@@ -23,6 +23,20 @@ impl Component for FolderComponent {
     /// ```
     fn component_name(&self) -> &str {
         "folder"
+    }
+
+    /// Creates a boxed clone of the component.
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// use app_lib::components::{Component, FolderComponent};
+    /// 
+    /// let folder_component = FolderComponent;
+    /// let cloned_component = folder_component.clone_component();
+    /// ```
+    fn clone_component(&self) -> Box<dyn Component> {
+        Box::new(Self)
     }
 
     /// Reads the file path and yields wether the file is associated with the folder component.
@@ -60,18 +74,24 @@ impl Component for FolderComponent {
 
     /// Gets a read request to view the "Folder" component data for a record. This returns a
     /// [Response][ipc::Response] containing the list of files and directories within the folder.
-    fn read(&self, record: &Record) -> Result<Response, String> {
-        let files = match std::fs::read_dir(record.path()) {
-            Ok(entries) => entries
-                .filter_map(|entry| entry.ok())
-                .map(|entry| entry.path().to_string_lossy().to_string())
-                .collect::<Vec<String>>(),
-            Err(e) if e.kind() == ErrorKind::NotFound => vec![],
-            Err(e) => return Err(format!("Failed to read folder: {e}")),
-        };
+    fn read(&self, record: &Record) -> ComponentAction<Response> {
+        let path: PathBuf = record.path();
 
-        let value = json!({ "files": files });
-        Ok(Response::new(value.to_string()))
+        ComponentAction::Action {
+            action: Box::new(|| {
+                let files = match std::fs::read_dir(path) {
+                    Ok(entries) => entries
+                        .filter_map(|entry| entry.ok())
+                        .map(|entry| entry.path().to_string_lossy().to_string())
+                        .collect::<Vec<String>>(),
+                    Err(e) if e.kind() == ErrorKind::NotFound => vec![],
+                    Err(e) => return Err(format!("Failed to read folder: {e}").into()),
+                };
+
+                let value = json!({ "files": files });
+                Ok(Response::new(value.to_string()))
+            }),
+        }
     }
 
     /// Gets a write request to save the component data for a record. This takes a
@@ -79,8 +99,18 @@ impl Component for FolderComponent {
     ///
     /// The "Article" component will interpret the resulting binary as a markdown
     /// string.
-    fn write(&self, record: &Record, _content: &[u8]) -> Result<(), String> {
-        std::fs::create_dir_all(record.path()).map_err(|e| format!("Failed to create folder: {e}"))
+    fn write(&self, record: &Record, _content: Vec<u8>) -> ComponentAction<()> {
+        let path = record.path();
+
+        ComponentAction::Action {
+            action: Box::new(move || std::fs::create_dir_all(path).map_err(|e| e.into())),
+        }
+    }
+
+    /// Gets a write request to save the component for a record, taking a local file path as
+    /// the copy source. This method returns the following.
+    fn write_from_file(&self, _record: &Record, _source: &PathBuf) -> ComponentAction<()> {
+        ComponentAction::unimplemented("The `Folder` component cannot be copied from a file.")
     }
 
     /// Gets a remove request to delete the folder for a record. The return type
@@ -94,7 +124,11 @@ impl Component for FolderComponent {
     /// that are solely associated with this component.
     ///
     /// The "Folder" component will remove the file "<entity>.md"
-    fn remove(&self, _: &Record) -> Option<Result<(), String>> {
-        None
+    fn remove(&self, record: &Record) -> ComponentAction<()> {
+        let path = record.path();
+
+        ComponentAction::Action {
+            action: Box::new(move || std::fs::remove_dir_all(path).map_err(|e| e.into())),
+        }
     }
 }

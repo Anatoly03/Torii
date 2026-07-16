@@ -2,13 +2,13 @@
 //!
 //! It provides functionality to read article files and handle article-related operations.
 
+use super::{Component, ComponentAction};
 use crate::Record;
-
-use super::Component;
 use std::{io::ErrorKind, path::PathBuf};
 use tauri::ipc::Response;
 
 /// Represents an article component in a Torii project.
+#[derive(Clone, Debug)]
 pub struct ArticleComponent;
 
 impl Component for ArticleComponent {
@@ -22,6 +22,20 @@ impl Component for ArticleComponent {
     /// ```
     fn component_name(&self) -> &str {
         "article"
+    }
+
+    /// Creates a boxed clone of the component.
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// use app_lib::components::{Component, ArticleComponent};
+    /// 
+    /// let article_component = ArticleComponent;
+    /// let cloned_component = article_component.clone_component();
+    /// ```
+    fn clone_component(&self) -> Box<dyn Component> {
+        Box::new(Self)
     }
 
     /// Reads the file path and yields wether the file is associated with the article component.
@@ -59,16 +73,20 @@ impl Component for ArticleComponent {
 
     /// Gets a read request to view the "Article" component data for a record. This returns a
     /// [Response][ipc::Response] containing the markdown string of the article.
-    fn read(&self, record: &Record) -> Result<Response, String> {
+    fn read(&self, record: &Record) -> ComponentAction<Response> {
         let path = record.path().with_extension("md");
 
-        let file = match std::fs::read(path) {
-            Ok(file) => file,
-            Err(e) if e.kind() == ErrorKind::NotFound => vec![],
-            Err(e) => return Err(format!("Failed to read markdown file: {e}")),
-        };
+        ComponentAction::Action {
+            action: Box::new(move || {
+                let file = match std::fs::read(path) {
+                    Ok(file) => file,
+                    Err(e) if e.kind() == ErrorKind::NotFound => vec![],
+                    Err(e) => return Err(format!("Failed to read markdown file: {e}").into()),
+                };
 
-        Ok(Response::new(file))
+                Ok(Response::new(file))
+            }),
+        }
     }
 
     /// Gets a write request to save the component data for a record. This takes a
@@ -76,9 +94,18 @@ impl Component for ArticleComponent {
     ///
     /// The "Article" component will interpret the resulting binary as a markdown
     /// string.
-    fn write(&self, record: &Record, content: &[u8]) -> Result<(), String> {
+    fn write(&self, record: &Record, content: Vec<u8>) -> ComponentAction<()> {
         let path = record.path().with_extension("md");
-        std::fs::write(path, content).map_err(|e| format!("Failed to write markdown file: {e}"))
+
+        ComponentAction::Action {
+            action: Box::new(move || std::fs::write(path, content).map_err(|e| e.into())),
+        }
+    }
+
+    /// Gets a write request to save the component for a record, taking a local file path as
+    /// the copy source. This method returns the following.
+    fn write_from_file(&self, _record: &Record, _source: &PathBuf) -> ComponentAction<()> {
+        ComponentAction::unimplemented("The `Article` component cannot be copied from a file.")
     }
 
     /// Gets a remove request to delete the article for a record. The return type
@@ -92,9 +119,7 @@ impl Component for ArticleComponent {
     /// that are solely associated with this component.
     ///
     /// The "Article" component will remove the file "<entity>.md"
-    fn remove(&self, _: &Record) -> Option<Result<(), String>> {
-        Some(Err(
-            "The article component can not be removed from a record.".to_string(),
-        ))
+    fn remove(&self, _: &Record) -> ComponentAction<()> {
+        ComponentAction::unimplemented("The `Article` component cannot be removed from a record.")
     }
 }

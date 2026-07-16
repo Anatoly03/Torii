@@ -143,9 +143,10 @@ async function loadComponents() {
     if (!currentFile.value) return;
     console.log('Loading components for:', currentFile.value);
 
-    recordComponents.value = await invoke('list_record_components', {
+    const recordComponentsResult = await invoke<any[]>('list_record_components', {
         record: currentFile.value,
     });
+    recordComponents.value = recordComponentsResult.map(c => c.name);
 
     console.log('Components listed:', recordComponents.value);
 }

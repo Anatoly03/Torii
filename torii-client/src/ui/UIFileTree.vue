@@ -72,12 +72,12 @@ async function loadNodes(directory: string): Promise<TreeNode<Record>[]> {
      * @returns A `TreeNode` object representing the record.
      */
     async function mapRecord(record: Record): Promise<TreeNode<Record>> {
-        const components = await invoke<string[]>('list_record_components', {
+        const components = await invoke<any[]>('list_record_components', {
             record,
         });
 
         console.debug(`Components for \`${record.name}\`:`, components);
-        const isFolder = components.some((c) => c === 'folder');
+        const isFolder = components.some((c) => c.name === 'folder');
 
         return {
             value: record,

@@ -80,11 +80,11 @@ The first stage of the project is to create a simple file browser like applicati
 
 -   [x] Implement click for remote URLs
 -   [ ] Fix: Editing renamed file saves to outdated file path.
--   [ ] Fix: Control + click for local file links not working
 -   [ ] Cache all records on start for autocomplete (or scan recursive)
 -   [x] Github CI: `cargo test`
 -   [ ] Rust Refactoring
-    -   [ ] Component methods should be e.g. `remove() -> Option<Fn -> Result>`: None if no action is defined, and it should return a lazy callback.
+    -   [x] Component methods should be e.g. `remove() -> Option<Fn -> Result>`: None if no action is defined, and it should return a lazy callback.
+    -   [x] Refactor `list_record_components` event to yield component permissions
 -   [ ] Breadcrumb Header
 
 ### `v0.0.0-dev9`
@@ -94,6 +94,7 @@ The first stage of the project is to create a simple file browser like applicati
     -   [ ] Edit Mode: Remove: Open URL on link click
     -   [ ] View Mode: Hides placeholder grids and no interaction
     -   [ ] View Mode: Fix: Link should be clickable
+-   [ ] Fix: Control + click for local file links not working.
 
 ### `v0.0.0-dev10`
 

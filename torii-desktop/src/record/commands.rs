@@ -1,7 +1,8 @@
 //! This module defines [tauri] commands associated with the [Record] instance.
 
-use crate::{Component, Record};
+use crate::{Component, Record, components::ComponentAction};
 use base64::{Engine as _, engine::general_purpose};
+use serde_json::{Value, json};
 use std::{io::ErrorKind::NotFound, path::PathBuf};
 use tauri::ipc::Response;
 
@@ -64,14 +65,33 @@ pub fn remove_record(record: Record) -> Result<(), String> {
     Ok(())
 }
 
-/// Lists all components attached to a given record.
+/// Lists all components attached to a given record. This returns
 ///
 /// This is used in the project view to conditionally render only existing
 /// components, and is used in the file tree UI to enable special behaviour
 /// for folders.
 #[tauri::command]
-pub fn list_record_components(record: Record) -> Vec<String> {
-    record.list_components()
+pub fn list_record_components(record: Record) -> Value {
+    record
+        .list_components()
+        .iter()
+        .map(|c| {
+            let can_write = c.write(&record, Vec::new()).is_implemented();
+            let can_write_from_file = c.write_from_file(&record, &PathBuf::new()).is_implemented();
+            let can_read = c.read(&record).is_implemented();
+            let can_remove = c.remove(&record).is_implemented();
+
+            json!({
+                "name": c.component_name(),
+                "permissions": {
+                    "write": can_write,
+                    "write_from_file": can_write_from_file,
+                    "read": can_read,
+                    "remove": can_remove,
+                }
+            })
+        })
+        .collect()
 }
 
 /// Returns the content of a specific component for a given record.
@@ -84,7 +104,7 @@ pub fn get_record_component(
     record: Record,
     component: Box<dyn Component>,
 ) -> Result<Response, String> {
-    component.read(&record)
+    component.read(&record).invoke().map_err(|e| e.to_string())
 }
 
 /// Saves (or creates) a specific component for a given record to the disc
@@ -111,7 +131,10 @@ pub fn save_record_component(
         _ => return Err(format!("Unsupported content type: {content_type}")),
     };
 
-    component.write(&record, &bytes)
+    component
+        .write(&record, bytes)
+        .invoke()
+        .map_err(|e| e.to_string())
 }
 
 /// Saves (or creates) a specific component for a given record to the disc,
@@ -124,12 +147,8 @@ pub fn save_record_component_from_local_file(
 ) -> Result<(), String> {
     component
         .write_from_file(&record, &source)
-        .unwrap_or_else(|| {
-            Err(format!(
-                "Component {} does not support writing from a file.",
-                component.component_name()
-            ))
-        })
+        .invoke()
+        .map_err(|e| e.to_string())
 }
 
 /// Removes a specific component for a given record from the disc.
@@ -140,11 +159,19 @@ pub fn remove_record_component(
     record: Record,
     component: Box<dyn Component>,
 ) -> Result<(), String> {
+    component
+        .remove(&record)
+        .invoke()
+        .map_err(|e| e.to_string())
+
+    /*
     // If the component implements a custom remove method, use it. Otherwise, fall back to the default
     // implementation.
     match component.remove(&record) {
-        Some(result) => return result,
-        None => (),
+        ComponentAction::Unimplemented { .. } => (),
+        ComponentAction::Action { action } => {
+            return action().map_err(|e| e.to_string());
+        }
     };
 
     // Here begins the default component destructor.
@@ -164,4 +191,5 @@ pub fn remove_record_component(
         .collect::<Result<Vec<()>, String>>()?;
 
     Ok(())
+    */
 }

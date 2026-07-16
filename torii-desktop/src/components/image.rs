@@ -2,13 +2,13 @@
 //!
 //! It provides functionality to read image files and handle image-related operations.
 
+use super::{Component, ComponentAction};
 use crate::Record;
-
-use super::Component;
 use std::{io::ErrorKind, path::PathBuf};
 use tauri::ipc::Response;
 
 /// Represents an image component in a Torii project.
+#[derive(Clone, Debug)]
 pub struct ImageComponent {
     component_name: String,
     file_suffix: String,
@@ -34,6 +34,23 @@ impl Component for ImageComponent {
     /// ```
     fn component_name(&self) -> &str {
         &self.component_name
+    }
+
+    /// Creates a boxed clone of the component.
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// use app_lib::components::{Component, ImageComponent};
+    /// 
+    /// let image_component = ImageComponent::new("image", "png");
+    /// let cloned_component = image_component.clone_component();
+    /// 
+    /// assert_eq!(cloned_component.component_name(), "image");
+    /// assert_eq!(cloned_component.is_associated(&std::path::PathBuf::from("Hello World.png")), true);
+    /// ```
+    fn clone_component(&self) -> Box<dyn Component> {
+        Box::new(self.clone())
     }
 
     /// Reads the file path and yields wether the file is associated with the image component.
@@ -72,25 +89,32 @@ impl Component for ImageComponent {
 
     /// Gets a read request to view the "Image" component data for a record. This returns a
     /// [Response][ipc::Response] containing the image data.
-    fn read(&self, record: &Record) -> Result<Response, String> {
+    fn read(&self, record: &Record) -> ComponentAction<Response> {
         let path = record.path().with_extension(&self.file_suffix);
 
-        let file = match std::fs::read(path) {
-            Ok(file) => file,
-            Err(e) if e.kind() == ErrorKind::NotFound => vec![],
-            Err(e) => return Err(format!("Failed to read image file: {e}")),
-        };
+        ComponentAction::Action {
+            action: Box::new(|| {
+                let file = match std::fs::read(path) {
+                    Ok(file) => file,
+                    Err(e) if e.kind() == ErrorKind::NotFound => vec![],
+                    Err(e) => return Err(format!("Failed to read image file: {e}").into()),
+                };
 
-        Ok(Response::new(file))
+                Ok(Response::new(file))
+            }),
+        }
     }
 
     /// Gets a write request to save the component data for a record. This takes a
     /// base64 encoded string representing the binary data to be saved.
     ///
     /// The "Image" component will interpret content as raw byte data.
-    fn write(&self, record: &Record, content: &[u8]) -> Result<(), String> {
+    fn write(&self, record: &Record, content: Vec<u8>) -> ComponentAction<()> {
         let path = record.path().with_extension(&self.file_suffix);
-        std::fs::write(path, content).map_err(|e| format!("Failed to write image file: {e}"))
+
+        ComponentAction::Action {
+            action: Box::new(move || std::fs::write(path, content).map_err(|e| e.into())),
+        }
     }
 
     /// Gets a write request to save the "Image" component for a record, taking a local
@@ -100,11 +124,16 @@ impl Component for ImageComponent {
     /// - [Some(Err)][Some]: The component failed to copy the file to the record's directory.
     ///
     /// The "Image" component will accept a file path and copy the file to the record's directory.
-    fn write_from_file(&self, record: &Record, source: &PathBuf) -> Option<Result<(), String>> {
+    fn write_from_file(&self, record: &Record, source: &PathBuf) -> ComponentAction<()> {
+        let source = source.to_owned();
         let destination = record.path().with_extension(&self.file_suffix);
-        match std::fs::copy(source, &destination) {
-            Ok(_) => Some(Ok(())),
-            Err(e) => Some(Err(format!("Failed to copy image file: {e}"))),
+
+        ComponentAction::Action {
+            action: Box::new(move || {
+                std::fs::copy(source, destination)
+                    .map(|_| ())
+                    .map_err(|e| e.into())
+            }),
         }
     }
 
@@ -119,12 +148,10 @@ impl Component for ImageComponent {
     /// that are solely associated with this component.
     ///
     /// The "Article" component will remove the file "<entity>.md"
-    fn remove(&self, record: &Record) -> Option<Result<(), String>> {
+    fn remove(&self, record: &Record) -> ComponentAction<()> {
         let path = record.path().with_extension(&self.file_suffix);
-        match std::fs::remove_file(&path) {
-            Ok(_) => Some(Ok(())),
-            Err(e) if e.kind() == ErrorKind::NotFound => Some(Ok(())),
-            Err(e) => Some(Err(format!("Failed to remove image file: {e}"))),
+        ComponentAction::Action {
+            action: Box::new(move || std::fs::remove_file(&path).map_err(|e| e.into())),
         }
     }
 }
