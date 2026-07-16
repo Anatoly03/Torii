@@ -2,6 +2,7 @@
 
 use crate::{Component, Record, components::ComponentAction};
 use base64::{Engine as _, engine::general_purpose};
+use serde_json::{Value, json};
 use std::{io::ErrorKind::NotFound, path::PathBuf};
 use tauri::ipc::Response;
 
@@ -64,14 +65,33 @@ pub fn remove_record(record: Record) -> Result<(), String> {
     Ok(())
 }
 
-/// Lists all components attached to a given record.
+/// Lists all components attached to a given record. This returns
 ///
 /// This is used in the project view to conditionally render only existing
 /// components, and is used in the file tree UI to enable special behaviour
 /// for folders.
 #[tauri::command]
-pub fn list_record_components(record: Record) -> Vec<String> {
-    record.list_components()
+pub fn list_record_components(record: Record) -> Value {
+    record
+        .list_components()
+        .iter()
+        .map(|c| {
+            let can_write = c.write(&record, Vec::new()).is_implemented();
+            let can_write_from_file = c.write_from_file(&record, &PathBuf::new()).is_implemented();
+            let can_read = c.read(&record).is_implemented();
+            let can_remove = c.remove(&record).is_implemented();
+
+            json!({
+                "name": c.component_name(),
+                "permissions": {
+                    "write": can_write,
+                    "write_from_file": can_write_from_file,
+                    "read": can_read,
+                    "remove": can_remove,
+                }
+            })
+        })
+        .collect()
 }
 
 /// Returns the content of a specific component for a given record.

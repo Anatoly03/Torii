@@ -8,6 +8,7 @@ use std::{io::ErrorKind, path::PathBuf};
 use tauri::ipc::Response;
 
 /// Represents an image component in a Torii project.
+#[derive(Clone, Debug)]
 pub struct ImageComponent {
     component_name: String,
     file_suffix: String,
@@ -33,6 +34,23 @@ impl Component for ImageComponent {
     /// ```
     fn component_name(&self) -> &str {
         &self.component_name
+    }
+
+    /// Creates a boxed clone of the component.
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// use app_lib::components::{Component, ImageComponent};
+    /// 
+    /// let image_component = ImageComponent::new("image", "png");
+    /// let cloned_component = image_component.clone_component();
+    /// 
+    /// assert_eq!(cloned_component.component_name(), "image");
+    /// assert_eq!(cloned_component.is_associated(&std::path::PathBuf::from("Hello World.png")), true);
+    /// ```
+    fn clone_component(&self) -> Box<dyn Component> {
+        Box::new(self.clone())
     }
 
     /// Reads the file path and yields wether the file is associated with the image component.

@@ -8,6 +8,7 @@ use std::{io::ErrorKind, path::PathBuf};
 use tauri::ipc::Response;
 
 /// Represents an article component in a Torii project.
+#[derive(Clone, Debug)]
 pub struct ArticleComponent;
 
 impl Component for ArticleComponent {
@@ -21,6 +22,20 @@ impl Component for ArticleComponent {
     /// ```
     fn component_name(&self) -> &str {
         "article"
+    }
+
+    /// Creates a boxed clone of the component.
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// use app_lib::components::{Component, ArticleComponent};
+    /// 
+    /// let article_component = ArticleComponent;
+    /// let cloned_component = article_component.clone_component();
+    /// ```
+    fn clone_component(&self) -> Box<dyn Component> {
+        Box::new(Self)
     }
 
     /// Reads the file path and yields wether the file is associated with the article component.

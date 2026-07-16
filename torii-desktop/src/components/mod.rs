@@ -18,6 +18,12 @@ pub trait Component {
     /// Retrieves the name of the component. Examples includes "article" and "image".
     fn component_name(&self) -> &str;
 
+    /// Creates a boxed clone of the component.
+    /// 
+    /// The standard library [Clone] trait is not used here because it implements [Sized]
+    /// bound. The syntax `trait Component: Clone` would therefore not be object safe.
+    fn clone_component(&self) -> Box<dyn Component + 'static>;
+
     /// Reads the file path and yields whether the file is associated with this component.
     ///
     /// A file can be associated with multiple components, and multiple components can

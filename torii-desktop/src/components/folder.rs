@@ -9,6 +9,7 @@ use std::{io::ErrorKind, path::PathBuf};
 use tauri::ipc::Response;
 
 /// Represents a folder component in a Torii project.
+#[derive(Clone, Debug)]
 pub struct FolderComponent;
 
 impl Component for FolderComponent {
@@ -22,6 +23,20 @@ impl Component for FolderComponent {
     /// ```
     fn component_name(&self) -> &str {
         "folder"
+    }
+
+    /// Creates a boxed clone of the component.
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// use app_lib::components::{Component, FolderComponent};
+    /// 
+    /// let folder_component = FolderComponent;
+    /// let cloned_component = folder_component.clone_component();
+    /// ```
+    fn clone_component(&self) -> Box<dyn Component> {
+        Box::new(Self)
     }
 
     /// Reads the file path and yields wether the file is associated with the folder component.

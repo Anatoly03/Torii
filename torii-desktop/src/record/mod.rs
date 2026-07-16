@@ -265,12 +265,14 @@ impl Record {
     /// assert!(!components.contains(&"banner".to_string()));
     /// assert!(!components.contains(&"folder".to_string()));
     /// ```
-    pub fn list_components(&self) -> Vec<String> {
+    pub fn list_components(&self) -> Vec<Box<dyn Component>> {
         get_all_components()
             .iter()
-            .filter_map(|comp| match self.has_component(comp) {
-                true => Some(comp.component_name().to_string()),
-                false => None,
+            .filter_map(|comp| -> Option<Box<dyn Component>> {
+                match self.has_component(comp) {
+                    true => Some(comp.clone_component()),
+                    false => None,
+                }
             })
             .collect()
     }
