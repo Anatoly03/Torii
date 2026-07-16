@@ -163,6 +163,10 @@ async function renameRecord(node: TreeNode<Record>, newLabel: string) {
     const record = node.value;
     if (!record) return;
 
+    // Wether the current record is "active", meaning we currently view
+    // it in the editor.
+    const isActive = selectedKeys.value.includes(record.path);
+
     const newRelativePathSlice = record.relative_path.split('/');
     /* const _oldName = */ newRelativePathSlice.pop();
     newRelativePathSlice.push(newLabel);
@@ -173,6 +177,16 @@ async function renameRecord(node: TreeNode<Record>, newLabel: string) {
         record,
         newName: newRelativePath,
     });
+
+    // If the current record is active, update the "selected key" to the new
+    // record's path.
+    if (isActive) {
+        const selectedIndex = selectedKeys.value.indexOf(record.path);
+        if (selectedIndex !== -1) {
+            selectedKeys.value[selectedIndex] = newRecord.path;
+            emit('update:current-file', newRecord);
+        }
+    }
 
     console.log(`Renamed record \`${record.name}\` to \`${newRecord.name}\``);
     await refresh();
