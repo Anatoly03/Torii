@@ -124,7 +124,11 @@ impl Component for FolderComponent {
     /// that are solely associated with this component.
     ///
     /// The "Folder" component will remove the file "<entity>.md"
-    fn remove(&self, _record: &Record) -> ComponentAction<()> {
-        ComponentAction::unimplemented("The `Folder` component cannot be removed from a record.")
+    fn remove(&self, record: &Record) -> ComponentAction<()> {
+        let path = record.path();
+
+        ComponentAction::Action {
+            action: Box::new(move || std::fs::remove_dir_all(path).map_err(|e| e.into())),
+        }
     }
 }
