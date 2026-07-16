@@ -2,9 +2,7 @@
 
 -   [x] Verify the continuous integration works and can build artefacts.
 
-# Hajime 始め
-
-### `v0.0.0-dev2` [COMPLETED]
+### `v0.0.0-dev2` Hajime 始め [COMPLETED]
 
 The first stage of the project is to create a simple file browser like application with tools to create and manage markdown notes.
 
@@ -79,14 +77,16 @@ The first stage of the project is to create a simple file browser like applicati
 ### `v0.0.0-dev8` [CURRENT]
 
 -   [x] Implement click for remote URLs
--   [ ] Fix: Editing renamed file saves to outdated file path.
+-   [x] Fix: Editing renamed file saves to outdated file path.
 -   [ ] Cache all records on start for autocomplete (or scan recursive)
 -   [x] Github CI: `cargo test`
--   [x] Rust Refactoring
+-   [ ] Rust Refactoring
     -   [x] Component methods should be e.g. `remove() -> Option<Fn -> Result>`: None if no action is defined, and it should return a lazy callback.
     -   [x] Refactor `list_record_components` event to yield component permissions
+    -   [ ] Implement Rust path normalization in workspace and record
 -   [ ] Breadcrumb Header
 -   [x] Add Record search (filter records by search pattern)
+-   [x] Set up branch protection rules (block force pushes)
 
 ### `v0.0.0-dev9`
 
@@ -180,10 +180,9 @@ The first stage of the project is to create a simple file browser like applicati
 -   [ ] Add project icon
 -   [ ] FULLY COVERED CODE REVIEW BEFORE FIRST RELEASE
 -   [ ] Full Code Documentation
+-   [ ] Enable "Require PR before merging" to branch protection rules (require approvals)
 
-# Daiishi 台石
-
-### `v0.0.1`
+### `v0.0.1` Daiishi 台石
 
 -   [ ] Add support for [automatic updates](https://v2.tauri.app/plugin/updater/)
 
