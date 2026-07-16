@@ -82,10 +82,11 @@ The first stage of the project is to create a simple file browser like applicati
 -   [ ] Fix: Editing renamed file saves to outdated file path.
 -   [ ] Cache all records on start for autocomplete (or scan recursive)
 -   [x] Github CI: `cargo test`
--   [ ] Rust Refactoring
+-   [x] Rust Refactoring
     -   [x] Component methods should be e.g. `remove() -> Option<Fn -> Result>`: None if no action is defined, and it should return a lazy callback.
     -   [x] Refactor `list_record_components` event to yield component permissions
 -   [ ] Breadcrumb Header
+-   [ ] Add Record search (filter records by search pattern)
 
 ### `v0.0.0-dev9`
 
@@ -118,7 +119,6 @@ The first stage of the project is to create a simple file browser like applicati
 ### `v0.0.0-dev12`
 
 -   [ ] Define CSS variables, modularize CSS
--   [ ] Add Record search (filter records by search pattern)
 -   [ ] Add UX to move banner offset in edit mode. (scroll, zoom)
 
 ### `v0.0.0-dev13`

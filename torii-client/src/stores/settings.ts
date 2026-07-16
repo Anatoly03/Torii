@@ -24,95 +24,97 @@ export async function loadSettings() {
 }
 
 /**
+ * @brief Unlisteners for the event listeners. These will be called when the store is destroyed.
+ */
+const unlisteners: (() => void)[] = [];
+
+/**
+ * @brief Creates a reactive setting with a default value and
+ * sets up synchronization with the backend.
+ */
+function createSetting<T>(name: string, defaultValue: T) {
+    if (!store) {
+        throw new Error('Settings store is not loaded. Call loadSettings() first.');
+    }
+
+    const setting = ref<T>(defaultValue);
+
+    let skipEmits = 0;
+
+    // Load the initial value from the store if available.
+    store.get(name).then((value) => {
+        console.log(`Loaded setting ${name} from store:`, value);
+
+        if (value === undefined) return;
+        setting.value = value as T;
+
+        console.log(`Setting ${name} initialized to:`, setting.value);
+    });
+
+    // Listen for changes from the backend and update the setting.
+    listen(`update:setting:${name}`, (event: any) => {
+        console.log(
+            `Received update for setting ${name} from backend:`,
+            event.payload
+        );
+
+        const source: string = event.payload.source;
+        const value: T = event.payload.value;
+
+        // Ignore updates from the same window to prevent feedback loops.
+        if (source === currentWindowId) return;
+
+        if (setting.value === value) return;
+
+        // Prevent emitting an update back to the backend when we update the setting.
+        skipEmits += 1;
+        setting.value = value;
+    }).then((unlisten) => unlisteners.push(unlisten));
+
+    // Watch for changes in the setting and emit an event to the backend.
+    watch(setting, (newValue) => {
+        console.log(
+            `Setting ${name} changed to:`,
+            newValue,
+            'with skip emits:',
+            skipEmits,
+            'and store:',
+            store
+        );
+
+        // Prevent emitting an update back to the backend when we update the setting
+        // from an external source.
+        if (skipEmits > 0) {
+            skipEmits -= 1;
+            return;
+        }
+
+        emit(`update:setting:${name}`, {
+            source: currentWindowId,
+            value: newValue,
+        });
+
+        if (store) {
+            store.set(name, newValue);
+            store.save();
+        }
+    });
+
+    return setting;
+}
+
+/**
  * @brief Pinia Store for the Torii client application. This
  */
 export const useSettingsStore = defineStore('settings', () => {
-    const unlisteners: (() => void)[] = [];
-
-    /**
-     * @brief Creates a reactive setting with a default value and
-     * sets up synchronization with the backend.
-     */
-    function createSetting<T>(name: string, defaultValue: T) {
-        const setting = ref<T>(defaultValue);
-
-        let skipEmits = 0;
-
-        // Load the initial value from the store if available.
-        store?.get(name).then((value) => {
-            console.log(`Loaded setting ${name} from store:`, value);
-
-            if (value === undefined) return;
-            setting.value = value as T;
-
-            console.log(`Setting ${name} initialized to:`, setting.value);
-        });
-
-        // Listen for changes from the backend and update the setting.
-        listen(`update:setting:${name}`, (event: any) => {
-            console.log(
-                `Received update for setting ${name} from backend:`,
-                event.payload
-            );
-
-            const source: string = event.payload.source;
-            const value: T = event.payload.value;
-
-            // Ignore updates from the same window to prevent feedback loops.
-            if (source === currentWindowId) return;
-
-            if (setting.value === value) return;
-
-            // Prevent emitting an update back to the backend when we update the setting.
-            skipEmits += 1;
-            setting.value = value;
-        }).then((unlisten) => unlisteners.push(unlisten));
-
-        // Watch for changes in the setting and emit an event to the backend.
-        watch(setting, (newValue) => {
-            console.log(
-                `Setting ${name} changed to:`,
-                newValue,
-                'with skip emits:',
-                skipEmits,
-                'and store:',
-                store
-            );
-
-            // Prevent emitting an update back to the backend when we update the setting
-            // from an external source.
-            if (skipEmits > 0) {
-                skipEmits -= 1;
-                return;
-            }
-
-            emit(`update:setting:${name}`, {
-                source: currentWindowId,
-                value: newValue,
-            });
-
-            if (store) {
-                store.set(name, newValue);
-                store.save();
-            }
-        });
-
-        return setting;
-    }
-
-    //
-    // SETTINGS
-    //
     /**
      * @brief Enables the word count in the footer of a project.
      */
     const enableWordCount = createSetting('enableWordCount', false);
 
-    //
-    // END SETTINGS
-    //
-
-    // Cleanup listeners when store is destroyed (window closes)
+    /**
+     * Cleanup listeners when store is destroyed (window closes)
+     */
     onScopeDispose(() => {
         unlisteners.forEach((fn) => fn());
     });
