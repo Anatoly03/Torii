@@ -85,6 +85,7 @@ The first stage of the project is to create a simple file browser like applicati
 -   [x] Github CI: `cargo test`
 -   [ ] Rust Refactoring
     -   [x] Component methods should be e.g. `remove() -> Option<Fn -> Result>`: None if no action is defined, and it should return a lazy callback.
+    -   [x] Refactor `list_record_components` event to yield component permissions
 -   [ ] Breadcrumb Header
 
 ### `v0.0.0-dev9`
