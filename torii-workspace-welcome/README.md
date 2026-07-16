@@ -9,7 +9,7 @@ Like a [Japanese Torii](https://en.wikipedia.org/wiki/Torii) gate, the idea for 
 The following is a list of all features currently possible in Torii. If you have added new features, feel free to edit this list.
 
 - View, (Create) Open &amp; Unlink Recent Projects
-- View, Create, Rename &amp; Remove Records
+- View, Search (Filter), Create, Rename &amp; Remove Records
 - View &amp; Edit Markdown Components (`.md`)
 - Add, View &amp; Delete Image Component (`.png`)
 - Add, View &amp; Delete Image Banner Component (`.banner.png`)
