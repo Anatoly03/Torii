@@ -42,6 +42,7 @@ import { Record } from 'types';
 const props = defineProps<{
     record: Record;
     // placeholder: boolean;
+    autocompleteStart: () => Promise<void>;
     autocompleteSuggestion: (name: string) => Promise<SuggestionItem[]>;
 }>();
 
@@ -64,9 +65,11 @@ const editor = new Editor({
         TaskList,
         TaskItem,
         AutocompleteExtension.configure({
+            cache: async () => {
+                return props.autocompleteStart();
+            },
             suggest: async (name: string) => {
-                const suggestions = await props.autocompleteSuggestion(name);
-                return suggestions;
+                return props.autocompleteSuggestion(name);
             },
             replace: (item) => ({
                 type: 'text',

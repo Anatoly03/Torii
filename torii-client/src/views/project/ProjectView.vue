@@ -69,6 +69,7 @@
                     ref="markdownEditor"
                     v-model:word-count="wordCount"
                     :record="currentFile"
+                    :autocomplete-start="autocompleteStart"
                     :autocomplete-suggestion="(v) => autocompleteMarkdown(v)"
                     :placeholder="!recordComponents.includes('article')"
                     @open-file="openFile"
@@ -116,6 +117,7 @@ const recordComponents = ref<string[]>([]);
 const fileTree = ref<InstanceType<typeof UIFileTree> | null>(null);
 const markdownEditor = ref<InstanceType<typeof MarkdownEditor> | null>(null);
 const records = ref<Record[]>([]);
+const autocompleteCache = ref<Record[]>([]);
 const wordCount = ref<number | undefined>(undefined);
 
 onMounted(async () => {
@@ -223,18 +225,27 @@ function listRecords(attrs: {
     });
 }
 
-async function autocompleteMarkdown(name: string): Promise<any> {
-    if (!currentFile.value) return [];
-
+/**
+ * On autocomplete popup creation, cache all records.
+ */
+async function autocompleteStart() {
     const suggestions = await listRecords({
         directory: '',
         recursive: true,
-        filter: name,
     });
+    autocompleteCache.value = suggestions;
+}
 
-    return suggestions
+/**
+ * Filter caches records by name and return them as autocomplete suggestions.
+ * @param name The name to filter records by.
+ */
+async function autocompleteMarkdown(filter: string): Promise<any> {
+    if (!currentFile.value) return [];
+
+    return autocompleteCache.value
         .filter((record) => {
-            return record.name.toLowerCase()?.startsWith(name.toLowerCase());
+            return record.name.toLowerCase()?.startsWith(filter.toLowerCase());
         })
         .map((record) => {
             // In order to generate a "proper" relative link for value, we nee to first find

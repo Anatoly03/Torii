@@ -22,6 +22,12 @@ export type SuggestionItem = {
 
 export type AutocompleteOptions = {
     /**
+     * Called everytime the popup is opened to fetch the list of suggestions. This
+     * is used to cache the suggestions.
+     */
+    cache: () => Promise<void>;
+
+    /**
      * Called with the current text before cursor if a suggestion is needed.
      * @param text
      * @returns A promise that resolves to an array of suggestions or null/empty
@@ -101,7 +107,10 @@ function triggerAutocomplete(
             // Delete the token before the cursor.
             commands.deleteRange({ from: rangeFrom, to: rangeTo });
 
-            console.debug('[autocomplete] Autocompleting', `Replace \`${token}\` with \`[${item.label}](${item.value})\``);
+            console.debug(
+                '[autocomplete] Autocompleting',
+                `Replace \`${token}\` with \`[${item.label}](${item.value})\``
+            );
 
             // Insert the selected suggestion into the editor.
             commands.insertContent([
@@ -138,7 +147,10 @@ export const ProsemirrorAutocompleteExtension = (
         key: new PluginKey('autocomplete'),
         view: (editorView) => {
             return {
-                update: (_editorView: EditorView, _prevState: EditorState) => {
+                update: async (
+                    _editorView: EditorView,
+                    _prevState: EditorState
+                ) => {
                     // We only apply the autocomplete logic within one element of the editor.
                     //
                     // For example `<a href="#">hel</a>lo` with the cursor at the end will autocomplete
@@ -169,16 +181,22 @@ export const ProsemirrorAutocompleteExtension = (
                         return;
                     }
 
-                    // Get the suggestions for the current text before the cursor.
-                    options.suggest(token).then((suggestions) => {
-                        // If we can't find the popup component, we can't show the suggestions.
-                        if (!options.popup?.value) return;
+                    // If the popup is currently hidden, we need to cache the
+                    // suggestions before showing the popup.
+                    if (!options.popup?.value?.isVisible()) {
+                        await options.cache();
+                    }
 
-                        // Get the list of suggestions and propagate them to the
-                        // autocomplete popup component.
-                        options.popup.value.setSuggestions(suggestions ?? []);
-                        options.popup.value.show();
-                    });
+                    // Get the suggestions for the current text before the cursor.
+                    const suggestions = await options.suggest(token);
+
+                    // If we can't find the popup component, we can't show the suggestions.
+                    if (!options.popup?.value) return;
+
+                    // Get the list of suggestions and propagate them to the
+                    // autocomplete popup component.
+                    options.popup.value.setSuggestions(suggestions ?? []);
+                    options.popup.value.show();
                 },
                 destroy: () => {
                     // TODO
@@ -192,7 +210,8 @@ export const AutocompleteExtension = Extension.create<AutocompleteOptions>({
 
     addOptions() {
         return {
-            suggest: async () => {
+            cache: async () => {},
+            suggest: async (_t) => {
                 console.warn('Autocomplete suggest function not set.');
                 return [];
             },

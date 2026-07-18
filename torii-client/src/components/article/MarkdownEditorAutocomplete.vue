@@ -55,6 +55,10 @@ async function hide() {
     visible.value = false;
 }
 
+function isVisible() {
+    return visible.value;
+}
+
 function onKeyDown(event: KeyboardEvent) {
     if (!visible.value || items.value.length === 0) return;
 
@@ -121,6 +125,7 @@ defineExpose({
     show,
     hide,
     setSuggestions,
+    isVisible,
 });
 </script>
 
