@@ -80,18 +80,25 @@
                 />
             </div>
             <div class="view-project-footer">
-                <span class="view-record-word-count">
-                    {{ $t('app.project.wordCount', { count: wordCount }) }}
-                </span>
-                <span class="view-mode">
-                    <UISelect
-                        :options="[
-                            { label: 'Edit', value: 'edit' },
-                            { label: 'Preview', value: 'preview' },
-                        ]"
-                        v-model="settings.viewMode"
-                    />
-                </span>
+                <div class="view-project-footer-left">
+                    <span
+                        class="view-record-word-count"
+                        v-if="settings.enableWordCount"
+                    >
+                        {{ $t('app.project.wordCount', { count: wordCount }) }}
+                    </span>
+                </div>
+                <div class="view-project-footer-right">
+                    <span class="view-mode">
+                        <UISelect
+                            :options="[
+                                { label: 'Edit', value: 'edit' },
+                                { label: 'Preview', value: 'preview' },
+                            ]"
+                            v-model="settings.viewMode"
+                        />
+                    </span>
+                </div>
             </div>
         </div>
     </div>
@@ -419,10 +426,18 @@ if (!projectPath) {
     .view-project-footer {
         display: flex;
         flex-direction: row;
-        align-items: center;
+        // align-items: center;
         justify-content: space-between;
         padding: 8px;
         border-top: 1px solid #ccc;
+
+        .view-project-footer-left {
+            align-self: flex-start;
+        }
+
+        .view-project-footer-right {
+            align-self: flex-end;
+        }
     }
 }
 </style>
