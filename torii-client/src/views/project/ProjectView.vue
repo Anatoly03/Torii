@@ -53,7 +53,7 @@
                     :placeholder-text="$t('app.project.bannerPlaceholder')"
                     placeholder-anchor="left"
                     class="view-project-banner"
-                    :view-mode="projectViewMode"
+                    :view-mode="settings.viewMode"
                     @refresh="loadComponents()"
                     v-if="currentFile"
                 />
@@ -63,7 +63,7 @@
                     component="image"
                     placeholder-anchor="center"
                     class="view-project-image"
-                    :view-mode="projectViewMode"
+                    :view-mode="settings.viewMode"
                     @refresh="loadComponents()"
                     v-if="currentFile"
                 />
@@ -74,7 +74,7 @@
                     :autocomplete-start="autocompleteStart"
                     :autocomplete-suggestion="(v) => autocompleteMarkdown(v)"
                     :placeholder="!recordComponents.includes('article')"
-                    :view-mode="projectViewMode"
+                    :view-mode="settings.viewMode"
                     @open-file="openFile"
                     v-if="currentFile"
                 />
@@ -89,7 +89,7 @@
                             { label: 'Edit', value: 'edit' },
                             { label: 'Preview', value: 'preview' },
                         ]"
-                        v-model="projectViewMode"
+                        v-model="settings.viewMode"
                     />
                 </span>
             </div>
@@ -132,7 +132,6 @@ const markdownEditor = ref<InstanceType<typeof MarkdownEditor> | null>(null);
 const records = ref<Record[]>([]);
 const autocompleteCache = ref<Record[]>([]);
 const wordCount = ref<number | undefined>(undefined);
-const projectViewMode = ref<'edit' | 'preview'>('edit');
 
 onMounted(async () => {
     const nodes = await fileTree.value?.getFiles();
@@ -385,6 +384,11 @@ if (!projectPath) {
             height: 176px;
             border-bottom: 2px dashed #ccc;
             overflow: hidden;
+
+            &.disabled {
+                pointer-events: none;
+                border: none;
+            }
         }
 
         .view-project-image {
@@ -396,6 +400,11 @@ if (!projectPath) {
             border-radius: 8px;
             margin: 16px;
             background-color: #fafafaaa;
+
+            &.disabled {
+                pointer-events: none;
+                border: none;
+            }
         }
     }
 
