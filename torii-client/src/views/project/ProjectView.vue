@@ -388,6 +388,10 @@ if (!projectPath) {
             &.disabled {
                 pointer-events: none;
                 border: none;
+
+                &.no-content {
+                    display: none;
+                }
             }
         }
 
@@ -404,6 +408,10 @@ if (!projectPath) {
             &.disabled {
                 pointer-events: none;
                 border: none;
+
+                &.no-content {
+                    display: none;
+                }
             }
         }
     }

@@ -1,6 +1,7 @@
 <template>
     <UIDropRegion
         class="file-editor-image"
+        :class="{'no-content': !imageBlob}"
         :disabled="viewMode === 'preview'"
         @drop-url="loadImageFromURL"
         @drop-local-path="loadImageFromFilePath"

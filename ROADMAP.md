@@ -90,11 +90,12 @@ The first stage of the project is to create a simple file browser like applicati
 ### `v0.0.0-dev9` [NEXT]
 
 -   [ ] Breadcrumb Header
--   [ ] Expand Footer with Edit and View mode.
+-   [x] Expand Footer with Edit and View mode.
     -   [ ] Edit Mode: WYSIWYG if provided, allows to edit article, drag and drop
     -   [ ] Edit Mode: Remove: Open URL on link click
     -   [ ] View Mode: Hides placeholder grids and no interaction
     -   [ ] View Mode: Fix: Link should be clickable
+    -   [ ] View Mode: Fix layout/ spacing when image or banner is gone.
 -   [ ] Fix: Control + click for local file links not working.
 -   [ ] Implement Rust path normalization in workspace and record
 
