@@ -76,6 +76,7 @@ The first stage of the project is to create a simple file browser like applicati
 
 ### `v0.0.0-dev8` [CURRENT]
 
+-   [x] Add `.vscode` launch configuration
 -   [x] Implement click for remote URLs
 -   [x] Fix: Editing renamed file saves to outdated file path.
 -   [ ] Cache all records on start for autocomplete (or scan recursive)
