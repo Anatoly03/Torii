@@ -11,7 +11,7 @@
         }"
         :draggable="props.draggable"
         @dragstart="onDrag"
-        @dragenter.prevent="isDragOver = true"
+        @dragenter.prevent="!props.disabled && (isDragOver = true)"
         @dragleave.prevent="isDragOver = false"
         @drop="onDrop"
     >
@@ -29,7 +29,8 @@ const isDragOver = ref(false);
 
 const props = defineProps<{
     /**
-     * Disables the drop region. When disabled, the drop region will not respond to drag and drop events.
+     * Disables the drop region. When disabled, the drop region will not respond to drop events. This does
+     * not prevent the drop region from being draggable, if {@link draggable} is set to true.
      */
     disabled?: boolean;
 
@@ -214,6 +215,8 @@ function setDragData(event: DragEvent) {
  * @param event - The drag event that triggered the drop.
  */
 function onDrop(event: DragEvent) {
+    if (props.disabled) return;
+
     event.preventDefault();
     isDragOver.value = false;
     // isUnimplementedDragover.value = false;
