@@ -53,6 +53,7 @@
                     :placeholder-text="$t('app.project.bannerPlaceholder')"
                     placeholder-anchor="left"
                     class="view-project-banner"
+                    :view-mode="settings.viewMode"
                     @refresh="loadComponents()"
                     v-if="currentFile"
                 />
@@ -62,31 +63,58 @@
                     component="image"
                     placeholder-anchor="center"
                     class="view-project-image"
+                    :view-mode="settings.viewMode"
                     @refresh="loadComponents()"
                     v-if="currentFile"
                 />
-                <MarkdownEditor
-                    ref="markdownEditor"
-                    v-model:word-count="wordCount"
-                    :record="currentFile"
-                    :autocomplete-start="autocompleteStart"
-                    :autocomplete-suggestion="(v) => autocompleteMarkdown(v)"
-                    :placeholder="!recordComponents.includes('article')"
-                    @open-file="openFile"
-                    v-if="currentFile"
-                />
+                <div
+                    class="view-project-content-body"
+                    :style="{
+                        paddingTop: needsExtraPadding ? '176px' : '0',
+                    }"
+                >
+                    <MarkdownEditor
+                        ref="markdownEditor"
+                        v-model:word-count="wordCount"
+                        :record="currentFile"
+                        :autocomplete-start="autocompleteStart"
+                        :autocomplete-suggestion="
+                            (v) => autocompleteMarkdown(v)
+                        "
+                        :placeholder="!recordComponents.includes('article')"
+                        :view-mode="settings.viewMode"
+                        @open-file="openFile"
+                        v-if="currentFile"
+                    />
+                </div>
             </div>
-            <div class="view-project-footer" v-if="settings.enableWordCount">
-                <span class="view-record-word-count">
-                    {{ $t('app.project.wordCount', { count: wordCount }) }}
-                </span>
+            <div class="view-project-footer">
+                <div class="view-project-footer-left">
+                    <span
+                        class="view-record-word-count"
+                        v-if="settings.enableWordCount"
+                    >
+                        {{ $t('app.project.wordCount', { count: wordCount }) }}
+                    </span>
+                </div>
+                <div class="view-project-footer-right">
+                    <span class="view-mode">
+                        <UISelect
+                            :options="[
+                                { label: 'Edit', value: 'edit' },
+                                { label: 'Preview', value: 'preview' },
+                            ]"
+                            v-model="settings.viewMode"
+                        />
+                    </span>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { invoke } from '@tauri-apps/api/core';
 import { Icon } from '@vicons/utils';
@@ -103,6 +131,7 @@ import MarkdownEditor from '../../components/article/MarkdownEditor.vue';
 import ImageEditor from '../../components/image/ImageEditor.vue';
 import { Record } from 'types';
 import UIFileTree from '@/ui/UIFileTree.vue';
+import UISelect from '@/ui/UISelect.vue';
 import { TreeNode } from 'ui/UITree.vue';
 
 const route = useRoute();
@@ -119,6 +148,13 @@ const markdownEditor = ref<InstanceType<typeof MarkdownEditor> | null>(null);
 const records = ref<Record[]>([]);
 const autocompleteCache = ref<Record[]>([]);
 const wordCount = ref<number | undefined>(undefined);
+
+const needsExtraPadding = computed(() => {
+    return (
+        recordComponents.value.includes('banner') &&
+        !recordComponents.value.includes('image')
+    );
+});
 
 onMounted(async () => {
     const nodes = await fileTree.value?.getFiles();
@@ -371,27 +407,59 @@ if (!projectPath) {
             height: 176px;
             border-bottom: 2px dashed #ccc;
             overflow: hidden;
+
+            &.disabled {
+                pointer-events: none;
+                border: none;
+
+                &.no-content {
+                    display: none;
+                }
+            }
         }
 
         .view-project-image {
             position: relative;
             min-width: 200px;
             min-height: 200px;
+            max-width: 200px;
+            max-height: 200px;
             z-index: 10;
             border: 2px dashed #ccc;
             border-radius: 8px;
             margin: 16px;
             background-color: #fafafaaa;
+
+            &.disabled {
+                pointer-events: none;
+                border: none;
+
+                &.no-content {
+                    display: none;
+                }
+            }
         }
+    }
+
+    .view-project-content-body {
+        width: 100%;
     }
 
     .view-project-footer {
         display: flex;
         flex-direction: row;
-        align-items: center;
-        justify-content: start;
+        // align-items: center;
+        justify-content: space-between;
         padding: 8px;
         border-top: 1px solid #ccc;
+
+        .view-project-footer-left {
+            align-self: flex-start;
+        }
+
+        .view-project-footer-right {
+            align-self: flex-end;
+        }
     }
 }
 </style>

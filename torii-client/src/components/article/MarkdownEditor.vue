@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { invoke } from '@tauri-apps/api/core';
 import { Editor, EditorContent } from '@tiptap/vue-3';
 import { Markdown } from '@tiptap/markdown';
@@ -42,6 +42,7 @@ import { Record } from 'types';
 const props = defineProps<{
     record: Record;
     // placeholder: boolean;
+    viewMode?: 'edit' | 'preview';
     autocompleteStart: () => Promise<void>;
     autocompleteSuggestion: (name: string) => Promise<SuggestionItem[]>;
 }>();
@@ -56,6 +57,7 @@ const autocompletePopup = ref<InstanceType<
 > | null>(null);
 
 const suggestions = ref<SuggestionItem[]>([]);
+const viewMode = computed(() => props.viewMode || 'edit');
 
 const ignoreFirstSave = ref(true);
 const editor = new Editor({
@@ -99,6 +101,18 @@ const editor = new Editor({
         updateWordCount();
     },
 });
+
+watch(
+    () => viewMode.value,
+    (newMode) => {
+        if (newMode === 'preview') {
+            editor.setEditable(false);
+        } else {
+            editor.setEditable(true);
+        }
+    },
+    { immediate: true }
+);
 
 /**
  * Handles control+click

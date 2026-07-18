@@ -1,6 +1,8 @@
 <template>
     <UIDropRegion
         class="file-editor-image"
+        :class="{'no-content': !imageBlob}"
+        :disabled="viewMode === 'preview'"
         @drop-url="loadImageFromURL"
         @drop-local-path="loadImageFromFilePath"
         @drop-files="loadImageFromFiles"
@@ -14,6 +16,7 @@
                     alt="Image Preview"
                 />
                 <button
+                    v-if="viewMode === 'edit'"
                     class="delete-btn"
                     @click="removeImage"
                     title="Delete image"
@@ -24,7 +27,7 @@
                 </button>
             </div>
             <div
-                v-else
+                v-else-if="viewMode === 'edit'"
                 class="image-placeholder"
                 :class="{
                     ['image-placeholder-' + props.placeholderAnchor]:
@@ -56,6 +59,7 @@ const props = defineProps<{
     component: string;
     placeholderText?: string;
     placeholderAnchor: 'top' | 'bottom' | 'left' | 'right' | 'center';
+    viewMode?: 'edit' | 'preview';
 }>();
 
 const emit = defineEmits<{
@@ -73,6 +77,7 @@ const imageData = ref<Uint8Array | null>(null);
 const imageBlob = ref<string | null>(null);
 const loading = ref(0);
 const isDragOver = ref(false);
+const viewMode = computed(() => props.viewMode ?? 'edit');
 
 function createImageUrl(bytes: Uint8Array, mimeType = 'image/png'): string {
     const blob = new Blob([bytes], { type: mimeType });
@@ -209,6 +214,8 @@ async function loadImageFromFilePath(source: string) {
  * dialog and select image.
  */
 async function onImageClick(_event: MouseEvent) {
+    if (viewMode.value === 'preview') return;
+
     const path = await openFileDialog();
     if (!path) return;
 
@@ -260,7 +267,7 @@ onUnmounted(async () => {
     aspect-ratio: 1 / 1;
     overflow: hidden;
 
-    &:not(.has-image) {
+    &:not(.has-image):not(.disabled) {
         cursor: pointer;
     }
 

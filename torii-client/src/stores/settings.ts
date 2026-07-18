@@ -34,7 +34,9 @@ const unlisteners: (() => void)[] = [];
  */
 function createSetting<T>(name: string, defaultValue: T) {
     if (!store) {
-        throw new Error('Settings store is not loaded. Call loadSettings() first.');
+        throw new Error(
+            'Settings store is not loaded. Call loadSettings() first.'
+        );
     }
 
     const setting = ref<T>(defaultValue);
@@ -110,6 +112,14 @@ export const useSettingsStore = defineStore('settings', () => {
     /**
      * @brief Enables the word count in the footer of a project.
      */
+    const viewMode = createSetting<'edit' | 'preview' | 'source'>(
+        'viewMode',
+        'edit'
+    );
+
+    /**
+     * @brief Enables the word count in the footer of a project.
+     */
     const enableWordCount = createSetting('enableWordCount', false);
 
     /**
@@ -119,5 +129,5 @@ export const useSettingsStore = defineStore('settings', () => {
         unlisteners.forEach((fn) => fn());
     });
 
-    return { enableWordCount };
+    return { viewMode, enableWordCount };
 });

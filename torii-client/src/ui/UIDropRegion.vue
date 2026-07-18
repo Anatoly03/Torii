@@ -6,11 +6,12 @@
         class="ui-drop-region"
         :class="{
             'drag-over': isDragOver,
+            'disabled': props.disabled,
             // 'drag-over-invalid': isUnimplementedDragover,
         }"
         :draggable="props.draggable"
         @dragstart="onDrag"
-        @dragenter.prevent="isDragOver = true"
+        @dragenter.prevent="!props.disabled && (isDragOver = true)"
         @dragleave.prevent="isDragOver = false"
         @drop="onDrop"
     >
@@ -27,6 +28,12 @@ const isDragOver = ref(false);
 // const isUnimplementedDragover = ref(false);
 
 const props = defineProps<{
+    /**
+     * Disables the drop region. When disabled, the drop region will not respond to drop events. This does
+     * not prevent the drop region from being draggable, if {@link draggable} is set to true.
+     */
+    disabled?: boolean;
+
     /**
      * Makes the drop region draggable. This is useful for in-app drag and drop
      * operations.
@@ -208,6 +215,8 @@ function setDragData(event: DragEvent) {
  * @param event - The drag event that triggered the drop.
  */
 function onDrop(event: DragEvent) {
+    if (props.disabled) return;
+
     event.preventDefault();
     isDragOver.value = false;
     // isUnimplementedDragover.value = false;
@@ -370,7 +379,7 @@ function onDropHtmlUrl(element: HTMLAnchorElement): boolean {
 
 <style lang="scss" scoped>
 .ui-drop-region {
-    &.drag-over:not(.drag-over-invalid) {
+    &.drag-over:not(.drag-over-invalid):not(.disabled) {
         outline: 2px solid #42b983;
         background-color: rgba(66, 185, 131, 0.1);
         cursor: default;

@@ -89,19 +89,22 @@ The first stage of the project is to create a simple file browser like applicati
 
 ### `v0.0.0-dev9` [NEXT]
 
+-   [ ] Client Refactoring (vue app and plugins first steps)
 -   [ ] Breadcrumb Header
--   [ ] Expand Footer with Edit and View mode.
+-   [x] Expand Footer with Edit and View mode.
     -   [ ] Edit Mode: WYSIWYG if provided, allows to edit article, drag and drop
     -   [ ] Edit Mode: Remove: Open URL on link click
     -   [ ] View Mode: Hides placeholder grids and no interaction
+    -   [ ] View Mode: Hide autocomplete
     -   [ ] View Mode: Fix: Link should be clickable
+    -   [x] View Mode: Fix layout/ spacing when image or banner is gone.
 -   [ ] Fix: Control + click for local file links not working.
 -   [ ] Implement Rust path normalization in workspace and record
 
 ### `v0.0.0-dev10`
 
--   [ ] Client Refactoring (Types, Documentation Github CI)
-    -   [ ] Remove Naive UI dependency and implement custom vue components
+-   [ ] Client Documentationn (Types, Github CI)
+-   [ ] Remove Naive UI dependency and implement custom vue components
 -   [ ] Expand Footer with Source mode.
     -   [ ] Source Mode: Raw source of the file, only when MIME type is not a binary.
     -   [ ] Source Mode: Use [codemirror](https://codemirror.net)
