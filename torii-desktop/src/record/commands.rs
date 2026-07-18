@@ -1,6 +1,6 @@
 //! This module defines [tauri] commands associated with the [Record] instance.
 
-use crate::{Component, Record, components::ComponentAction};
+use crate::{Component, Record};
 use base64::{Engine as _, engine::general_purpose};
 use serde_json::{Value, json};
 use std::{io::ErrorKind::NotFound, path::PathBuf};
@@ -15,6 +15,7 @@ pub fn list_records(
     workspace: PathBuf,
     directory: PathBuf,
     recursive: Option<bool>,
+    filter: Option<String>,
 ) -> Result<Vec<Record>, String> {
     let recursive = recursive.unwrap_or(false);
 
@@ -28,7 +29,17 @@ pub fn list_records(
     // Handle the result of the listing operation. If the directory does not
     // exist, return an empty list.
     match result {
-        Ok(records) => Ok(records),
+        Ok(records) => {
+            if let Some(filter) = filter {
+                let filter = filter.to_lowercase();
+                Ok(records
+                    .into_iter()
+                    .filter(|r| r.name().to_lowercase().contains(&filter))
+                    .collect())
+            } else {
+                Ok(records)
+            }
+        }
         Err(e) if e.kind() == NotFound => Ok(vec![]),
         Err(e) => Err(format!("Failed to list records: {e}")),
     }

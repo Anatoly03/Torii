@@ -79,12 +79,11 @@ The first stage of the project is to create a simple file browser like applicati
 -   [x] Add `.vscode` launch configuration
 -   [x] Implement click for remote URLs
 -   [x] Fix: Editing renamed file saves to outdated file path.
--   [ ] Cache all records on start for autocomplete (or scan recursive)
+-   [x] Scan all records recursive for autocomplete
 -   [x] Github CI: `cargo test`
--   [ ] Rust Refactoring
+-   [x] Rust Refactoring
     -   [x] Component methods should be e.g. `remove() -> Option<Fn -> Result>`: None if no action is defined, and it should return a lazy callback.
     -   [x] Refactor `list_record_components` event to yield component permissions
-    -   [ ] Implement Rust path normalization in workspace and record
 -   [ ] Breadcrumb Header
 -   [x] Add Record search (filter records by search pattern)
 -   [x] Set up branch protection rules (block force pushes)
@@ -97,6 +96,7 @@ The first stage of the project is to create a simple file browser like applicati
     -   [ ] View Mode: Hides placeholder grids and no interaction
     -   [ ] View Mode: Fix: Link should be clickable
 -   [ ] Fix: Control + click for local file links not working.
+-   [ ] Implement Rust path normalization in workspace and record
 
 ### `v0.0.0-dev10`
 

@@ -145,10 +145,10 @@ watch(currentFile, (newFile) => {
     }
 });
 
-watch (searchQuery, (query) => {
+watch(searchQuery, (query) => {
     if (!fileTree.value) return;
     fileTree.value.setFilter(query.length ? query : undefined);
-})
+});
 
 async function loadComponents() {
     if (!currentFile.value) return;
@@ -210,25 +210,31 @@ async function createNewFile() {
     fileTree.value.refresh();
 }
 
+function listRecords(attrs: {
+    directory: string;
+    recursive?: boolean;
+    filter?: string;
+}) {
+    return invoke<Record[]>('list_records', {
+        workspace: projectPath,
+        directory: attrs.directory,
+        recursive: attrs.recursive ?? false,
+        filter: attrs.filter,
+    });
+}
+
 async function autocompleteMarkdown(name: string): Promise<any> {
     if (!currentFile.value) return [];
 
-    const tree = await fileTree.value?.getFiles();
+    const suggestions = await listRecords({
+        directory: '',
+        recursive: true,
+        filter: name,
+    });
 
-    function recurseTree(tree: TreeNode<Record>[]): Record[] {
-        let records: Record[] = [];
-        for (const node of tree) {
-            records.push(node.value);
-            if (node.children) {
-                records = records.concat(recurseTree(node.children));
-            }
-        }
-        return records;
-    }
-
-    return recurseTree(tree)
+    return suggestions
         .filter((record) => {
-            return record.name?.startsWith(name);
+            return record.name.toLowerCase()?.startsWith(name.toLowerCase());
         })
         .map((record) => {
             // In order to generate a "proper" relative link for value, we nee to first find
@@ -285,7 +291,7 @@ if (!projectPath) {
         .view-project-quick-actions {
             display: flex;
             flex-direction: row;
-        
+
             // width: 100%;
             box-sizing: border-box;
             // align-items: center;
