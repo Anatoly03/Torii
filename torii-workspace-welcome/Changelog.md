@@ -6,6 +6,7 @@
 
 - Add search bar in the file tree.
 - Add feature to open browser links when clicked.
+- Cache autocomplete suggestions.
 - (For Developers:) Added new workspace "Torii Contributors" for maintaining programmer resources in-app.
 
 ---
