@@ -67,17 +67,26 @@
                     @refresh="loadComponents()"
                     v-if="currentFile"
                 />
-                <MarkdownEditor
-                    ref="markdownEditor"
-                    v-model:word-count="wordCount"
-                    :record="currentFile"
-                    :autocomplete-start="autocompleteStart"
-                    :autocomplete-suggestion="(v) => autocompleteMarkdown(v)"
-                    :placeholder="!recordComponents.includes('article')"
-                    :view-mode="settings.viewMode"
-                    @open-file="openFile"
-                    v-if="currentFile"
-                />
+                <div
+                    class="view-project-content-body"
+                    :style="{
+                        paddingTop: needsExtraPadding ? '176px' : '0',
+                    }"
+                >
+                    <MarkdownEditor
+                        ref="markdownEditor"
+                        v-model:word-count="wordCount"
+                        :record="currentFile"
+                        :autocomplete-start="autocompleteStart"
+                        :autocomplete-suggestion="
+                            (v) => autocompleteMarkdown(v)
+                        "
+                        :placeholder="!recordComponents.includes('article')"
+                        :view-mode="settings.viewMode"
+                        @open-file="openFile"
+                        v-if="currentFile"
+                    />
+                </div>
             </div>
             <div class="view-project-footer">
                 <div class="view-project-footer-left">
@@ -105,7 +114,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { invoke } from '@tauri-apps/api/core';
 import { Icon } from '@vicons/utils';
@@ -139,6 +148,13 @@ const markdownEditor = ref<InstanceType<typeof MarkdownEditor> | null>(null);
 const records = ref<Record[]>([]);
 const autocompleteCache = ref<Record[]>([]);
 const wordCount = ref<number | undefined>(undefined);
+
+const needsExtraPadding = computed(() => {
+    return (
+        recordComponents.value.includes('banner') &&
+        !recordComponents.value.includes('image')
+    );
+});
 
 onMounted(async () => {
     const nodes = await fileTree.value?.getFiles();
@@ -406,6 +422,8 @@ if (!projectPath) {
             position: relative;
             min-width: 200px;
             min-height: 200px;
+            max-width: 200px;
+            max-height: 200px;
             z-index: 10;
             border: 2px dashed #ccc;
             border-radius: 8px;
@@ -421,6 +439,10 @@ if (!projectPath) {
                 }
             }
         }
+    }
+
+    .view-project-content-body {
+        width: 100%;
     }
 
     .view-project-footer {

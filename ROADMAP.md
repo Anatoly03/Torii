@@ -96,7 +96,7 @@ The first stage of the project is to create a simple file browser like applicati
     -   [ ] View Mode: Hides placeholder grids and no interaction
     -   [ ] View Mode: Hide autocomplete
     -   [ ] View Mode: Fix: Link should be clickable
-    -   [ ] View Mode: Fix layout/ spacing when image or banner is gone.
+    -   [x] View Mode: Fix layout/ spacing when image or banner is gone.
 -   [ ] Fix: Control + click for local file links not working.
 -   [ ] Implement Rust path normalization in workspace and record
 
