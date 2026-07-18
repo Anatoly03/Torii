@@ -74,7 +74,7 @@ The first stage of the project is to create a simple file browser like applicati
 -   [x] Fix command `list_records` providing wrong workspace path.
 -   [x] Add new workspace which gets saved to resources: Changelog, Quick Guide
 
-### `v0.0.0-dev8` [CURRENT]
+### `v0.0.0-dev8` [COMPLETED]
 
 -   [x] Add `.vscode` launch configuration
 -   [x] Implement click for remote URLs
@@ -84,12 +84,12 @@ The first stage of the project is to create a simple file browser like applicati
 -   [x] Rust Refactoring
     -   [x] Component methods should be e.g. `remove() -> Option<Fn -> Result>`: None if no action is defined, and it should return a lazy callback.
     -   [x] Refactor `list_record_components` event to yield component permissions
--   [ ] Breadcrumb Header
 -   [x] Add Record search (filter records by search pattern)
 -   [x] Set up branch protection rules (block force pushes)
 
-### `v0.0.0-dev9`
+### `v0.0.0-dev9` [NEXT]
 
+-   [ ] Breadcrumb Header
 -   [ ] Expand Footer with Edit and View mode.
     -   [ ] Edit Mode: WYSIWYG if provided, allows to edit article, drag and drop
     -   [ ] Edit Mode: Remove: Open URL on link click
