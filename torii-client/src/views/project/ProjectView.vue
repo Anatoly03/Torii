@@ -53,6 +53,7 @@
                     :placeholder-text="$t('app.project.bannerPlaceholder')"
                     placeholder-anchor="left"
                     class="view-project-banner"
+                    :view-mode="projectViewMode"
                     @refresh="loadComponents()"
                     v-if="currentFile"
                 />
@@ -62,6 +63,7 @@
                     component="image"
                     placeholder-anchor="center"
                     class="view-project-image"
+                    :view-mode="projectViewMode"
                     @refresh="loadComponents()"
                     v-if="currentFile"
                 />
@@ -72,13 +74,23 @@
                     :autocomplete-start="autocompleteStart"
                     :autocomplete-suggestion="(v) => autocompleteMarkdown(v)"
                     :placeholder="!recordComponents.includes('article')"
+                    :view-mode="projectViewMode"
                     @open-file="openFile"
                     v-if="currentFile"
                 />
             </div>
-            <div class="view-project-footer" v-if="settings.enableWordCount">
+            <div class="view-project-footer">
                 <span class="view-record-word-count">
                     {{ $t('app.project.wordCount', { count: wordCount }) }}
+                </span>
+                <span class="view-mode">
+                    <UISelect
+                        :options="[
+                            { label: 'Edit', value: 'edit' },
+                            { label: 'Preview', value: 'preview' },
+                        ]"
+                        v-model="projectViewMode"
+                    />
                 </span>
             </div>
         </div>
@@ -103,6 +115,7 @@ import MarkdownEditor from '../../components/article/MarkdownEditor.vue';
 import ImageEditor from '../../components/image/ImageEditor.vue';
 import { Record } from 'types';
 import UIFileTree from '@/ui/UIFileTree.vue';
+import UISelect from '@/ui/UISelect.vue';
 import { TreeNode } from 'ui/UITree.vue';
 
 const route = useRoute();
@@ -119,6 +132,7 @@ const markdownEditor = ref<InstanceType<typeof MarkdownEditor> | null>(null);
 const records = ref<Record[]>([]);
 const autocompleteCache = ref<Record[]>([]);
 const wordCount = ref<number | undefined>(undefined);
+const projectViewMode = ref<'edit' | 'preview'>('edit');
 
 onMounted(async () => {
     const nodes = await fileTree.value?.getFiles();
@@ -389,7 +403,7 @@ if (!projectPath) {
         display: flex;
         flex-direction: row;
         align-items: center;
-        justify-content: start;
+        justify-content: space-between;
         padding: 8px;
         border-top: 1px solid #ccc;
     }
