@@ -97,13 +97,18 @@ The first stage of the project is to create a simple file browser like applicati
     -   [ ] View Mode: Hides placeholder grids and no interaction
     -   [ ] View Mode: Hide autocomplete
     -   [ ] View Mode: Fix: Link should be clickable
+        -   [ ] Remote URL
+        -   [ ] Local Files/ Relative Paths
     -   [x] View Mode: Fix layout/ spacing when image or banner is gone.
--   [ ] Fix: Control + click for local file links not working.
+-   [ ] Remove: Control + click.
 -   [ ] Implement Rust path normalization in workspace and record
+-   [ ] Autocomplete should fill encoded paths (e.g. space should become `%20`)
+-   [x] Refactor workspaces to scale more easily
 
 ### `v0.0.0-dev10`
 
--   [ ] Client Documentationn (Types, Github CI)
+-   [ ] Client Documentation (Types, Github CI)
+    -   [ ] [clean-jsdoc-theme](https://www.npmjs.com/package/@clean-jsdoc-theme/typedoc)
 -   [ ] Remove Naive UI dependency and implement custom vue components
 -   [ ] Expand Footer with Source mode.
     -   [ ] Source Mode: Raw source of the file, only when MIME type is not a binary.
@@ -124,6 +129,9 @@ The first stage of the project is to create a simple file browser like applicati
 
 -   [ ] Define CSS variables, modularize CSS
 -   [ ] Add UX to move banner offset in edit mode. (scroll, zoom)
+-   [ ] Add infoboxes
+    -   [ ] Infobox Definition Component: Table, Attributes, Types
+    -   [ ] Values stored `config.json`, as well as relative component definition path.
 
 ### `v0.0.0-dev13`
 

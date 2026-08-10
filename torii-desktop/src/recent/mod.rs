@@ -6,7 +6,7 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::{fs::File, io::ErrorKind, path::PathBuf};
-use tauri::{AppHandle, Manager, path::BaseDirectory};
+use tauri::{AppHandle, Manager};
 
 /// The path to the file where recent projects are stored. This is a JSON file
 /// that contains an array of `RecentProjectMetadata` objects. The parent is
@@ -32,6 +32,14 @@ pub struct RecentProjectMetadata {
     /// the Unix epoch.
     #[serde(skip_deserializing, default = "time_now")]
     pub last_opened: u64,
+}
+
+/// This is used for example workspaces.
+#[derive(Serialize, Deserialize, Debug)]
+struct ExampleWorkspace {
+    pub name: String,
+    pub path: PathBuf,
+    pub release: bool,
 }
 
 /// Gets the current time in milliseconds since the Unix epoch. This is used to
@@ -79,45 +87,47 @@ impl RecentProjectMetadata {
     pub async fn get_extended(app: AppHandle) -> Result<Vec<Self>, String> {
         let mut projects = Self::get(app.clone()).await?;
 
-        if cfg!(dev) {
-            // If we are in development mode, link the `torii-example` demo workspace. This
-            // Torii project is version tracked in this repository and shared with collaborators.
-            let manifest_dir = std::env::var("CARGO_MANIFEST_DIR").unwrap();
+        // Parse the definition of example workspaces
+        const WORKSPACE_CONFIGURATION: &str = include_str!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../torii-workspaces/workspaces.json"
+        ));
+        let example_projects: Vec<ExampleWorkspace> = serde_json::from_str(WORKSPACE_CONFIGURATION)
+            .expect("configuration file `workspaces.json` should be valid JSON");
 
-            // Link demo workspaces for development purposes.
+        // If we are in development mode, link the `torii-example` demo workspace. This
+        // Torii project is version tracked in this repository and shared with collaborators.
+        #[cfg(dev)]
+        let manifest_dir = std::env::var("CARGO_MANIFEST_DIR").unwrap();
+
+        // If we are in production mode, we want to link only the "Torii Welcome" workspace,
+        // by adding it to the list of recent projects. The welcome workspace is stored in
+        // resources.
+        #[cfg(not(dev))]
+        let release_example_workspace =
+            match app.path().resolve("workspaces", BaseDirectory::Resource) {
+                Ok(o) => o,
+                _ => return Ok(projects),
+            };
+
+        for p in example_projects.iter() {
+            if cfg!(not(dev)) && !p.release {
+                continue;
+            }
+
+            #[cfg(dev)]
+            let full_path = PathBuf::from(&manifest_dir)
+                .join("../torii-workspaces")
+                .join(&p.path);
+            #[cfg(not(dev))]
+            let full_path = release_example_workspace.join(&p.path);
+
             projects.push(RecentProjectMetadata {
-                name: "Torii Welcome".to_string(),
-                path: PathBuf::from(&manifest_dir).join("../torii-workspace-welcome"),
+                name: p.name.to_string(),
+                path: full_path,
                 is_system: true,
                 last_opened: 0,
             });
-            projects.push(RecentProjectMetadata {
-                name: "Torii Contributors".to_string(),
-                path: PathBuf::from(&manifest_dir).join("../torii-workspace-contrib"),
-                is_system: true,
-                last_opened: 0,
-            });
-            projects.push(RecentProjectMetadata {
-                name: "Torii Dev Tests".to_string(),
-                path: PathBuf::from(&manifest_dir).join("../torii-workspace-dev"),
-                is_system: true,
-                last_opened: 0,
-            });
-        } else {
-            // If we are in production mode, we want to link only the "Torii Welcome" workspace,
-            // by adding it to the list of recent projects. The welcome workspace is stored in
-            // resources.
-            app.path()
-                .resolve("workspace-welcome", BaseDirectory::Resource)
-                .map(|welcome_dir| {
-                    projects.push(RecentProjectMetadata {
-                        name: "Torii Welcome".to_string(),
-                        path: welcome_dir,
-                        is_system: true,
-                        last_opened: 0,
-                    });
-                })
-                .unwrap_or(());
         }
 
         Ok(projects)
