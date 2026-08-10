@@ -1,0 +1,8 @@
+{
+    "entryPoints": ["src/**"],
+    "name": "Torii Project",
+    // "entryPointStrategy": "packages",
+    "includeVersion": false,
+    "plugin": ["typedoc-plugin-vue"],
+    "excludeVueProperties": true
+}

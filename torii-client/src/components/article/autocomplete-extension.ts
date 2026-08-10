@@ -1,4 +1,4 @@
-import { Extension, Editor, Content } from '@tiptap/core';
+import { Extension, Editor, Content, RawCommands } from '@tiptap/core';
 import { EditorState, Plugin, PluginKey } from 'prosemirror-state';
 import { Node } from '@tiptap/pm/model';
 import { EditorView } from 'prosemirror-view';
@@ -73,10 +73,10 @@ export type AutocompleteOptions = {
 
 function triggerAutocomplete(
     options: AutocompleteOptions,
-    editorView: EditorView
+    editorView: Editor
 ) {
     return (item: SuggestionItem) =>
-        ({ commands }) => {
+        ({ commands }: { commands: any }) => {
             // We only apply the autocomplete logic within one element of the editor.
             //
             // For example `<a href="#">hel</a>lo` with the cursor at the end will autocomplete
@@ -141,7 +141,7 @@ function triggerAutocomplete(
 
 export const ProsemirrorAutocompleteExtension = (
     options: AutocompleteOptions,
-    editor: Editor
+    _editor: Editor
 ) =>
     new Plugin({
         key: new PluginKey('autocomplete'),
@@ -224,10 +224,10 @@ export const AutocompleteExtension = Extension.create<AutocompleteOptions>({
         };
     },
 
-    addCommands() {
+    addCommands(): Partial<RawCommands> {
         return {
             autocomplete: triggerAutocomplete(this.options, this.editor),
-        };
+        } as any;
     },
 
     addProseMirrorPlugins() {

@@ -9,9 +9,10 @@ target
 # pocketbase
 pb_data
 
-# npm
+# npm, typedoc
 node_modules
 dist
+docs
 build
 
 # env
