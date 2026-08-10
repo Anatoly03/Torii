@@ -35,7 +35,7 @@ export function openSettingsWindow() {
         console.log('Settings window created');
     });
 
-    settingsWindow.value.once('tauri://close-requested', (e) => {
+    settingsWindow.value.once('tauri://close-requested', (_e) => {
         settingsWindow.value?.close();
         settingsWindow.value = null;
     });

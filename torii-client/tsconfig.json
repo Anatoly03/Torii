@@ -23,7 +23,7 @@
 
         // file handling
 
-        "baseUrl": "src",
+        // "baseUrl": "src",
         "paths": {
             "@/*": ["./src/*"]
         }

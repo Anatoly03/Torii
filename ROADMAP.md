@@ -89,7 +89,7 @@ The first stage of the project is to create a simple file browser like applicati
 
 ### `v0.0.0-dev9` [NEXT]
 
--   [ ] Client Refactoring (vue app and plugins first steps)
+-   [x] Client Documentation (Typedoc Infrastructure)
 -   [ ] Breadcrumb Header
 -   [x] Expand Footer with Edit and View mode.
     -   [ ] Edit Mode: WYSIWYG if provided, allows to edit article, drag and drop
@@ -107,7 +107,8 @@ The first stage of the project is to create a simple file browser like applicati
 
 ### `v0.0.0-dev10`
 
--   [ ] Client Documentation (Types, Github CI)
+-   [ ] Client Refactoring (vue app and plugins first steps)
+-   [ ] Client Documentation (Github CI)
     -   [ ] [clean-jsdoc-theme](https://www.npmjs.com/package/@clean-jsdoc-theme/typedoc)
 -   [ ] Remove Naive UI dependency and implement custom vue components
 -   [ ] Expand Footer with Source mode.
