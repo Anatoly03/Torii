@@ -39,7 +39,8 @@
       "debugApplicationIdSuffix": ".debug"
     },
     "resources": {
-        "../torii-workspace-welcome/": "workspace-welcome/"
+        "../torii-workspaces/welcome": "workspaces/welcome/",
+        "../torii-workspaces/workspaces.json": "workspaces/workspaces.json"
     }
   }
 }
