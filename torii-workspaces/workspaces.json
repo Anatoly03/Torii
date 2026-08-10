@@ -10,6 +10,11 @@
         "release": false
     },
     {
+        "path": "writing-theory",
+        "name": "Writing Theory",
+        "release": true
+    },
+    {
         "path": "dev-tests",
         "name": "Torii Dev Tests",
         "release": false

@@ -2,7 +2,11 @@
 
 This folder contains all example workspaces, which will be visible when running the Torii application.
 
-### Contributing
+### Contributing (New Files)
+
+If you want to contribute new records to existing workspaces, just run Torii in development mode and edit the files. Git will automatically track the file changes.
+
+### Contributing (New Workspaces)
 
 Usually there is no need to create new workspaces, but for the rare case when a new workspace is needed, please be aware to change the following:
 
