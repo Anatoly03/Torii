@@ -4,9 +4,9 @@
 //! from the desktop application.
 
 use serde::{Deserialize, Serialize};
-use serde_json::{Map, Value};
+use serde_json::Value;
 use std::{fs::File, io::ErrorKind, path::PathBuf};
-use tauri::{AppHandle, Manager, path::BaseDirectory};
+use tauri::{AppHandle, Manager};
 
 /// The path to the file where recent projects are stored. This is a JSON file
 /// that contains an array of `RecentProjectMetadata` objects. The parent is
