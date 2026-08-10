@@ -1,5 +1,9 @@
 Since all contributors would need to start the application anyway, an exhaustive contributors guide is provided in-app after starting in development mode.
 
+If you are serious about contributing to this repository, you can find a quick way to start the application in development mode below. Please be aware of the [Pull Request Rules](#pull-request-rules). Breaking these rules will result in reactions such as your Pull Request to be rejected or your account restricted in this repository.
+
+### Quickstart
+
 This contributors guide is short and will only help you run a minimal working Torii app. First make sure you have the [Rust Programming Language](https://rust-lang.org/) (which comes with [cargo](https://doc.rust-lang.org/cargo/)) and [NodeJS](https://nodejs.org/en) (which comes with [npm](https://docs.npmjs.com/cli/v11/commands/npm) and [npx](https://docs.npmjs.com/cli/v11/commands/npx)) installed. This guide assumes you have some prior familiarity with these tools.
 
 First, install all client dependencies with the following command. You will have to run this command everytime when client dependencies change (e.g. after pulling from remote). This will generate the `node_modules` directory, which contains all client dependencies.
@@ -22,3 +26,9 @@ Now you should see the application winow which comes with at least two default w
 cd torii-api
 go run src/main.go serve
 ``` -->
+
+### Pull Request Rules
+
+- **No vibes.** You are allowed to use smart, contextless autocompletion but code which has been subject to agent generation is not allowed in this repository.
+
+- **English Codebase.** We allow to interact with this repositories issuesses and discussions in different languages. However excluded are all commit messages, source code and the title and first message in a Pull Request, which have to be in English.

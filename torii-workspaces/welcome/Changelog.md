@@ -4,7 +4,9 @@
 
 ### [v0.0.0-dev9](https://github.com/Anatoly03/Torii/releases/tag/app-v0.0.0-dev9)
 
-- TBA
+- Add a button to switch between Edit Mode and Preview Mode.
+- Preview Mode hides the template grids for image-like components.
+- Add a new workspace "Writing Theory". It contains some selected resources which are useful for fiction writing. Currently it contains an unfinished document on plot structure.
 
 ---
 
@@ -56,7 +58,7 @@
 
 ---
 
-### [v0.0.0-dev3](https://github.com/Anatoly03/Torii/releases/tag/app-v0.0.0-dev3)
+### [v0.0.0-dev3](https://github.com/Anatoly03/Torii/releases/tag/app-v0.0.0-dev3) 
 
 - Added technical functionality to display one header image.
 

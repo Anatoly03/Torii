@@ -2,7 +2,7 @@
     "name": "Torii",
     "type": "module",
     "workspaces": [
-        "torii-client"
+        "torii-client/**"
     ],
     "devDependencies": {
         "@tauri-apps/cli": "^2.11.1",
