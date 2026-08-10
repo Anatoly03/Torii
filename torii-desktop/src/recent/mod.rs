@@ -34,6 +34,14 @@ pub struct RecentProjectMetadata {
     pub last_opened: u64,
 }
 
+/// This is used for example workspaces.
+#[derive(Serialize, Deserialize, Debug)]
+struct ExampleWorkspace {
+    pub name: String,
+    pub path: PathBuf,
+    pub release: bool,
+}
+
 /// Gets the current time in milliseconds since the Unix epoch. This is used to
 /// set the `last_opened` field of the `RecentProjectMetadata` struct when a project
 /// is added to the list of recent projects.
@@ -84,9 +92,8 @@ impl RecentProjectMetadata {
             env!("CARGO_MANIFEST_DIR"),
             "/../torii-workspaces/workspaces.json"
         ));
-        let example_projects: Vec<Map<String, Value>> =
-            serde_json::from_str(WORKSPACE_CONFIGURATION)
-                .expect("configuration file `workspaces.json` should be valid JSON");
+        let example_projects: Vec<ExampleWorkspace> = serde_json::from_str(WORKSPACE_CONFIGURATION)
+            .expect("configuration file `workspaces.json` should be valid JSON");
 
         // If we are in development mode, link the `torii-example` demo workspace. This
         // Torii project is version tracked in this repository and shared with collaborators.
@@ -104,32 +111,19 @@ impl RecentProjectMetadata {
             };
 
         for p in example_projects.iter() {
-            let name = p
-                .get("name")
-                .and_then(|v| v.as_str())
-                .expect("configuration file `workspaces.json` should follow schema");
-            let path = p
-                .get("path")
-                .and_then(|v| v.as_str())
-                .expect("configuration file `workspaces.json` should follow schema");
-
-            #[cfg(not(dev))]
-            let release = p.get("release").and_then(|b| b.as_bool()).unwrap_or(false);
-
-            #[cfg(not(dev))]
-            if !release {
+            if cfg!(not(dev)) && !p.release {
                 continue;
             }
 
             #[cfg(dev)]
             let full_path = PathBuf::from(&manifest_dir)
                 .join("../torii-workspaces")
-                .join(path);
+                .join(&p.path);
             #[cfg(not(dev))]
-            let full_path = release_example_workspace.join(path);
+            let full_path = release_example_workspace.join(&p.path);
 
             projects.push(RecentProjectMetadata {
-                name: name.to_string(),
+                name: p.name.to_string(),
                 path: full_path,
                 is_system: true,
                 last_opened: 0,
