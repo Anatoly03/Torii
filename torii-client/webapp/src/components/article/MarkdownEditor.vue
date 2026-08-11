@@ -37,7 +37,7 @@ import {
     type SuggestionItem,
 } from './autocomplete-extension';
 import MarkdownEditorAutocomplete from './MarkdownEditorAutocomplete.vue';
-import { Record } from 'types';
+import type { Record } from '../../types.d.ts';
 
 const props = defineProps<{
     record: Record;

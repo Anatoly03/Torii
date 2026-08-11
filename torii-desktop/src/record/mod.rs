@@ -5,10 +5,7 @@ mod serde;
 
 use crate::{Component, components::get_all_components, workspace::Workspace};
 use path_normalizer::PathNormalizeExt;
-use std::{
-    collections::HashSet,
-    path::{Path, PathBuf},
-};
+use std::{collections::HashSet, path::PathBuf};
 
 /// The record struct represents a Torii record.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
