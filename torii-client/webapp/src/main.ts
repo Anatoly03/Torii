@@ -1,11 +1,14 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
+import { world } from '@torii/plugin-core';
 
 import { createI18n } from 'vue-i18n';
 import en from './locales/en.json';
 import jp from './locales/jp.json';
 import zh from './locales/zh.json';
+
+console.log(world);
 
 const i18n = createI18n({
     legacy: false,
