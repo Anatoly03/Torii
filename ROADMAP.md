@@ -90,8 +90,17 @@ The first stage of the project is to create a simple file browser like applicati
 ### `v0.0.0-dev9` [NEXT]
 
 -   [ ] Client Refactoring (vue app and plugins first steps)
-    -   [ ] Plugin: A separate non-app code module.
-    -   [ ] Views: A panel which can be defined by a module.
+    -   [ ] Phase 1: Plugin API Core
+        -   [ ] `ToriiPlugin`: A separate library module defining plugin.
+        -   [ ] Define plugin lifecycle hooks (`onInit`, `onRecordOpen`, `onComponentUpdate`, etc.)
+        -   [ ] Define anchor point constants. Anchor points are views which can be extended by plugins.
+        -   [ ] `PluginManager` with `register` new plugins and `getAnchorView()` to render an anchor screen.
+    -   [ ] Phase 2: Call Plugin API
+        -   [ ] Define a Vue anchor component (renderer) and place some in the app.
+        -   [ ] Pass workspace context to plugins.
+    -   [ ] Phase 3: Plugin Extraction
+        -   [ ] `word-count`
+        -   [ ] `recent-projects`
 -   [x] Client Documentation (Typedoc Infrastructure)
 -   [ ] Breadcrumb Header
 -   [x] Expand Footer with Edit and View mode.

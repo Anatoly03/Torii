@@ -29,6 +29,14 @@ go run src/main.go serve
 
 ### Pull Request Rules
 
-- **No vibes.** You are allowed to use smart, contextless autocompletion but code which has been subject to agent generation is not allowed in this repository.
+- **No vibes.** You are allowed to use smart, contextless autocompletion and ask smart assistants for planning and code review. However code which has been subject to agent generation is categorically not allowed in this repository.
 
-- **English Codebase.** We allow to interact with this repositories issuesses and discussions in different languages. However excluded are all commit messages, source code and the title and first message in a Pull Request, which have to be in English.
+- **English Codebase.** We allow to interact with this repositories issuesses, discussions and comments in different languages. However excluded are all commit messages, source code and the title and first message in a Pull Request, which have to be in English.
+
+- **No obfuscastions.** Code using obfuscations for the sake of being unreadable is not allowed. Performance-optimized code has to be clearly documented with comments.
+
+- **Citations.** Code retrieved from external websites like StackOverflow have to be cited in the codebase. A citation is a comment with a link above the cited code segment. Links that helped you fix bugs or helped you choose an algorithm or approach are welcomed.
+
+- **Documentation.** All code is subject to exhaustive documentation. Make sure the formatting is not broken for documentation generators. For functions include example and usage. We try to keep a 1:1 to 1:2 (code lines:documentation) ratio.
+
+- **Rules are non-exhaustive.** The administrative team of this codebase reserves the right to make up new written rules when "unspoken rules" are broken. The "unspoken rules" include: Be Nice, Keep the Code Clean, Follow Existing Patterns or Evolve New Maintainable Patterns.
