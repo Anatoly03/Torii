@@ -1,1 +1,1 @@
-export const world = 'Hello, World!';
+export const world = 'Hello, Torii Plugin API!';
