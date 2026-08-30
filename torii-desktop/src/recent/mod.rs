@@ -5,6 +5,8 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+#[cfg(not(dev))]
+use tauri::path::BaseDirectory;
 use std::{fs::File, io::ErrorKind, path::PathBuf};
 use tauri::{AppHandle, Manager};
 
