@@ -13,10 +13,15 @@
             </div>
         </div>
         <div class="view-home-content">
-            {{ $t('app.menu.home') }}
-            <small class="version">
-                {{ $t('app.version.verbose', { version }) }}
-            </small>
+            <div class="view-home-title">
+                {{ $t('app.menu.home') }}
+                <small class="version">
+                    {{ $t('app.version.verbose', { version }) }}
+                </small>
+            </div>
+            <div class="view-home-update">
+                <UpdateButton />
+            </div>
         </div>
     </div>
 </template>
@@ -29,6 +34,7 @@ import { SettingsOutline } from '@vicons/ionicons5';
 import LanguageSelect from '@/components/LanguageSelect.vue';
 import RecentProjectsView from './RecentProjectsView.vue';
 import { openSettingsWindow } from '../composables/settings-window.ts';
+import UpdateButton from '@/components/UpdateButton.vue';
 
 const version = ref('Invalid Version');
 
@@ -71,9 +77,24 @@ onMounted(async () => {
     .view-home-content {
         display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
         flex: 1;
+
+        .view-home-title {
+            display: flex;
+            flex-direction: column;
+            justify-self: center;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .view-home-update {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            justify-self: end;
+            margin-bottom: 16px;
+        }
     }
 }
 </style>

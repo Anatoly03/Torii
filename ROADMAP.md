@@ -96,6 +96,9 @@ The first stage of the project is to create a simple file browser like applicati
 
 Due to my Bachelors' thesis I took a 3 week break from Torii here and `dev9` should be a small update to bring back the pace.
 
+-   [x] Add updater artifacts (build signatures) to CI/CD.
+-   [x] Add a button which checks if an update is available. (Not Tested!)
+
 ### `v0.0.0-dev10`
 
 -   [ ] Edit Mode: WYSIWYG if provided, allows to edit article, drag and drop

@@ -21,7 +21,9 @@ pub fn run() {
         .plugin(tauri_plugin_cors_fetch::init())
         .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_process::init())
         .setup(enable_logging)
+        .setup(enable_update_artifacts)
         .invoke_handler(tauri::generate_handler![
             recent::list_recent_projects,
             recent::add_recent_project,
@@ -50,6 +52,26 @@ pub fn enable_logging(app: &mut App) -> Result<(), Box<dyn Error>> {
                 .level(log::LevelFilter::Info)
                 .build(),
         )?;
+    }
+    Ok(())
+}
+
+/// Enables updater artifacts for the application. This will build
+/// application signatures which are used to update older clients.
+pub fn enable_update_artifacts(app: &mut App) -> Result<(), Box<dyn Error>> {
+    #[cfg(desktop)]
+    {
+        #[allow(unused)]
+        let res = app
+            .handle()
+            .plugin(tauri_plugin_updater::Builder::new().build());
+        
+        // In development mode, we can safely ignore this errors. In
+        // releases builds however, we expect this to work.
+        #[cfg(not(debug_assertions))]
+        if let Err(err) = res {
+            println!("{err}");
+        }
     }
     Ok(())
 }

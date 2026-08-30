@@ -22,3 +22,7 @@ tauri-plugin-dialog = "2.7"
 tauri-plugin-cors-fetch = "5.0.0"
 tauri-plugin-store = "2.4.3"
 tauri-plugin-opener = "2.5.4"
+tauri-plugin-process = "2.3.1"
+
+[target.'cfg(any(target_os = "macos", windows, target_os = "linux"))'.dependencies]
+tauri-plugin-updater = "2.10.1"
