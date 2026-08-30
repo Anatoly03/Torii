@@ -15,6 +15,7 @@ jobs:
   publish-tauri:
     permissions:
       contents: write
+    environment: Publish Environment
     strategy:
       fail-fast: false
       matrix:
@@ -78,9 +79,16 @@ jobs:
         if: matrix.platform == 'windows-latest'
         run: npm run fix-windows-version
 
+      - name: Inject signing public key into config
+        run: npm run add-signing-public-key
+        env:
+          TAURI_SIGNING_PUBLIC_KEY: ${{ vars.TAURI_SIGNING_PUBLIC_KEY }}
+
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+        #   TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
           tagName: app-v${{ steps.get-version.outputs.version }}
           releaseName: 'App v${{ steps.get-version.outputs.version }}'

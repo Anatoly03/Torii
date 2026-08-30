@@ -14,6 +14,7 @@
     "@tauri-apps/plugin-dialog": "^2.7.1",
     "@tauri-apps/plugin-opener": "^2.5.4",
     "@tauri-apps/plugin-store": "^2.4.3",
+    "@tauri-apps/plugin-updater": "^2.10.1",
     "@tiptap/extension-list": "^3.27.1",
     "@tiptap/markdown": "^3.27.1",
     "@tiptap/pm": "^3.27.1",

@@ -43,5 +43,12 @@
         "../torii-workspaces/writing-theory": "workspaces/writing-theory/",
         "../torii-workspaces/workspaces.json": "workspaces/workspaces.json"
     }
+  },
+  "plugins": {
+    "updater": {
+        "endpoints": [
+            "https://github.com/Anatoly03/Torii/releases/latest/download/latest.json"
+        ]
+    }
   }
 }
