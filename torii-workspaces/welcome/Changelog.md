@@ -4,7 +4,8 @@
 
 ### [v0.0.0-dev9](https://github.com/Anatoly03/Torii/releases/tag/app-v0.0.0-dev9)
 
-- TBA
+- Add "Preview Mode" to record footer, which disable editing and hides image placeholder grids.
+- Add an update information button in the welcome screen. *This button has not been tested yet! We will see when dev10 releases if it works.*
 
 ---
 
