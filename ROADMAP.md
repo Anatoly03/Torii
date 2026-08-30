@@ -96,7 +96,7 @@ The first stage of the project is to create a simple file browser like applicati
 
 Due to my Bachelors' thesis I took a 3 week break from Torii here and `dev9` should be a small update to bring back the pace.
 
--   [x] Add updater artifacts (build signatures) to CI/CD.
+-   [x] Add support for [automatic updates](https://v2.tauri.app/plugin/updater/) by adding artifacts (build signatures) to CI/CD.
 -   [x] Add a button which checks if an update is available. (Not Tested!)
 
 ### `v0.0.0-dev10` [NEXT]
@@ -205,15 +205,11 @@ Due to my Bachelors' thesis I took a 3 week break from Torii here and `dev9` sho
 
 ### `v0.0.1` Daiishi 台石
 
--   [ ] Add support for [automatic updates](https://v2.tauri.app/plugin/updater/)
-
-### `v0.0.1-dev1`
-
 -   [ ] Refactor to an embeddable theme system.
     -   [ ] In dev builds, they are linked with the repository styles.
     -   [ ] In production, they are linked with the [resources](https://v2.tauri.app/develop/resources/).
 
-### `v0.0.1-dev2`
+### `v0.0.1-dev1`
 
 -   [x] Torii API
     -   [ ] Blogposts (Main Menu)
