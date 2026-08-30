@@ -91,7 +91,7 @@ The first stage of the project is to create a simple file browser like applicati
 
 -   [ ] Client Refactoring (vue app and plugins first steps)
     -   [ ] Phase 1: Plugin API Core
-        -   [ ] `ToriiPlugin`: A separate library module defining plugin.
+        -   [x] `ToriiPlugin`: A separate library module defining plugin.
         -   [ ] Define plugin lifecycle hooks (`onInit`, `onRecordOpen`, `onComponentUpdate`, etc.)
         -   [ ] Define anchor point constants. Anchor points are views which can be extended by plugins.
         -   [ ] `PluginManager` with `register` new plugins and `getAnchorView()` to render an anchor screen.

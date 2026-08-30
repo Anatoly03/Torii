@@ -47,6 +47,7 @@ import { open } from '@tauri-apps/plugin-dialog';
 import { NIcon, NDropdown, DropdownOption } from 'naive-ui';
 import { EllipsisVertical } from '@vicons/ionicons5';
 import { useRouter } from 'vue-router';
+import { usePlugins } from '@/services/plugins';
 
 const router = useRouter();
 const recentProjects = listRecentProjects();

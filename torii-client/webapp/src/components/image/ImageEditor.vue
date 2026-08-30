@@ -51,7 +51,7 @@ import { invoke } from '@tauri-apps/api/core';
 import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
 import { NIcon, NSpin } from 'naive-ui';
 import { CloseOutline, ImageOutline } from '@vicons/ionicons5';
-import { Record } from 'types';
+import type { Record } from '../../types.d.ts';
 import UIDropRegion from '../../ui/UIDropRegion.vue';
 
 const props = defineProps<{

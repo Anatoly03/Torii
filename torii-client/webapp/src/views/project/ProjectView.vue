@@ -114,7 +114,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { invoke } from '@tauri-apps/api/core';
 import { Icon } from '@vicons/utils';
@@ -133,6 +133,7 @@ import { Record } from 'types';
 import UIFileTree from '@/ui/UIFileTree.vue';
 import UISelect from '@/ui/UISelect.vue';
 import { TreeNode } from 'ui/UITree.vue';
+import { usePlugins } from '@/services/plugins.ts';
 
 const route = useRoute();
 const router = useRouter();
@@ -166,7 +167,13 @@ onMounted(async () => {
         currentFile.value = readme;
     }
 
-    loadComponents();
+    await loadComponents();
+
+    usePlugins().emit('workspace-open', projectPath);
+});
+
+onUnmounted(() => {
+    usePlugins().emit('workspace-close', projectPath);
 });
 
 watch(currentFile, (newFile) => {

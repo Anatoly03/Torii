@@ -20,6 +20,7 @@
     "@tiptap/starter-kit": "^3.27.1",
     "@tiptap/vue-3": "^3.27.1",
     "@torii/plugin-core": "file:../plugin-core",
+    "@torii/plugin-debug": "file:../plugin-debug",
     "pinia": "^3.0.4",
     "typedoc": "^0.28.20",
     "typedoc-plugin-vue": "^1.5.1",
