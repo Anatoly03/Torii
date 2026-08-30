@@ -2,6 +2,12 @@
 
 ---
 
+### [v0.0.0-dev10](https://github.com/Anatoly03/Torii/releases/tag/app-v0.0.0-dev10)
+
+- TBA
+
+---
+
 ### [v0.0.0-dev9](https://github.com/Anatoly03/Torii/releases/tag/app-v0.0.0-dev9)
 
 - Add "Preview Mode" to record footer, which disable editing and hides image placeholder grids.

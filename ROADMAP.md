@@ -87,7 +87,7 @@ The first stage of the project is to create a simple file browser like applicati
 -   [x] Add Record search (filter records by search pattern)
 -   [x] Set up branch protection rules (block force pushes)
 
-### `v0.0.0-dev9` [NEXT]
+### `v0.0.0-dev9` [COMPLETED]
 
 -   [x] Client Documentation (Typedoc Infrastructure)
 -   [x] Expand Footer with Edit and View mode.
@@ -99,7 +99,7 @@ Due to my Bachelors' thesis I took a 3 week break from Torii here and `dev9` sho
 -   [x] Add updater artifacts (build signatures) to CI/CD.
 -   [x] Add a button which checks if an update is available. (Not Tested!)
 
-### `v0.0.0-dev10`
+### `v0.0.0-dev10` [NEXT]
 
 -   [ ] Edit Mode: WYSIWYG if provided, allows to edit article, drag and drop
 -   [ ] Edit Mode: Remove: Open URL on link click
