@@ -21,6 +21,7 @@ pub fn run() {
         .plugin(tauri_plugin_cors_fetch::init())
         .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_process::init())
         .setup(enable_logging)
         .setup(enable_update_artifacts)
         .invoke_handler(tauri::generate_handler![
