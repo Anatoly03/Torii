@@ -90,22 +90,27 @@ The first stage of the project is to create a simple file browser like applicati
 ### `v0.0.0-dev9` [NEXT]
 
 -   [x] Client Documentation (Typedoc Infrastructure)
--   [ ] Breadcrumb Header
 -   [x] Expand Footer with Edit and View mode.
-    -   [ ] Edit Mode: WYSIWYG if provided, allows to edit article, drag and drop
-    -   [ ] Edit Mode: Remove: Open URL on link click
-    -   [ ] View Mode: Hides placeholder grids and no interaction
-    -   [ ] View Mode: Hide autocomplete
-    -   [ ] View Mode: Fix: Link should be clickable
-        -   [ ] Remote URL
-        -   [ ] Local Files/ Relative Paths
     -   [x] View Mode: Fix layout/ spacing when image or banner is gone.
+-   [x] Refactor workspaces to scale more easily when adding default workspaces. (`workspaces.json`)
+
+Due to my Bachelors' thesis I took a 3 week break from Torii here and `dev9` should be a small update to bring back the pace.
+
+### `v0.0.0-dev10`
+
+-   [ ] Edit Mode: WYSIWYG if provided, allows to edit article, drag and drop
+-   [ ] Edit Mode: Remove: Open URL on link click
+-   [ ] View Mode: Hides placeholder grids and no interaction
+-   [ ] View Mode: Hide autocomplete
+-   [ ] View Mode: Fix: Link should be clickable
+    -   [ ] Remote URL
+    -   [ ] Local Files/ Relative Paths
+-   [ ] Breadcrumb Header
 -   [ ] Remove: Control + click.
 -   [ ] Implement Rust path normalization in workspace and record
 -   [ ] Autocomplete should fill encoded paths (e.g. space should become `%20`)
--   [x] Refactor workspaces to scale more easily
 
-### `v0.0.0-dev10`
+### `v0.0.0-dev11`
 
 -   [ ] Client Refactoring (vue app and plugins first steps)
 -   [ ] Client Documentation (Github CI)
@@ -115,7 +120,7 @@ The first stage of the project is to create a simple file browser like applicati
     -   [ ] Source Mode: Raw source of the file, only when MIME type is not a binary.
     -   [ ] Source Mode: Use [codemirror](https://codemirror.net)
 
-### `v0.0.0-dev11`
+### `v0.0.0-dev12`
 
 -   [ ] Add `entity.config.json` API
 -   [ ] Add component manager collapsable sidebar
@@ -126,7 +131,7 @@ The first stage of the project is to create a simple file browser like applicati
 -   [ ] Add Banner component config: Offset Y, Offset X, Zoom
 -   [ ] Render Banner image with offset
 
-### `v0.0.0-dev12`
+### `v0.0.0-dev13`
 
 -   [ ] Define CSS variables, modularize CSS
 -   [ ] Add UX to move banner offset in edit mode. (scroll, zoom)
@@ -134,7 +139,7 @@ The first stage of the project is to create a simple file browser like applicati
     -   [ ] Infobox Definition Component: Table, Attributes, Types
     -   [ ] Values stored `config.json`, as well as relative component definition path.
 
-### `v0.0.0-dev13`
+### `v0.0.0-dev14`
 
 -   [ ] Refactor to Theme Support
     -   [ ] Light Mode
@@ -142,7 +147,7 @@ The first stage of the project is to create a simple file browser like applicati
 -   [ ] Opt-In Setting: Citation Tracking Component (Store URLs for uploaded Images and inserted content.)
 -   [ ] Fix bug where opening new record sometimes scrolls to an offset.
 
-### `v0.0.0-dev14`
+### `v0.0.0-dev15`
 
 -   [ ] Extend Markdown
     -   [ ] Image embed support (new images are stored as a child-record in this records' directory)
@@ -150,14 +155,14 @@ The first stage of the project is to create a simple file browser like applicati
 -   [ ] Add ability to rename files with fixes in backlinks
     -   [ ] Add component trait method `rename_link`: Invoked on records with backlinks, rename link within component.
 
-### `v0.0.0-dev15`
+### `v0.0.0-dev16`
 
 -   [ ] Export one record
     -   [ ] PDF
     -   [ ] HTML
     -   [ ] LaTeX
 
-### `v0.0.0-dev16`
+### `v0.0.0-dev17`
 
 -   [ ] Export one record
     -   [ ] LaTeX
@@ -174,7 +179,7 @@ The first stage of the project is to create a simple file browser like applicati
     -   [ ] Security: `cargo deny`
     -   [ ] Security: `cargo audit`, `npm audit`
 
-### `v0.0.0-dev17`
+### `v0.0.0-dev18`
 
 -   [ ] Refactor to an embeddable localization system.
     -   [ ] In dev builds, they are linked with the repository.
@@ -183,12 +188,12 @@ The first stage of the project is to create a simple file browser like applicati
     -   [ ] All localization key-values should be editable.
     -   [ ] User Interface for vertical line: Singular, plural, with bracket placeholders.
 
-### `v0.0.0-dev18`
+### `v0.0.0-dev19`
 
 -   [ ] Refactor to an embeddable client-plugin system. (Currently, statically link all plugins, no dynamic loading)
 -   [ ] General Keybinds and keybinds to overwrite [TipTap Keybinds](https://tiptap.dev/docs/editor/core-concepts/keyboard-shortcuts)
 
-### `v0.0.0-dev19`
+### `v0.0.0-dev20`
 
 -   [ ] Add project icon
 -   [ ] FULLY COVERED CODE REVIEW BEFORE FIRST RELEASE
