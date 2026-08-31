@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { Record } from '../types.d.ts';
+import { Record } from '../types';
 import UITree, { TreeNode } from './UITree.vue';
 import { invoke } from '@tauri-apps/api/core';
 

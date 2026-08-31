@@ -2,7 +2,7 @@
     "name": "Torii",
     "type": "module",
     "workspaces": [
-        "torii-client"
+        "torii-client/**"
     ],
     "devDependencies": {
         "@tauri-apps/cli": "^2.11.1",
@@ -13,13 +13,13 @@
         "vite-plugin-vue-devtools": "^8.1.3"
     },
     "scripts": {
-        "serve": "npm run serve --workspace=torii-client",
+        "serve": "npm run serve --workspace=torii-client/webapp",
         "build": "npm run build --workspaces",
-        "lint": "npm run lint --workspace=torii-client",
+        "lint": "npm run lint --workspace=torii-client/webapp",
         "tauri": "tauri",
         "fix-windows-version": "tsx .github/scripts/fix-windows-versioning.ts",
         "add-signing-public-key": "tsx .github/scripts/add-signing-public-key.ts ",
         "version": "tsx .github/scripts/print-tauri-version.ts",
-        "docs": "npm run docs --workspace=torii-client"
+        "docs": "npm run docs --workspace=torii-client/webapp"
     }
 }

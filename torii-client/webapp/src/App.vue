@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue';
-import { watchLocale } from './composables/watch-locale';
+import { watchLocale } from './composables/watch-locale.ts';
 import { loadSettings } from './stores/settings.ts';
 
 watchLocale();

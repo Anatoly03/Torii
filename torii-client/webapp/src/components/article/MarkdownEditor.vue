@@ -35,9 +35,9 @@ import StarterKit from '@tiptap/starter-kit';
 import {
     AutocompleteExtension,
     type SuggestionItem,
-} from './autocomplete-extension';
+} from './autocomplete-extension.ts';
 import MarkdownEditorAutocomplete from './MarkdownEditorAutocomplete.vue';
-import type { Record } from '../../types.d.ts';
+import type { Record } from '../../types';
 
 const props = defineProps<{
     record: Record;

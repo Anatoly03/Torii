@@ -1,4 +1,4 @@
-# torii-client
+# Torii Project Client (WebApp)
 
 ## Project setup
 ```

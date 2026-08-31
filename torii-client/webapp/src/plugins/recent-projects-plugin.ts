@@ -1,4 +1,4 @@
-import ToriiPlugin from './core';
+import ToriiPlugin from './core.ts';
 
 export class RecentProjectsPlugin extends ToriiPlugin {
     constructor() {

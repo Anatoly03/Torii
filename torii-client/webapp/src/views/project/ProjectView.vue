@@ -129,7 +129,7 @@ import { useSettingsStore } from '@/stores/settings';
 // Components
 import MarkdownEditor from '../../components/article/MarkdownEditor.vue';
 import ImageEditor from '../../components/image/ImageEditor.vue';
-import type { Record } from '../../types.d.ts';
+import type { Record } from '../../types';
 import UIFileTree from '@/ui/UIFileTree.vue';
 import UISelect from '@/ui/UISelect.vue';
 import { TreeNode } from 'ui/UITree.vue';
