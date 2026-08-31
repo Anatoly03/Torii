@@ -101,6 +101,7 @@ Due to my Bachelors' thesis I took a 3 week break from Torii here and `dev9` sho
 
 ### `v0.0.0-dev10` [NEXT]
 
+-   [x] Client Refactoring (Vue webapp and plugins first steps)
 -   [ ] Edit Mode: WYSIWYG if provided, allows to edit article, drag and drop
 -   [ ] Edit Mode: Remove: Open URL on link click
 -   [ ] View Mode: Hides placeholder grids and no interaction
@@ -115,7 +116,6 @@ Due to my Bachelors' thesis I took a 3 week break from Torii here and `dev9` sho
 
 ### `v0.0.0-dev11`
 
--   [ ] Client Refactoring (vue app and plugins first steps)
 -   [ ] Client Documentation (Github CI)
     -   [ ] [clean-jsdoc-theme](https://www.npmjs.com/package/@clean-jsdoc-theme/typedoc)
 -   [ ] Remove Naive UI dependency and implement custom vue components

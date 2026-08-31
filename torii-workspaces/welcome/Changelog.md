@@ -4,7 +4,10 @@
 
 ### [v0.0.0-dev10](https://github.com/Anatoly03/Torii/releases/tag/app-v0.0.0-dev10)
 
-- TBA
+- Add plugin: Recent Projects
+- Add a settings page to display installed plugins.
+
+Technical Change: The codebase was refactored to support dynamically loaded plugins. This is still premature for usage by 3rd party extensions, but will act as a solid base in the future.
 
 ---
 
@@ -13,6 +16,8 @@
 - Add "Preview Mode" to record footer, which disable editing and hides image placeholder grids.
 - Add an update information button in the welcome screen. *This button has not been tested yet! We will see when dev10 releases if it works.*
 
+Technical Change: The Github CI/CD now builds releases with signatures. This release comes with an update button that is capable of update the app to a newer version.
+
 ---
 
 ### [v0.0.0-dev8](https://github.com/Anatoly03/Torii/releases/tag/app-v0.0.0-dev8)
@@ -20,7 +25,8 @@
 - Add search bar in the file tree.
 - Add feature to open browser links when clicked.
 - Cache autocomplete suggestions.
-- (For Developers:) Added new workspace "Torii Contributors" for maintaining programmer resources in-app.
+
+For Developers: Added new workspace "Torii Contributors" for maintaining programmer resources in-app.
 
 ---
 
