@@ -51,7 +51,7 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 const recentProjects = listRecentProjects();
 
-function getProjectOptions(project: any): DropDownOption[] {
+function getProjectOptions(project: any): DropdownOption[] {
     if (project.is_system) {
         return [{ label: 'Remove', key: 'remove', disabled: true }];
     }

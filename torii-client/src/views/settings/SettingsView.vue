@@ -32,6 +32,10 @@ const menuOptions = computed(() => [
         label: i18n.t('app.settings.themes'),
         key: 'settings-theme',
     },
+    {
+        label: i18n.t('app.settings.plugins'),
+        key: 'settings-plugins',
+    },
 ]);
 
 function openSetting(key: string) {
@@ -54,6 +58,8 @@ function openSetting(key: string) {
         flex-direction: column;
         align-items: center;
         padding: 16px;
+        width: 100%;
+        box-sizing: border-box;
     }
 }
 </style>

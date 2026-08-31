@@ -41,6 +41,14 @@ const routes: Array<RouteRecordRaw> = [
                         /* webpackChunkName: "settings-theme" */ '../views/settings/ThemeSettingsView.vue'
                     ),
             },
+            {
+                path: 'plugins',
+                name: 'settings-plugins',
+                component: () =>
+                    import(
+                        /* webpackChunkName: "settings-plugins" */ '../views/settings/PluginSettingsView.vue'
+                    ),
+            },
         ],
     },
 ];

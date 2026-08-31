@@ -18,6 +18,7 @@
             "title": "Settings",
             "general": "General",
             "themes": "Themes",
+            "plugins": "Plugins",
             "enableWordCount": "Enable Word Count"
         },
         "menu": {
