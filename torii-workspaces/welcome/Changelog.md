@@ -63,7 +63,7 @@ For Developers: Added new workspace "Torii Contributors" for maintaining program
 ### [v0.0.0-dev4](https://github.com/Anatoly03/Torii/releases/tag/app-v0.0.0-dev4)
 
 - Add minor support for tabulation accross the project.
-- Added very simple autocomplete feature for linking markdown notes (e.g. [Vision](./Vision.md), [Article](./Article.md)).
+- Added very simple autocomplete feature for linking markdown notes (e.g. [Vision](./Vision.md), [Article](./Components/Article.md)).
 - Sort all files in the file tree alphabetically.
 - Fix minor CSS issuesses on Mac.
 - Fix minor bug with recent projects where "Torii Dev" workspace would duplicate itself into the local project list.
