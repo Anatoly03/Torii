@@ -23,6 +23,7 @@
     "@tiptap/vue-3": "^3.27.1",
     "@torii-project/core": "file:../torii-core",
     "@torii-project/plugin-recent-projects": "file:../plugin-recent-projects",
+    "normalizeurl": "^1.0.0",
     "pinia": "^3.0.4",
     "typedoc": "^0.28.20",
     "typedoc-plugin-vue": "^1.5.1",
