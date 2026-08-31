@@ -151,6 +151,12 @@ export const ProsemirrorAutocompleteExtension = (
                     _editorView: EditorView,
                     _prevState: EditorState
                 ) => {
+                    // If preview mode or edit is disabled, we do not display the autocomplete popup.
+                    if (!editorView.editable) {
+                        options.popup?.value?.hide();
+                        return;
+                    }
+
                     // We only apply the autocomplete logic within one element of the editor.
                     //
                     // For example `<a href="#">hel</a>lo` with the cursor at the end will autocomplete
