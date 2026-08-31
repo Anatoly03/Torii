@@ -9,6 +9,9 @@
         <div v-for="(Comp, index) in renderedComponents" :key="index" class="torii-anchor-item">
             <component :is="Comp" v-if="Comp" />
         </div>
+        <div v-if="renderedComponents.length === 0">
+            <slot></slot>
+        </div>
     </div>
 </template>
 

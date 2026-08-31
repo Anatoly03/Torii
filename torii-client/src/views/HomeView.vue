@@ -1,7 +1,9 @@
 <template>
     <div class="view-home">
         <div class="view-home-side">
-            <TAnchor id="welcome:sidebar:top" />
+            <TAnchor id="welcome:sidebar:top">
+                Recent Projects Plugin not installed.
+            </TAnchor>
             <div class="view-home-quick-settings">
                 <LanguageSelect class="language-select" />
                 <button
