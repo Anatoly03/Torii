@@ -1,0 +1,9 @@
+{
+    "name": "@torii-project/core",
+    "version": "0.1.0",
+    "private": false,
+    "main": "src/lib.ts",
+    "dependencies": {
+        "vue": "^3.5.41"
+    }
+}

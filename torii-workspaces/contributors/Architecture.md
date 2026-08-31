@@ -7,7 +7,7 @@ TODO: Resort below
 ### Architecture 
 
 - `torii-api`: The Torii API, currently reserved but not in use.
-- `torii-client`: The Torii web client, which comes bundles with the desktop binary. The client is the main user interface of Torii.
+- `torii-client/webapp`: The Torii web client, which comes bundles with the desktop binary. The client is the main user interface of Torii.
 - `torii-desktop`: The Torii binary, which manages the webview and packaging the application into different distributions.
 
 ### Vue Essential Links
