@@ -6,8 +6,10 @@
 
 - Add plugin: Recent Projects
 - Add a settings page to display installed plugins.
+- Fix: Hyperlinks no longer open in Edit Mode.
+- Fix: Autocomplete no longer pops up in Preview Mode.
 
-Technical Change: The codebase was refactored to support dynamically loaded plugins. This is still premature for usage by 3rd party extensions, but will act as a solid base in the future.
+Technical Change: The codebase was refactored to support plugins which are dynamically loaded. This is still premature for usage by 3rd party extensions, but will act as a solid base in the future.
 
 ---
 
@@ -61,7 +63,7 @@ For Developers: Added new workspace "Torii Contributors" for maintaining program
 ### [v0.0.0-dev4](https://github.com/Anatoly03/Torii/releases/tag/app-v0.0.0-dev4)
 
 - Add minor support for tabulation accross the project.
-- Added very simple autocomplete feature for linking markdown notes (e.g. [Vision](./Vision.md), [Article](./Article.md)).
+- Added very simple autocomplete feature for linking markdown notes (e.g. [Vision](./Vision.md), [Article](./Components/Article.md)).
 - Sort all files in the file tree alphabetically.
 - Fix minor CSS issuesses on Mac.
 - Fix minor bug with recent projects where "Torii Dev" workspace would duplicate itself into the local project list.

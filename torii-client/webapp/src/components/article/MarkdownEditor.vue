@@ -29,6 +29,7 @@ import { TaskList, TaskItem } from '@tiptap/extension-list';
 import { NIcon } from 'naive-ui';
 import { CloseOutline, TextOutline } from '@vicons/ionicons5';
 import { openUrl } from '@tauri-apps/plugin-opener';
+import normalizeurl from 'normalizeurl';
 
 // tiptap extensions
 import StarterKit from '@tiptap/starter-kit';
@@ -115,10 +116,10 @@ watch(
 );
 
 /**
- * Handles control+click
+ * Handles click
  */
 function onLinkClick(event: MouseEvent) {
-    if (!event.ctrlKey && !event.metaKey) return;
+    // if (!event.ctrlKey && !event.metaKey) return;
 
     const link = (event.target as HTMLElement).closest('a');
     if (!link) return;
@@ -128,24 +129,33 @@ function onLinkClick(event: MouseEvent) {
 
     const href = link.getAttribute('href');
     if (!href) return;
+    const path = decodeURIComponent(href);
 
     // If href starts with "./", it's a path relative to the current file. We need
     // to resolve it to an absolute path.
-    if (href.startsWith('./')) {
+    if (path.startsWith('./')) {
         const currentFilePath = props.record?.relative_path;
         if (!currentFilePath) return;
 
-        console.warn(`Command + Click on relative path '${href}' is temporarily disabled due to client refactor.`);
+        const lastSlash = currentFilePath.lastIndexOf('/');
+        const recordParent = lastSlash === -1 ? '.' : currentFilePath.substring(0, lastSlash);
+
+        const newPath = normalizeurl(`${recordParent}/${path}`);
+
+        console.log('[todo: open relative path]', recordParent, path, newPath);
+        console.warn(`Relative hyperlink '${path}' is temporarily disabled due to client refactor.`);
         return;
     }
 
     // If href is a remote URL (starts with http:// or https://), open it in the default browser.
-    if (href.startsWith('http://') || href.startsWith('https://')) {
-        openUrl(href);
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+        if (viewMode.value === 'preview') {
+            openUrl(path);
+        }
         return;
     }
 
-    console.error(`Command + Click on link '${href}' is not currently supported.`);
+    console.error(`Opening hyperlink '${path}' is not currently supported.`);
 
     // const fileName = decodeURIComponent(match[1]);
     // emit('open-file', fileName);

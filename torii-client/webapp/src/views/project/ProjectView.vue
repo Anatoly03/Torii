@@ -125,6 +125,7 @@ import {
 } from '@vicons/ionicons5';
 import { openSettingsWindow } from '../../composables/settings-window.ts';
 import { useSettingsStore } from '@/stores/settings';
+import normalizeurl from 'normalizeurl';
 
 // Components
 import MarkdownEditor from '../../components/article/MarkdownEditor.vue';
@@ -292,8 +293,9 @@ async function autocompleteMarkdown(filter: string): Promise<any> {
                     .split('/')
                     .map((_, index) => (index == 0 ? '.' : '..'))
                     .join('/') ?? '.';
+
             // Then we append the record's relative path to the workspace root.
-            const relativePath = `${workspaceRelative}/${record.relative_path}`;
+            const relativePath = encodeURIComponent(`${workspaceRelative}/${record.relative_path}`);
 
             return {
                 label: record.name,
