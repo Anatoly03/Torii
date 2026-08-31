@@ -6,8 +6,10 @@
 
 - Add plugin: Recent Projects
 - Add a settings page to display installed plugins.
+- Fix: Hyperlinks no longer open in Edit Mode.
+- Fix: Autocomplete no longer pops up in Preview Mode.
 
-Technical Change: The codebase was refactored to support dynamically loaded plugins. This is still premature for usage by 3rd party extensions, but will act as a solid base in the future.
+Technical Change: The codebase was refactored to support plugins which are dynamically loaded. This is still premature for usage by 3rd party extensions, but will act as a solid base in the future.
 
 ---
 
