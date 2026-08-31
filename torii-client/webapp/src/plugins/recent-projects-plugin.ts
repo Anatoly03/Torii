@@ -1,4 +1,4 @@
-import ToriiPlugin from './core.ts';
+import { ToriiPlugin } from '@torii-project/core';
 
 export class RecentProjectsPlugin extends ToriiPlugin {
     constructor() {
@@ -9,7 +9,7 @@ export class RecentProjectsPlugin extends ToriiPlugin {
     }
 
     public override renderAnchor(anchorId: string) {
-        switch(anchorId) {
+        switch (anchorId) {
             case 'welcome:sidebar:top':
                 return import('./RecentProjectsView.vue');
             default:
