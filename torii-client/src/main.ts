@@ -34,3 +34,9 @@ mainWindow.listen('tauri://close-requested', async (_event) => {
 import '@/styles/global.scss';
 
 createApp(App).use(router).use(pinia).use(i18n).mount('#app');
+
+// TODO: design better plugin loaders
+import { usePlugins } from './plugins/loader.ts';
+import { RecentProjectsPlugin } from './plugins/recent-projects-plugin.ts';
+const pluginManager = usePlugins();
+pluginManager.install(new RecentProjectsPlugin())

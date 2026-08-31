@@ -1,7 +1,7 @@
 <template>
     <div class="view-home">
         <div class="view-home-side">
-            <RecentProjectsView />
+            <TAnchor id="welcome:sidebar:top" />
             <div class="view-home-quick-settings">
                 <LanguageSelect class="language-select" />
                 <button
@@ -32,9 +32,9 @@ import { getVersion } from '@tauri-apps/api/app';
 import { Icon } from '@vicons/utils';
 import { SettingsOutline } from '@vicons/ionicons5';
 import LanguageSelect from '@/components/LanguageSelect.vue';
-import RecentProjectsView from './RecentProjectsView.vue';
 import { openSettingsWindow } from '../composables/settings-window.ts';
 import UpdateButton from '@/components/UpdateButton.vue';
+import TAnchor from '@/plugins/TAnchor.vue';
 
 const version = ref('Invalid Version');
 
