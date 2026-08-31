@@ -1,9 +1,17 @@
 import { ToriiPluginManager } from '@torii-project/core';
+import { RecentProjectsPlugin } from '@torii-project/plugin-recent-projects';
 
 /**
  * @brief Singleton instance of the Torii plugin manager.
  */
 let singleton: ToriiPluginManager | undefined;
+
+/**
+ * @brief When the plugins are initialized, it installs the core plugins.
+ */
+export function installCorePlugins(m: ToriiPluginManager) {
+    m.install(new RecentProjectsPlugin());
+}
 
 /**
  * @returns The singleton instance of the Torii plugin manager, lazily
@@ -12,6 +20,7 @@ let singleton: ToriiPluginManager | undefined;
 export function usePlugins() {
     if (!singleton) {
         singleton = new ToriiPluginManager();
+        installCorePlugins(singleton);
     }
 
     return singleton;

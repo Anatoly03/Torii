@@ -11,19 +11,13 @@
                 v-for="(project, index) in recentProjects"
                 :key="project.path"
             >
-                <span
-                    @click="openProject(project.path)"
-                    class="project-title"
-                    >{{ project.name }}</span
-                >
+                <span @click="openProject(project.path)" class="project-title">{{ project.name }}</span>
                 <n-dropdown
                     trigger="hover"
                     placement="right"
                     :options="getProjectOptions(project)"
                     :show-arrow="true"
-                    @select="
-                        (_, option) => handleProjectOptions(project, option)
-                    "
+                    @select="(_, option) => handleProjectOptions(project, option)"
                 >
                     <n-icon class="project-remove">
                         <ellipsis-vertical />
@@ -38,11 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-    listRecentProjects,
-    addRecentProject,
-    removeRecentProject,
-} from '../composables/recentProjects';
+import { listRecentProjects, addRecentProject, removeRecentProject } from './api.ts';
 import { open } from '@tauri-apps/plugin-dialog';
 import { NIcon, NDropdown, DropdownOption } from 'naive-ui';
 import { EllipsisVertical } from '@vicons/ionicons5';
@@ -86,10 +76,7 @@ function openProject(projectPath: string) {
  * @param project Project Metadata
  * @param option Project Option
  */
-function handleProjectOptions(
-    project: { path: string; name: string },
-    option: DropdownOption
-) {
+function handleProjectOptions(project: { path: string; name: string }, option: DropdownOption) {
     console.log('Selected option', option, 'for project', project);
     switch (option.key) {
         case 'remove':

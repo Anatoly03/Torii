@@ -1,12 +1,13 @@
 /**
- * @file recentProjects.ts
+ * @file
+ * @brief Contains the recent projects communication with the Tauri backend.
  */
 
 import { invoke } from '@tauri-apps/api/core';
 import { Ref, ref } from 'vue';
 
 /**
- *
+ * @brief Type of a recent project struct.
  */
 interface RecentProject {
     /**

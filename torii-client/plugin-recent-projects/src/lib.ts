@@ -11,7 +11,7 @@ export class RecentProjectsPlugin extends ToriiPlugin {
     public override renderAnchor(anchorId: string) {
         switch (anchorId) {
             case 'welcome:sidebar:top':
-                return import('./RecentProjectsView.vue');
+                return import('./RecentProjects.vue');
             default:
                 return;
         }
