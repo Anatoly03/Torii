@@ -115,10 +115,10 @@ watch(
 );
 
 /**
- * Handles control+click
+ * Handles click
  */
 function onLinkClick(event: MouseEvent) {
-    if (!event.ctrlKey && !event.metaKey) return;
+    // if (!event.ctrlKey && !event.metaKey) return;
 
     const link = (event.target as HTMLElement).closest('a');
     if (!link) return;
@@ -141,7 +141,9 @@ function onLinkClick(event: MouseEvent) {
 
     // If href is a remote URL (starts with http:// or https://), open it in the default browser.
     if (href.startsWith('http://') || href.startsWith('https://')) {
-        openUrl(href);
+        if (viewMode.value === 'preview') {
+            openUrl(href);
+        }
         return;
     }
 
