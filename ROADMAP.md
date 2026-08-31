@@ -107,10 +107,9 @@ Due to my Bachelors' thesis I took a 3 week break from Torii here and `dev9` sho
 -   [x] Edit Mode: Remove: Open URL on link click
 -   [x] View Mode: Hide autocomplete
 -   [ ] View Mode: Fix: Link should be clickable
-    -   [ ] Remote URL
+    -   [x] Remote URL
     -   [ ] Local Files/ Relative Paths
 -   [ ] Breadcrumb Header
--   [ ] Remove: Control + click.
 -   [ ] Implement Rust path normalization in workspace and record
 -   [ ] Autocomplete should fill encoded paths (e.g. space should become `%20`)
 
