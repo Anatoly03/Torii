@@ -9,7 +9,7 @@ import { Ref, ref } from 'vue';
 /**
  * @brief Type of a recent project struct.
  */
-interface RecentProject {
+export interface RecentProject {
     /**
      * The name of the project.
      */
@@ -24,7 +24,13 @@ interface RecentProject {
      * The timestamp of when the project was last opened, in milliseconds since
      * the Unix epoch.
      */
-    lastOpened?: number;
+    last_opened?: number;
+
+    /**
+     * Wether the project is added by the system. Such projects are not stored
+     * in the recent projects file and cannot be removed.
+     */
+    is_system?: boolean;
 }
 
 const recentProjects = ref<RecentProject[]>([]);
