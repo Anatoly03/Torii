@@ -116,7 +116,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { invoke } from '@tauri-apps/api/core';
 import { Icon } from '@vicons/utils';
 import {
     SettingsOutline,
@@ -134,6 +133,7 @@ import type { Record } from '../../types';
 import UIFileTree from '@/ui/UIFileTree.vue';
 import UISelect from '@/ui/UISelect.vue';
 import { TreeNode } from 'ui/UITree.vue';
+import { filterRecords, listRecordComponents, listRecords, saveRecordComponent } from '@/services/recordsService.ts';
 
 const route = useRoute();
 const router = useRouter();
@@ -191,14 +191,10 @@ watch(searchQuery, (query) => {
 
 async function loadComponents() {
     if (!currentFile.value) return;
-    console.log('Loading components for:', currentFile.value);
+    const record = currentFile.value;
+    console.log('Loading components for:', record);
 
-    const recordComponentsResult = await invoke<any[]>(
-        'list_record_components',
-        {
-            record: currentFile.value,
-        }
-    );
+    const recordComponentsResult = await listRecordComponents(record);
     recordComponents.value = recordComponentsResult.map((c) => c.name);
 
     console.log('Components listed:', recordComponents.value);
@@ -209,19 +205,20 @@ async function createNewFile() {
 
     const files: TreeNode<Record>[] = await fileTree.value.getFiles();
 
+    function createRecordObject(name: string) {
+        return {
+            workspace: projectPath,
+            relative_path: name,
+        } as any as Record;
+    }
+
     // If there are no files, we create "README" as the first file.
     if (files.length === 0) {
         const projectName = projectPath.split('/').pop() ?? 'My Project';
+        const record = createRecordObject('README');
+        const boilerplate = `# ${projectName}\n\nWelcome to your new project! This is the README file, which you can edit into the first record.`;
 
-        await invoke<string>('save_record_component', {
-            record: {
-                workspace: projectPath,
-                relative_path: 'README',
-            },
-            component: 'article',
-            content: `# ${projectName}\n\nWelcome to your new project! This is the README file, which you can edit into the first record.`,
-            contentType: 'text/markdown',
-        });
+        await saveRecordComponent(record, 'article', boilerplate, 'text/markdown');
 
         fileTree.value.refresh();
         return;
@@ -236,37 +233,25 @@ async function createNewFile() {
         counter++;
     }
 
-    await invoke<string>('save_record_component', {
-        record: {
-            workspace: projectPath,
-            relative_path: newFileName,
-        },
-        component: 'article',
-        content: `# ${newFileName}\n\n`,
-        contentType: 'text/markdown',
-    });
+    const newRecord = createRecordObject(newFileName);
+    await saveRecordComponent(newRecord, 'article', `# ${newFileName}\n\n`, 'text/markdown');
 
     fileTree.value.refresh();
 }
 
-function listRecords(attrs: {
+function listRecordsUI(attrs: {
     directory: string;
     recursive?: boolean;
     filter?: string;
 }) {
-    return invoke<Record[]>('list_records', {
-        workspace: projectPath,
-        directory: attrs.directory,
-        recursive: attrs.recursive ?? false,
-        filter: attrs.filter,
-    });
+    return filterRecords(projectPath, attrs.directory, attrs.recursive ?? false, attrs.filter);
 }
 
 /**
  * On autocomplete popup creation, cache all records.
  */
 async function autocompleteStart() {
-    const suggestions = await listRecords({
+    const suggestions = await listRecordsUI({
         directory: '',
         recursive: true,
     });
