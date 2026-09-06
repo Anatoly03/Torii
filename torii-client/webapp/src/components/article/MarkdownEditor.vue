@@ -211,7 +211,6 @@ async function saveFile() {
 
     // Get markdown content from the editor
     const content = editor.getMarkdown();
-    // console.debug('save', content);
 
     // Save the file content whenever it changes
     await saveRecordComponent(props.record, 'article', content, 'text/markdown');

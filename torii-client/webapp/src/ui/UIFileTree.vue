@@ -227,8 +227,6 @@ function findNodeByKey(
     key: string,
     nodes = files.value
 ): TreeNode<Record> | null {
-    // console.log('Searching for node with key:', key);
-
     for (const node of nodes) {
         if (node.key === key) return node;
         if (node.children) {
