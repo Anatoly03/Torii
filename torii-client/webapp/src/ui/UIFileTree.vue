@@ -5,12 +5,12 @@
         v-model:selected-keys="selectedKeys"
         :key="JSON.stringify(files)"
         :data="files"
-        :actions="[{ label: 'Remove', key: 'remove', action: removeRecord }]"
+        :actions="[{ label: 'Remove', key: 'remove', action: removeRecordUI }]"
         @find-node-by-key="findNodeByKey"
         @node-click="(e) => setCurrentFile(e)"
         @node-expand="(e) => loadNodes(e.value.relative_path)"
         @node-move="moveRecord"
-        @node-rename="renameRecord"
+        @node-rename="renameRecordUI"
         generic="Record"
     />
 </template>
@@ -19,7 +19,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { Record } from '../types';
 import UITree, { TreeNode } from './UITree.vue';
-import { invoke } from '@tauri-apps/api/core';
+import { listRecordComponents, listRecords, removeRecord, renameRecord, saveRecordComponent } from '@/services/recordsService.ts';
 
 /**
  *
@@ -79,9 +79,7 @@ async function loadNodes(
      * @returns A `TreeNode` object representing the record.
      */
     async function mapRecord(record: Record): Promise<TreeNode<Record>> {
-        const components = await invoke<any[]>('list_record_components', {
-            record,
-        });
+        const components = await listRecordComponents(record);
 
         console.debug(`Components for \`${record.name}\`:`, components);
         const isFolder = components.some((c) => c.name === 'folder');
@@ -102,11 +100,7 @@ async function loadNodes(
     }
 
     try {
-        const files = await invoke<Record[]>('list_records', {
-            workspace: props.workspace,
-            directory,
-            recursive,
-        });
+        const files = await listRecords(props.workspace, directory, recursive);
         const retrieved = await Promise.all(files.map(mapRecord));
         return sortNodes(retrieved);
     } catch (e) {
@@ -129,37 +123,23 @@ async function moveRecord(
     const record = node.value;
     if (!parent || !record) return;
 
-    // Create folder component for parent record if it doesn't exist.
-    await invoke('save_record_component', {
-        record: parent,
-        component: 'folder',
-        content: '',
-        contentType: 'text/markdown',
-    });
+    // Create folder component for parent record if it doesn't exist, then move
+    // the record into new path.
+    await saveRecordComponent(parent, 'folder', '', 'text/markdown');
+    const newRecord = await renameRecord(record, `${parent.relative_path}/${record.name}`);
 
-    console.log(record);
-
-    // Move the record to the new parent path.
-    const newRecord = await invoke<Record>('rename_record', {
-        record,
-        newName: `${parent.relative_path}/${record.name}`,
-    });
-
-    console.log(
-        `Moved record \`${record.name}\` to new parent \`${parent.name}\`:`,
-        newRecord
-    );
+    console.log(`Moved record \`${record.name}\` to \`${parent.name}\`:`, newRecord);
 
     await refresh();
 }
 
-async function removeRecord(node: TreeNode<Record>) {
+async function removeRecordUI(node: TreeNode<Record>) {
     const record = node.value;
-    await invoke('remove_record', { record });
+    await removeRecord(record);
     await refresh();
 }
 
-async function renameRecord(node: TreeNode<Record>, newLabel: string) {
+async function renameRecordUI(node: TreeNode<Record>, newLabel: string) {
     const record = node.value;
     if (!record) return;
 
@@ -173,10 +153,7 @@ async function renameRecord(node: TreeNode<Record>, newLabel: string) {
     const newRelativePath = newRelativePathSlice.join('/');
 
     // Move the record to the new parent path.
-    const newRecord = await invoke<Record>('rename_record', {
-        record,
-        newName: newRelativePath,
-    });
+    const newRecord = await renameRecord(record, newRelativePath);
 
     // If the current record is active, update the "selected key" to the new
     // record's path.

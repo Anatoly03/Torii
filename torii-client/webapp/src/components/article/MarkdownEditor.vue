@@ -22,7 +22,6 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
-import { invoke } from '@tauri-apps/api/core';
 import { Editor, EditorContent } from '@tiptap/vue-3';
 import { Markdown } from '@tiptap/markdown';
 import { TaskList, TaskItem } from '@tiptap/extension-list';
@@ -39,6 +38,7 @@ import {
 } from './autocomplete-extension.ts';
 import MarkdownEditorAutocomplete from './MarkdownEditorAutocomplete.vue';
 import type { Record } from '../../types';
+import { getRecordComponent, saveRecordComponent } from '@/services/recordsService.ts';
 
 const props = defineProps<{
     record: Record;
@@ -186,12 +186,8 @@ watch(
         if (!record) return;
 
         // Load the file content when a new file is selected
-        let bytes = await invoke('get_record_component', {
-            record: props.record,
-            component: 'article',
-        });
-        let content = new TextDecoder().decode(bytes as Uint8Array);
-        // console.debug('load', content);
+        let bytes = await getRecordComponent<Uint8Array>(props.record, 'article');
+        let content = new TextDecoder().decode(bytes);
 
         ignoreFirstSave.value = true;
         editor.commands.setContent(content, { contentType: 'markdown' });
@@ -199,13 +195,8 @@ watch(
 );
 
 async function loadFile() {
-    let bytes = await invoke('get_record_component', {
-        record: props.record,
-        component: 'article',
-    });
-    // console.log(bytes);
-    let content = new TextDecoder().decode(bytes as Uint8Array);
-    // console.debug('load', content);
+    let bytes = await getRecordComponent<Uint8Array>(props.record, 'article');
+    let content = new TextDecoder().decode(bytes);
 
     ignoreFirstSave.value = true;
     editor.commands.setContent(content, { contentType: 'markdown' });
@@ -223,12 +214,7 @@ async function saveFile() {
     // console.debug('save', content);
 
     // Save the file content whenever it changes
-    await invoke('save_record_component', {
-        record: props.record,
-        component: 'article',
-        content,
-        contentType: 'text/markdown',
-    });
+    await saveRecordComponent(props.record, 'article', content, 'text/markdown');
 }
 
 // Compute word count from the editor (e.g., on update)
