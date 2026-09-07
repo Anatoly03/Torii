@@ -41,7 +41,7 @@ export function saveRecordComponent(
  * @todo
  */
 export function saveRecordComponentFromLocalPath(record: Record, component: string, source: string): Promise<void> {
-    return invoke('save_record_component', {
+    return invoke('save_record_component_from_local_file', {
         record,
         component,
         source,
