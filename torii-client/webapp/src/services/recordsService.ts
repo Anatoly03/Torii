@@ -1,10 +1,10 @@
-import type { Record } from '@/types.d.ts';
+import type { ComponentMeta, Record } from '@/types.d.ts';
 import { invoke } from '@tauri-apps/api/core';
 
 /**
  * @todo
  */
-export function listRecordComponents(record: Record): Promise<any[]> {
+export function listRecordComponents(record: Record): Promise<ComponentMeta[]> {
     return invoke('list_record_components', {
         record,
     });

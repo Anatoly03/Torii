@@ -1,6 +1,9 @@
 //! This module defines [tauri] commands associated with the [Record] instance.
 
-use crate::{Component, Record};
+use crate::{
+    Component, Record,
+    record::component_meta::{ComponentMeta, ComponentPermissions},
+};
 use base64::{Engine as _, engine::general_purpose};
 use serde_json::{Value, json};
 use std::{io::ErrorKind::NotFound, path::PathBuf};
@@ -82,25 +85,25 @@ pub fn remove_record(record: Record) -> Result<(), String> {
 /// components, and is used in the file tree UI to enable special behaviour
 /// for folders.
 #[tauri::command]
-pub fn list_record_components(record: Record) -> Value {
+pub fn list_record_components(record: Record) -> Vec<ComponentMeta> {
     record
         .list_components()
         .iter()
         .map(|c| {
-            let can_write = c.write(&record, Vec::new()).is_implemented();
-            let can_write_from_file = c.write_from_file(&record, &PathBuf::new()).is_implemented();
-            let can_read = c.read(&record).is_implemented();
-            let can_remove = c.remove(&record).is_implemented();
+            let write = c.write(&record, Vec::new()).is_implemented();
+            let write_from_file = c.write_from_file(&record, &PathBuf::new()).is_implemented();
+            let read = c.read(&record).is_implemented();
+            let remove = c.remove(&record).is_implemented();
 
-            json!({
-                "name": c.component_name(),
-                "permissions": {
-                    "write": can_write,
-                    "write_from_file": can_write_from_file,
-                    "read": can_read,
-                    "remove": can_remove,
-                }
-            })
+            ComponentMeta {
+                name: c.component_name().to_string(),
+                permissions: ComponentPermissions {
+                    write,
+                    write_from_file,
+                    read,
+                    remove,
+                },
+            }
         })
         .collect()
 }
