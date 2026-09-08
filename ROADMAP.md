@@ -115,6 +115,11 @@ Due to my Bachelors' thesis I took a 3 week break from Torii here and `dev9` sho
 
 ### `v0.0.0-dev11`
 
+-   [ ] Continue Client Refactoring: Split the project features into composables
+    -   [ ] `useProjectFiles()`
+    -   [ ] `useCurrentWorkspace()`
+    -   [ ] `useCurrentRecord()`
+    -   [ ] `useProjectSearch()`
 -   [ ] Client Documentation (Github CI)
     -   [ ] [clean-jsdoc-theme](https://www.npmjs.com/package/@clean-jsdoc-theme/typedoc)
 -   [ ] Remove Naive UI dependency and implement custom vue components

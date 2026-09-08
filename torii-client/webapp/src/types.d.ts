@@ -60,3 +60,30 @@ export interface Workspace {
      */
     name: string;
 }
+
+/**
+ * The component meta represents component metadata such as command capabilities.
+ */
+export interface ComponentMeta {
+    /**
+     * The name of the component.
+     */
+    name: string;
+
+    /**
+     * The permissions matrix.
+     */
+    permissions: {
+        /** Wether the Tauri command `save_record_component` is implemented for the component. */
+        write: bool;
+
+        /** Wether the Tauri command `save_record_component_from_local_file` is implemented for the component. */
+        write_from_file: bool;
+
+        /** Wether the Tauri command `get_record_component` is implemented for the component. */
+        read: bool;
+
+        /** Wether the Tauri command `remove_record_component` is implemented for the component. */
+        remove: bool;
+    };
+}

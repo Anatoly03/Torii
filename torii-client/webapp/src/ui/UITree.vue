@@ -185,7 +185,6 @@ const data = ref<TreeNode<NodeValue>[]>(props.data);
 function selectNode(node: TreeNode<NodeValue>) {
     selectedKeys.value = [node.key];
     // emit('node-click', selectedKeys.value);
-    // console.log('Node clicked:', node);
     emit('node-click', node);
 }
 

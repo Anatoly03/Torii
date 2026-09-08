@@ -47,12 +47,12 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
-import { invoke } from '@tauri-apps/api/core';
 import { open as openFileDialog } from '@tauri-apps/plugin-dialog';
 import { NIcon, NSpin } from 'naive-ui';
 import { CloseOutline, ImageOutline } from '@vicons/ionicons5';
 import type { Record } from '../../types';
 import UIDropRegion from '../../ui/UIDropRegion.vue';
+import { getRecordComponent, removeRecordComponent, saveRecordComponent, saveRecordComponentFromLocalPath } from '@/services/recordsService.ts';
 
 const props = defineProps<{
     record: Record;
@@ -101,11 +101,7 @@ function refreshImageBlob() {
 
 async function loadFile() {
     try {
-        const file = await invoke<Uint8Array>('get_record_component', {
-            record: props.record,
-            component: props.component,
-        });
-
+        const file = await getRecordComponent<Uint8Array>(props.record, props.component);
         imageData.value = file.byteLength ? file : null;
     } catch (e) {
         console.warn(e);
@@ -126,24 +122,13 @@ async function loadImageFromFiles(files: File[]) {
     // if the image does not load immediately.
     setTimeout(() => (loading.value += 1), 100);
 
-    // Read as ArrayBuffer (binary)
+    // Read as ArrayBuffer (binary) and convert it to a base64 encoded string
+    // because Tauri accepts binaries only this way.
     const arrayBuffer = await file.arrayBuffer();
     const uint8Array = new Uint8Array(arrayBuffer);
-
-    console.log(file);
-    console.log(arrayBuffer);
-
-    // Send to Rust via invoke (base64)
-    const base64 = btoa(
-        uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '')
-    );
-
-    await invoke('save_record_component', {
-        record: props.record,
-        component: 'image',
-        content: base64,
-        contentType: file.type,
-    });
+    const stringBuffer = uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '');
+    const base64 = btoa(stringBuffer);
+    await saveRecordComponent(props.record, 'image', base64, file.type);
 
     // Refresh the image data after saving
     await loadFile();
@@ -180,12 +165,7 @@ async function loadImageFromURL(url: string) {
     );
 
     // Save the image data to the backend
-    await invoke('save_record_component', {
-        record: props.record,
-        component: props.component,
-        content: base64,
-        contentType: 'image/png',
-    });
+    await saveRecordComponent(props.record, props.component, base64, 'image/png');
 
     // Refresh the image data after saving
     await loadFile();
@@ -199,11 +179,7 @@ async function loadImageFromURL(url: string) {
  */
 async function loadImageFromFilePath(source: string) {
     // Save the image data from a local file path. This is a special case for local files.
-    await invoke('save_record_component_from_local_file', {
-        record: props.record,
-        component: props.component,
-        source,
-    });
+    await saveRecordComponentFromLocalPath(props.record, props.component, source);
 
     // Refresh the image data after saving
     await loadFile();
@@ -221,24 +197,14 @@ async function onImageClick(_event: MouseEvent) {
 
     // Load the image from the selected file path using the copy
     // command.
-    await invoke('save_record_component_from_local_file', {
-        record: props.record,
-        component: props.component,
-        source: path,
-    });
+    await saveRecordComponentFromLocalPath(props.record, props.component, path);
 
     // Refresh the image data after saving
     await loadFile();
 }
 
 async function removeImage() {
-    if (!props.directory || !props.name) return;
-
-    await invoke('remove_record_component', {
-        record: props.record,
-        component: props.component,
-    });
-
+    await removeRecordComponent(props.record, props.component);
     loadFile();
     emit('refresh');
 }
