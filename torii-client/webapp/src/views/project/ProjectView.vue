@@ -435,18 +435,10 @@ if (!projectPath) {
     .view-project-footer {
         display: flex;
         flex-direction: row;
-        // align-items: center;
+        align-items: center;
         justify-content: space-between;
         padding: 8px;
         border-top: 1px solid #ccc;
-
-        .view-project-footer-left {
-            align-self: flex-start;
-        }
-
-        .view-project-footer-right {
-            align-self: flex-end;
-        }
     }
 }
 </style>
