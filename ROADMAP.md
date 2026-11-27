@@ -103,7 +103,7 @@ Due to my Bachelors' thesis I took a 3 week break from Torii here and `dev9` sho
 ### `v0.0.0-dev10` [NEXT]
 
 -   [x] Client Refactoring (Vue webapp and plugins first steps)
-<!-- -   [ ] Edit Mode: WYSIWYG if provided, allows to edit article, drag and drop -->
+-   [ ] Edit Mode: drag and drop images and text
 -   [x] Edit Mode: Remove: Open URL on link click
 -   [x] View Mode: Hide autocomplete
 -   [ ] View Mode: Fix: Link should be clickable

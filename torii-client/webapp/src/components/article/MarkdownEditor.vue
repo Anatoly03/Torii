@@ -271,8 +271,8 @@ defineExpose({
 }
 </style>
 
-<!-- Override TipTap Editor (Global Style) -->
-<style lang="scss">
+
+<style lang="scss" scoped>
 .file-editor-md {
     width: 100%;
     height: 100%;
@@ -280,26 +280,28 @@ defineExpose({
     padding: 0 16px;
     cursor: text;
 
-    .ProseMirror {
+    // Override TipTap Editor (Global Style)
+
+    :deep(.ProseMirror) {
         outline: none;
-    }
 
-    p {
-        padding: 0;
-        margin: 0;
-    }
+        p {
+            padding: 0;
+            margin: 0;
+        }
 
-    label,
-    input[type='checkbox'] {
-        display: inline;
-    }
+        label,
+        input[type='checkbox'] {
+            display: inline;
+        }
 
-    li * {
-        display: inline;
-    }
+        li * {
+            display: inline;
+        }
 
-    li[data-checked] {
-        list-style-type: none;
+        li[data-checked] {
+            list-style-type: none;
+        }
     }
 }
 </style>
